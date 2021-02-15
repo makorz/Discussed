@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "924158228968",
+    "project_id": "discussed",
+    "storage_bucket": "discussed.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:924158228968:android:ae76e44715ea8271db8c5d",
+        "android_client_info": {
+          "package_name": "pl.makorz.discussed"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "924158228968-cupoeosp6ntcfsd7al685a09o43f6gel.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pl.makorz.discussed",
+            "certificate_hash": "8c5a3dc1baeaa6bfa273cae30abd6cdbe8e2e564"
+          }
+        },
+        {
+          "client_id": "924158228968-rslgfrubnkgs64vfmpcqalr5mtrvm20k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIg1SrF3pUo0td8qIG_KvwtXc6Q5Cj9tQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "924158228968-rslgfrubnkgs64vfmpcqalr5mtrvm20k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

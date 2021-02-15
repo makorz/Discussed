@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!--Brown theme colors-->
+    <color name="brown_500">#6d4c41</color>
+    <color name="brown_200">#9c786c</color>
+    <color name="brown_600">#68473C</color>
+    <color name="brown_700">#40241a</color>
+    <color name="teal_brown_200">#cddc39</color>
+    <color name="teal_brown_700">#99aa00</color>
+    <color name="login_background">#efdcd5</color>
+    <color name="drawer_menu">#efebe9</color>
+    <color name="transparent">#00EFEBE9</color>
+</resources>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:padding="5dp"
+    tools:context="pl.makorz.discussed.ProfileActivity">
+
+    <TextView
+        android:id="@+id/title_my_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="14dp"
+        android:text="@string/profile_title"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/firstphoto"
+        app:civ_border_width="2dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="25dp"
+        app:civ_border_color="@color/white"
+        android:id="@+id/imageview_first_image_own_profile"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_my_profile"
+        />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/secondphoto"
+        app:civ_border_width="2dp"
+        android:layout_marginTop="15dp"
+        app:civ_border_color="@color/white"
+        android:id="@+id/imageview_second_image_own_profile"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toStartOf="@+id/imageview_third_image_own_profile"
+        app:layout_constraintTop_toBottomOf="@+id/title_my_profile"
+        app:layout_constraintStart_toEndOf="@+id/imageview_first_image_own_profile"
+        />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/thirdphoto"
+        app:civ_border_width="2dp"
+        android:layout_marginTop="15dp"
+        app:civ_border_color="@color/white"
+        android:id="@+id/imageview_third_image_own_profile"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toEndOf="@id/imageview_second_image_own_profile"
+        app:layout_constraintTop_toBottomOf="@+id/title_my_profile"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <Button
+        android:id="@+id/first_image_change"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="25dp"
+        android:text="@string/change_image_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageview_first_image_own_profile" />
+
+    <Button
+        android:id="@+id/second_image_change"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="@string/change_image_button"
+        app:layout_constraintEnd_toStartOf="@+id/third_image_change"
+        app:layout_constraintStart_toEndOf="@+id/first_image_change"
+        app:layout_constraintTop_toBottomOf="@+id/imageview_second_image_own_profile" />
+
+    <Button
+        android:id="@+id/third_image_change"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="25dp"
+        android:text="@string/change_image_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageview_third_image_own_profile" />
+
+
+    <TextView
+        android:id="@+id/own_description_my_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="14dp"
+        android:hint="@string/description_edit_view"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/second_image_change" />
+
+
+    <Button
+        android:id="@+id/description_own_change"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/change_your_description_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/own_description_my_profile" />
+
+    <TextView
+        android:id="@+id/own_location_my_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="14dp"
+        android:hint="@string/location_edit_view"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/description_own_change" />
+
+
+    <Button
+        android:id="@+id/location_own_change"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/change_your_location_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/own_location_my_profile" />
+
+    <TextView
+        android:id="@+id/own_age_my_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="14dp"
+        android:hint="@string/age_edit_view"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/location_own_change" />
+
+    <Button
+        android:id="@+id/age_own_change"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/change_your_age_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/own_age_my_profile" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

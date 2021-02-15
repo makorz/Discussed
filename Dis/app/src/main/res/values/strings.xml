@@ -1,0 +1,73 @@
+<resources>
+    <string name="action_settings">Settings</string>
+    <string name="action_show_my_profile">My Profile</string>
+    <string name="action_show_alien_profile">Stranger Profile</string>
+    <string name="title_activity_profile">Profile</string>
+    <string name="title_activity_alien_profile">Profile Of Someone Else</string>
+    <string name="title_activity_chat">Chat</string>
+    <string name="title_activity_blindDate">Blind Date</string>
+    <string name="title_top">Main fragment</string>
+
+    <!--Titles of options in menu-->
+    <string-array name="titles">
+        <item>Home Page</item>
+        <item>Blind Dates</item>
+        <item>Conversations</item>
+        <item>Settings</item>
+        <item>Donate</item>
+        <item>About</item>
+        <item>Log out</item>
+    </string-array>
+
+    <!--Drawer strings-->
+    <string name="open_drawer">Open drawer</string>
+    <string name="close_drawer">Close drawer</string>
+
+
+    <!--Own Profile strings-->
+    <string name="change_image_button">Change image</string>
+    <string name="profile_title">WELCOME TO YOUR PROFILE</string>
+    <string name="change_your_description_button">Change Your Description</string>
+    <string name="change_your_location_button">Change Your Location</string>
+    <string name="description_edit_view">Your description has not been created yet!</string>
+    <string name="description_dialog_enter">Enter Your Description</string>
+    <string name="age_edit_view">Your age has not been set, yet!</string>
+    <string name="change_your_age_button">Change Age</string>
+    <string name="location_edit_view">Where are You?</string>
+
+    <!--Alien Profile strings-->
+    <string name="alien_profile_title">WELCOME TO PROFILE OF STRANGER</string>
+    <string name="uncover_alien_description">Uncover description (3p)</string>
+    <string name="uncover_image_button">Uncover photo (5p)</string>
+    <string name="alien_description_text_view">Description of Stranger To Uncover</string>
+    <string name="alien_location_text_view">Location of Stranger To Uncover</string>
+    <string name="uncover_alien_location">Uncover location (2p)</string>
+    <string name="alien_age_text_view">Exact Age of Stranger To Uncover</string>
+    <string name="uncover_alien_age">Uncover age (2p)</string>
+    <string name="points_left_to_use_alien">Nr of points left to use:</string>
+
+    <!--MainFragment strings-->
+    <string name="search_chatmate_button">Search Chat Mate</string>
+    <string name="start_blind_date_button">Start Blind Date</string>
+    <string name="welcome_text">Welcome dear friendo! In our up You will find someone to talk about topic You would like to discuss right now!</string>
+    <string name="app_name">Discussed</string>
+
+    <!--SettingsFragment strings-->
+    <string name="logout_text">Logout</string>
+
+
+
+    <!--DonateFragment strings-->
+    <string-array name="donate_options">
+        <item>Toss a Coin To Your Witch.. Android Development Newbie! ( 2$ )</item>
+        <item>Good job Button</item>
+    </string-array>
+
+    <!--AboutFragment strings-->
+    <string-array name="about_options">
+        <item>Logo</item>
+        <item>Version number</item>
+        <item>Quick guide</item>
+    </string-array>
+
+</resources>
