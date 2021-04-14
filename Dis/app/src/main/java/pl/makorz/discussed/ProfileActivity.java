@@ -80,7 +80,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         // Layout dialog boxa
         LayoutInflater inflaterDialog = LayoutInflater.from(this);
-        View dialogView = inflaterDialog.inflate(R.layout.dialog_descrition_change, null);
+        View dialogView = inflaterDialog.inflate(R.layout.dialog_description_change, null);
         EditText editDialogText = dialogView.findViewById(R.id.dialog_description_edit_text);
         // Filter input
         DescriptionFilter descriptionFilter = new DescriptionFilter(ProfileActivity.this);

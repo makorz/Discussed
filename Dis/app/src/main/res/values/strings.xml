@@ -14,7 +14,6 @@
         <item>Blind Dates</item>
         <item>Conversations</item>
         <item>Settings</item>
-        <item>Donate</item>
         <item>About</item>
         <item>Log out</item>
     </string-array>
@@ -54,14 +53,15 @@
 
     <!--SettingsFragment strings-->
     <string name="logout_text">Logout</string>
+    <string name="donate_text">Donate Me</string>
+    <string name="appreciate_me_text">GOOD JOB</string>
+    <string name="title_settings">What would You like to do in settings?</string>
 
+    <!--LoginFragment strings-->
+    <string name="agreeTermsCheckBox">I Agree to Terms and Conditions of using app "Discussed"</string>
+    <string name="terms_and_conditions">Terms and Conditions</string>
+    <string name="delete_account">DELETE ACCOUNT</string>
 
-
-    <!--DonateFragment strings-->
-    <string-array name="donate_options">
-        <item>Toss a Coin To Your Witch.. Android Development Newbie! ( 2$ )</item>
-        <item>Good job Button</item>
-    </string-array>
 
     <!--AboutFragment strings-->
     <string-array name="about_options">

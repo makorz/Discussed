@@ -3,11 +3,15 @@ package pl.makorz.discussed;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -32,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
     private SignInButton buttonSignInGoogle;
     private GoogleSignInClient client;
     private FirebaseAuth mAuth;
+    private CheckBox checkTermsBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,13 +48,12 @@ public class LoginActivity extends AppCompatActivity {
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-
         // Client object
         client = GoogleSignIn.getClient(this, gso);
         // Button google sign in
-        buttonSignInGoogle = findViewById(R.id.button_sign_in_google);
-        buttonSignInGoogle.setOnClickListener(clickListener);
-
+        googleButtonWork();
+        // Check Terms And Conditions
+        termsAgreementCheck();
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
@@ -114,15 +118,45 @@ public class LoginActivity extends AppCompatActivity {
         }
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
-        // Don't won't to show login in back stag
+        // Don't want to show login in back stag
         finish();
     }
 
-    private View.OnClickListener clickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            Intent signInIntent = client.getSignInIntent();
-            startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN);
-        }
-    };
+//    private View.OnClickListener clickListener = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View view) {
+//            Intent signInIntent = client.getSignInIntent();
+//            startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN);
+//        }
+//    };
+
+    private void googleButtonWork () {
+        buttonSignInGoogle = findViewById(R.id.button_sign_in_google);
+        buttonSignInGoogle.setEnabled(false);
+        buttonSignInGoogle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent signInIntent = client.getSignInIntent();
+                startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN);
+            }
+        });
+    }
+
+    private void termsAgreementCheck () {
+        checkTermsBox = findViewById(R.id.checkAgreeTerms);
+        checkTermsBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (checkTermsBox.isChecked()) {
+                    buttonSignInGoogle.setEnabled(true);
+                } else {
+                    buttonSignInGoogle.setEnabled(false);
+                }
+            }
+        });
+    }
+
+
+
+
 }

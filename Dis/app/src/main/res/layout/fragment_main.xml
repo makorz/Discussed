@@ -2,27 +2,27 @@
 
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="2dp"
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/welcome_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/welcome_text"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-        android:textAlignment="center"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="100dp"
-        android:layout_marginStart="15dp"
-        android:id="@+id/welcome_text" />
+        android:text="@string/welcome_text"
+        android:textAlignment="viewEnd"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
 
     <TextView
         android:layout_width="match_parent"
@@ -125,23 +125,18 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_margin="10dp"
-        android:layout_toLeftOf="@+id/welcome_text"
+        android:layout_toStartOf="@+id/welcome_text"
         android:scaleType="centerInside"
         app:srcCompat="@drawable/logo_discussed" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/topics_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/radioButtonGroup_gender"
-         android:scrollbars="vertical" />
+
 
     <Button
         android:id="@+id/button_search_chatmate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/topics_recycler"
+        android:layout_below="@+id/radioButtonGroup_gender"
         android:layout_marginTop="10dp"
         android:text="@string/search_chatmate_button" />
 
@@ -154,6 +149,13 @@
         android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp"
         android:text="@string/start_blind_date_button" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/topics_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button_start_blinddate"
+        android:scrollbars="vertical" />
 
 </RelativeLayout>
 </ScrollView>

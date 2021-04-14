@@ -20,9 +20,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.Objects;
+
 import pl.makorz.discussed.Fragments.BlindDateFragment;
 import pl.makorz.discussed.Fragments.ConversationsFragment;
-import pl.makorz.discussed.Fragments.DonateFragment;
 import pl.makorz.discussed.Fragments.MainFragment;
 import pl.makorz.discussed.Fragments.SettingsFragment;
 import pl.makorz.discussed.Fragments.AboutFragment;
@@ -81,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
         drawerLayout.addDrawerListener(drawerToggle);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
         getSupportFragmentManager().addOnBackStackChangedListener(
@@ -101,11 +102,8 @@ public class MainActivity extends AppCompatActivity {
                         if (fragment instanceof SettingsFragment) {
                             currentPosition = 3;
                         }
-                        if (fragment instanceof DonateFragment) {
-                            currentPosition = 4;
-                        }
                         if (fragment instanceof AboutFragment) {
-                            currentPosition = 5;
+                            currentPosition = 4;
                         }
                         setActionBarTitle(currentPosition);
                         drawerList.setItemChecked(currentPosition, true);
@@ -137,12 +135,9 @@ public class MainActivity extends AppCompatActivity {
                 fragment = new SettingsFragment();
                 break;
             case 4:
-                fragment = new DonateFragment();
-                break;
-            case 5:
                 fragment = new AboutFragment();
                 break;
-            case 6:
+            case 5:
                 fragment = new MainFragment();
                 Log.i(TAG, "Logout");
                 // Logout user

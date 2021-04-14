@@ -39,8 +39,7 @@ public class MainFragment extends Fragment {
         topicsRecycler.setLayoutManager(layoutManager);
 
         Button button = (Button) mainView.findViewById(R.id.button_search_chatmate);
-        button.setOnClickListener(new View.OnClickListener()
-        {
+        button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v)
             {
@@ -51,10 +50,6 @@ public class MainFragment extends Fragment {
 
             }
         });
-
-
-
-
 
         return mainView;
     }

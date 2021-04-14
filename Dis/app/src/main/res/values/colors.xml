@@ -10,6 +10,7 @@
 
     <!--Brown theme colors-->
     <color name="brown_500">#6d4c41</color>
+    <color name="grey">#707070</color>
     <color name="brown_200">#9c786c</color>
     <color name="brown_600">#68473C</color>
     <color name="brown_700">#40241a</color>
