@@ -219,4 +219,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Not blank screen after pressing back on main fragment
+    @Override
+    public void onBackPressed() {
+         if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+             finish();
+         } else if (getFragmentManager().getBackStackEntryCount() > 1) {
+             getFragmentManager().popBackStack();
+         } else {
+             super.onBackPressed();
+         }
+
+    }
+
 }

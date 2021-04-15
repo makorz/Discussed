@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     >
 
     <LinearLayout
         android:id="@+id/chatLeftLayout"
-        android:layout_width="300dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/background_chat_left"
+        android:background="@drawable/chat_left_bubble2"
         android:orientation="vertical"
         android:layout_marginBottom="5dp"
         tools:ignore="UselessParent">
@@ -18,16 +18,16 @@
             android:id="@+id/userNameID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginEnd="12dp"
+            android:maxWidth="300dp"
             android:textColor="@color/teal_brown_700" />
 
         <TextView
             android:id="@+id/textOfMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
+            android:layout_marginStart="5dp"
+            android:maxWidth="300dp"
             android:layout_marginTop="8dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Small"
             android:textColor="@android:color/white" />
@@ -37,11 +37,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="end"
-            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:maxWidth="300dp"
             android:textSize="11sp"
             android:textColor="@color/teal_brown_700" />
 
+
     </LinearLayout>
+
+<!--    <TextView-->
+<!--        android:layout_width="40dp"-->
+<!--        android:layout_marginTop="25dp"-->
+<!--        android:layout_marginStart="10dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        />-->
+
+
 </LinearLayout>

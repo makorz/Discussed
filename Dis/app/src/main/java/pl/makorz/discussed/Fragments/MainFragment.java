@@ -17,6 +17,8 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.util.Objects;
+
 import pl.makorz.discussed.ChatActivity;
 import pl.makorz.discussed.Models.Topic;
 import pl.makorz.discussed.Models.TopicViewHolder;
@@ -38,15 +40,15 @@ public class MainFragment extends Fragment {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         topicsRecycler.setLayoutManager(layoutManager);
 
-        Button button = (Button) mainView.findViewById(R.id.button_search_chatmate);
-        button.setOnClickListener(new View.OnClickListener(){
+        Button buttonChat = (Button) mainView.findViewById(R.id.button_search_chatmate);
+        buttonChat.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v)
             {
 
                 Intent intent = new Intent(getActivity(), ChatActivity.class);
                 //intent.putExtra(ChatActivity.EXTRA_CHAT_INFO, 1);
-                getActivity().startActivity(intent);
+                Objects.requireNonNull(getActivity()).startActivity(intent);
 
             }
         });
@@ -87,4 +89,6 @@ public class MainFragment extends Fragment {
         };
         topicsRecycler.setAdapter(topicAdapter);
     }
+
 }
+

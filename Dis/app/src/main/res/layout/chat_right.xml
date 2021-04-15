@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="end">
 
+
+
     <LinearLayout
         android:id="@+id/chatRightLayout"
-        android:layout_width="280dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/background_chat_right"
+        android:background="@drawable/chat_right_bubble2"
         android:orientation="vertical"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="5dp"
         tools:ignore="UselessParent">
 
         <TextView
@@ -20,8 +22,7 @@
             android:layout_height="wrap_content"
             android:gravity="end"
             android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
-            android:layout_marginTop="8dp"
+            android:maxWidth="300dp"
             android:textColor="@color/brown_500" />
 
         <TextView
@@ -30,9 +31,9 @@
             android:layout_height="wrap_content"
             android:gravity="end"
             android:textAlignment="viewEnd"
-            android:layout_marginStart="12dp"
-            android:layout_marginEnd="12dp"
+            android:layout_marginEnd="5dp"
             android:layout_marginTop="8dp"
+            android:maxWidth="300dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Small"
             android:textColor="@android:color/white" />
 
@@ -42,9 +43,8 @@
             android:layout_height="wrap_content"
             android:textSize="11sp"
             android:layout_marginEnd="12dp"
-            android:layout_marginStart="12dp"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
+            android:maxWidth="300dp"
             android:textColor="@color/brown_500" />
 
     </LinearLayout>
