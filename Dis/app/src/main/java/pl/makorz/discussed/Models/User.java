@@ -2,8 +2,10 @@ package pl.makorz.discussed.Models;
 
 public class User {
 
-    private String displayName;
-    private String description;
+    private String displayName, description, ageOfUser, location;
+    private String photo1URL, photo2URL, photo3URL;
+    private boolean premium, isActive, blindDateParticipationWill, filledNecessaryInfo;
+
     public User() {
     }
 

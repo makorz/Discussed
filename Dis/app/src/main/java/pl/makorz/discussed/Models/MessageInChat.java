@@ -8,7 +8,6 @@ public class MessageInChat {
     Date dateOfMessage;
 
     public MessageInChat() {
-
     }
 
     public MessageInChat(String textOfMessage, String userID, String userNameID, Date dateOfMessage) {

@@ -20,9 +20,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import java.util.Date;
@@ -37,6 +40,7 @@ import pl.makorz.discussed.Models.MessageInChat;
 public class ChatActivity extends AppCompatActivity {
 
     private static final String TAG = "ChatActivity";
+    private String chatIdIntent;
    // public static final String EXTRA_CHAT_INFO = "chatNumber";
 //    public static final String TEXT_OF_MESSAGE = "textOfMessage";
 //    public static final String DATE_OF_MESSAGE = "dateOfMessage";
@@ -58,17 +62,19 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
+        Intent intent = getIntent();
+        chatIdIntent = intent.getStringExtra("chatIdIntent");
         messageText = findViewById(R.id.messageEditText);
-
 
         // What happens after send button click
         findViewById(R.id.sendMessageButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MessageInChat messageChat = new MessageInChat(messageText.getText().toString(), user.getUid(), user.getDisplayName(), new Date());
-                db.collection("chats").document("chatID").collection("messages").add(messageChat);
+                db.collection("chats").document(chatIdIntent).collection("messages").add(messageChat);
                 messageText.setText("");
+
+
             }
         });
 
@@ -78,7 +84,7 @@ public class ChatActivity extends AppCompatActivity {
         messagesRecycler.setLayoutManager(layoutManager);
 
         //Ask Firebase what You want
-        Query queryMessages = FirebaseFirestore.getInstance().collection("chats").document("chatID").collection("messages").orderBy("dateOfMessage", Query.Direction.ASCENDING);
+        Query queryMessages = FirebaseFirestore.getInstance().collection("chats").document(chatIdIntent).collection("messages").orderBy("dateOfMessage", Query.Direction.ASCENDING);
         //Configuring adapter to populate recyclerview
         FirestoreRecyclerOptions<MessageInChat> options = new FirestoreRecyclerOptions.Builder<MessageInChat>()
                 .setQuery(queryMessages, MessageInChat.class)

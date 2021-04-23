@@ -61,6 +61,7 @@
     <string name="agreeTermsCheckBox">I Agree to Terms and Conditions of using app "Discussed"</string>
     <string name="terms_and_conditions">Terms and Conditions</string>
     <string name="delete_account">DELETE ACCOUNT</string>
+    <string name="change_name_button">CHANGE NAME</string>
 
 
     <!--AboutFragment strings-->

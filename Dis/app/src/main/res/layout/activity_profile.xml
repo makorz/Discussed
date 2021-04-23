@@ -27,7 +27,7 @@
         android:src="@drawable/firstphoto"
         app:civ_border_width="2dp"
         android:layout_marginTop="15dp"
-        android:layout_marginLeft="25dp"
+        android:layout_marginStart="25dp"
         app:civ_border_color="@color/white"
         android:id="@+id/imageview_first_image_own_profile"
         android:scaleType="centerCrop"
@@ -68,7 +68,7 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_marginLeft="25dp"
+        android:layout_marginStart="25dp"
         android:text="@string/change_image_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageview_first_image_own_profile" />
@@ -88,11 +88,37 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:layout_marginRight="25dp"
+        android:layout_marginEnd="25dp"
         android:text="@string/change_image_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageview_third_image_own_profile" />
 
+    <TextView
+        android:id="@+id/name_my_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="14dp"
+        android:hint=""
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/second_image_change" />
+
+
+    <Button
+        android:id="@+id/name_own_change"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/change_name_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/name_my_profile" />
 
     <TextView
         android:id="@+id/own_description_my_profile"
@@ -106,7 +132,7 @@
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/second_image_change" />
+        app:layout_constraintTop_toBottomOf="@+id/name_own_change" />
 
 
     <Button

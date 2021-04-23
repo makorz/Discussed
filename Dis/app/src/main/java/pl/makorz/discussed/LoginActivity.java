@@ -32,7 +32,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 public class LoginActivity extends AppCompatActivity {
 
     private static final int RC_GOOGLE_SIGN_IN = 496;
-    private static String TAG = "LoginActivity";
+    private static final String TAG = "LoginActivity";
     private SignInButton buttonSignInGoogle;
     private GoogleSignInClient client;
     private FirebaseAuth mAuth;
@@ -88,6 +88,7 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
+                            Toast.makeText(LoginActivity.this, "WELCOME IN OUR APPLICATION", Toast.LENGTH_SHORT).show();
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
                         } else {
@@ -116,6 +117,7 @@ public class LoginActivity extends AppCompatActivity {
             Log.w(TAG, "User is null, not going to navigate");
             return;
         }
+
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         // Don't want to show login in back stag
@@ -155,8 +157,4 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
-
 }

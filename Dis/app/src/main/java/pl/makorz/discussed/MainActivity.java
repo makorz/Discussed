@@ -1,5 +1,6 @@
 package pl.makorz.discussed;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -18,8 +19,23 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import com.google.firebase.auth.FirebaseAuth;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.SetOptions;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import pl.makorz.discussed.Fragments.BlindDateFragment;
@@ -31,12 +47,18 @@ import pl.makorz.discussed.Fragments.AboutFragment;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private FirebaseAuth mAuth;
+    private static int ageOfAccount = -1;
     private String[] titles;
     private ListView drawerList;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private int currentPosition = 0;
+    String searchID = "";
+
+
+    private FirebaseAuth mAuth;
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -231,5 +253,92 @@ public class MainActivity extends AppCompatActivity {
          }
 
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        fillUserDocument();
+    }
+
+    private void fillUserDocument() {
+
+        DocumentReference docRef = db.collection("users").document(user.getUid());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document != null) {
+                        ageOfAccount = document.getLong("age").intValue();
+                    } else {
+                        Log.d("LOGGER", "No such document");
+                    }
+                } else {
+                    Log.d("LOGGER", "get failed with ", task.getException());
+                }
+            }
+        });
+
+        // If the account is new complete the User document
+        if (ageOfAccount == 0) {
+
+            Map<String, Object> addToSearchCollection = new HashMap<>();
+            addToSearchCollection.put("locationOfUser",new GeoPoint(0,0));
+            addToSearchCollection.put("idOfUser", user.getUid());
+            addToSearchCollection.put("ageOfUser",1);
+            addToSearchCollection.put("genderOfUserFemale",false);
+
+            db.collection("search").add(addToSearchCollection)
+                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        searchID = documentReference.getId();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, e.toString());
+                    }
+                });
+
+            Map<String, Object> userCompletion = new HashMap<>();
+            userCompletion.put("photoURL1", "null");
+            userCompletion.put("photoURL2", "null");
+            userCompletion.put("photoURL3", "null");
+            userCompletion.put("isActive", true);
+            userCompletion.put("searchID", searchID);
+            userCompletion.put("blindDateParticipationWill", true);
+            userCompletion.put("filledNecessaryInfo", false);
+            userCompletion.put("premium", false);
+            userCompletion.put("genderFemale",false);
+            userCompletion.put("ageOfUser", 0);
+            docRef.set(userCompletion, SetOptions.merge());
+
+//            Map<String, Object> defaultChatOrBlindDateDocument = new HashMap<>();
+//            defaultChatOrBlindDateDocument.put("chatID", "null");
+//            defaultChatOrBlindDateDocument.put("dateOfChatCreation", new Date());
+//            defaultChatOrBlindDateDocument.put("dateOfLastActivity", new Date());
+//            defaultChatOrBlindDateDocument.put("nameOfOtherUser","null");
+//
+//            for (int i = 0; i <= 9; i++) {
+//                String Nr = Integer.toString(i);
+//                String chatPath = "chat" + Nr;
+//                String blindDatesPath = "blindDate" + Nr;
+//                docRef.collection("userChats").document(chatPath).set(defaultChatOrBlindDateDocument);
+//                docRef.collection("userBlindDates").document(blindDatesPath).set(defaultChatOrBlindDateDocument);
+//            }
+
+            Map<String, Object> userUpdateValues = new HashMap<>();
+            userUpdateValues.put("location", new GeoPoint(0,0));
+            userUpdateValues.put("age",1);
+
+            ageOfAccount++;
+            docRef.update(userUpdateValues);
+        }
+
+    }
+
+
 
 }
