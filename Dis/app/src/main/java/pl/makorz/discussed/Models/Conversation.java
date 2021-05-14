@@ -95,7 +95,7 @@ public class Conversation {
                                 Map<String, Object> chat = new HashMap<>();
                                 String textShort = document.get("textOfMessage").toString();
                                 if (textShort.length() > 40) {
-                                    textShort = textShort.substring(0,35) + "...";
+                                    textShort = textShort.substring(0,25) + "...";
                                 }
                                 chat.put("lastMessage", textShort);
                                 FirebaseFirestore.getInstance().collection("chats").document(chatID).set(chat, SetOptions.merge());

@@ -32,11 +32,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.SetOptions;
 
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import pl.makorz.discussed.Fragments.BlindDateFragment;
 import pl.makorz.discussed.Fragments.ConversationsFragment;
@@ -48,17 +50,19 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private static int ageOfAccount = -1;
+    private static int nrOfUsers = -1;
     private String[] titles;
     private ListView drawerList;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private int currentPosition = 0;
     String searchID = "";
-
-
+    private DocumentSnapshot userSnapshot;
+    private DocumentSnapshot searchSnapshot;
     private FirebaseAuth mAuth;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +71,8 @@ public class MainActivity extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); //no dark theme
 
         titles = getResources().getStringArray(R.array.titles);
-        drawerList = (ListView)findViewById(R.id.drawer);
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerList = findViewById(R.id.drawer);
+        drawerLayout =  findViewById(R.id.drawer_layout);
 
         //Populate the ListView
         drawerList.setAdapter(new ArrayAdapter<String>(this,
@@ -95,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
                 super.onDrawerClosed(view);
                 invalidateOptionsMenu();
             }
+
             //Called when a drawer has settled in a completely open state.
             @Override
             public void onDrawerOpened(View drawerView) {
@@ -132,6 +137,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
+
+
     }
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
@@ -146,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
         // Update the main content by replacing fragments
         currentPosition = position;
         Fragment fragment;
-        switch(position) {
+        switch (position) {
             case 1:
                 fragment = new BlindDateFragment();
                 break;
@@ -244,101 +251,114 @@ public class MainActivity extends AppCompatActivity {
     // Not blank screen after pressing back on main fragment
     @Override
     public void onBackPressed() {
-         if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
-             finish();
-         } else if (getFragmentManager().getBackStackEntryCount() > 1) {
-             getFragmentManager().popBackStack();
-         } else {
-             super.onBackPressed();
-         }
+        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+            finish();
+        } else if (getFragmentManager().getBackStackEntryCount() > 1) {
+            getFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
 
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        fillUserDocument();
-    }
-
-    private void fillUserDocument() {
-
-        DocumentReference docRef = db.collection("users").document(user.getUid());
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if (document != null) {
-                        ageOfAccount = document.getLong("age").intValue();
-                    } else {
-                        Log.d("LOGGER", "No such document");
-                    }
-                } else {
-                    Log.d("LOGGER", "get failed with ", task.getException());
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                android.os.SystemClock.sleep(2000);
+                try {
+                    fillUserDocument();
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         });
-
-        // If the account is new complete the User document
-        if (ageOfAccount == 0) {
-
-            Map<String, Object> addToSearchCollection = new HashMap<>();
-            addToSearchCollection.put("locationOfUser",new GeoPoint(0,0));
-            addToSearchCollection.put("idOfUser", user.getUid());
-            addToSearchCollection.put("ageOfUser",1);
-            addToSearchCollection.put("genderOfUserFemale",false);
-
-            db.collection("search").add(addToSearchCollection)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        searchID = documentReference.getId();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d(TAG, e.toString());
-                    }
-                });
-
-            Map<String, Object> userCompletion = new HashMap<>();
-            userCompletion.put("photoURL1", "null");
-            userCompletion.put("photoURL2", "null");
-            userCompletion.put("photoURL3", "null");
-            userCompletion.put("isActive", true);
-            userCompletion.put("searchID", searchID);
-            userCompletion.put("blindDateParticipationWill", true);
-            userCompletion.put("filledNecessaryInfo", false);
-            userCompletion.put("premium", false);
-            userCompletion.put("genderFemale",false);
-            userCompletion.put("ageOfUser", 0);
-            docRef.set(userCompletion, SetOptions.merge());
-
-//            Map<String, Object> defaultChatOrBlindDateDocument = new HashMap<>();
-//            defaultChatOrBlindDateDocument.put("chatID", "null");
-//            defaultChatOrBlindDateDocument.put("dateOfChatCreation", new Date());
-//            defaultChatOrBlindDateDocument.put("dateOfLastActivity", new Date());
-//            defaultChatOrBlindDateDocument.put("nameOfOtherUser","null");
-//
-//            for (int i = 0; i <= 9; i++) {
-//                String Nr = Integer.toString(i);
-//                String chatPath = "chat" + Nr;
-//                String blindDatesPath = "blindDate" + Nr;
-//                docRef.collection("userChats").document(chatPath).set(defaultChatOrBlindDateDocument);
-//                docRef.collection("userBlindDates").document(blindDatesPath).set(defaultChatOrBlindDateDocument);
-//            }
-
-            Map<String, Object> userUpdateValues = new HashMap<>();
-            userUpdateValues.put("location", new GeoPoint(0,0));
-            userUpdateValues.put("age",1);
-
-            ageOfAccount++;
-            docRef.update(userUpdateValues);
-        }
-
+        t.start();
     }
 
 
+    // update collections when user is first time in app
+    private void fillUserDocument() throws ExecutionException, InterruptedException {
 
+        // tasks are going too run in background treads
+        int numCores = Runtime.getRuntime().availableProcessors();
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(numCores * 2, numCores * 2,
+                60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+
+        DocumentReference docRef = db.collection("users").document(user.getUid());
+        Task<DocumentSnapshot> taskUsers = docRef.get();
+
+        DocumentReference docRefSearch = db.collection("search").document("searchAll");
+        Task<DocumentSnapshot> taskSearch = docRefSearch.get();
+
+        // Tasks are managed
+        taskUsers.addOnCompleteListener(executor, new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                userSnapshot = task.getResult();
+                taskSearch.addOnCompleteListener(executor, new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
+                        searchSnapshot = task2.getResult();
+                        ageOfAccount = userSnapshot.getLong("age").intValue();
+                        if (ageOfAccount == 0) {
+
+                            nrOfUsers = searchSnapshot.getLong("nrOfUsers").intValue();
+
+                            Map<String, Object> addToSearchCollection = new HashMap<>();
+                            addToSearchCollection.put("locationOfUser", new GeoPoint(0, 0));
+                            addToSearchCollection.put("idOfUser", user.getUid());
+                            addToSearchCollection.put("ageOfUser", 1);
+                            addToSearchCollection.put("genderOfUserFemale", false);
+                            addToSearchCollection.put("randomNr", nrOfUsers + 1);
+
+                            db.collection("search").document("searchAll").collection("searchNE").add(addToSearchCollection)
+                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                        @Override
+                                        public void onSuccess(DocumentReference documentReference) {
+                                            searchID = documentReference.getId();
+                                            Map<String, Object> userCompletion = new HashMap<>();
+                                            userCompletion.put("photoURL1", "null");
+                                            userCompletion.put("photoURL2", "null");
+                                            userCompletion.put("photoURL3", "null");
+                                            userCompletion.put("isActive", true);
+                                            userCompletion.put("searchID", searchID);
+                                            userCompletion.put("blindDateParticipationWill", true);
+                                            userCompletion.put("filledNecessaryInfo", false);
+                                            userCompletion.put("premium", false);
+                                            userCompletion.put("genderFemale", false);
+                                            userCompletion.put("ageOfUser", 0);
+                                            docRef.set(userCompletion, SetOptions.merge());
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.d(TAG, e.toString());
+                                        }
+                                    });
+
+                            Map<String, Object> userUpdateValues = new HashMap<>();
+                            userUpdateValues.put("location", new GeoPoint(0, 0));
+                            userUpdateValues.put("age", 1);
+                            docRef.update(userUpdateValues);
+
+                            Map<String, Object> searchAllUpdate = new HashMap<>();
+                            Log.d(TAG, "onCompleteUSERSSSSS: " + nrOfUsers);
+                            searchAllUpdate.put("nrOfUsers", nrOfUsers + 1);
+                            docRefSearch.update(searchAllUpdate);
+
+                        }
+
+                    }
+                });
+
+            }
+        });
+
+    }
 }
+
+
+

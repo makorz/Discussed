@@ -1,9 +1,9 @@
 package pl.makorz.discussed.Adpaters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,7 +19,9 @@ import java.util.List;
 import pl.makorz.discussed.Models.Conversation;
 import pl.makorz.discussed.R;
 
+
 public class ConversationsAdapter extends FirestoreRecyclerAdapter<Conversation, ConversationsAdapter.ViewHolder> {
+
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private static OnItemClickListener listener;
     private static String chatID;
@@ -29,6 +31,8 @@ public class ConversationsAdapter extends FirestoreRecyclerAdapter<Conversation,
 
         chatID = model.getChatID();
         model.checkLastMessage(chatID);
+        holder.imageOfUser.setImageResource(R.drawable.main_logo_icon_transparent2);
+        holder.chatIDtext.setText(model.getChatID());
         holder.textOfMessage.setText(model.getLastMessage());
         List<String> listOfUsers = model.getUsersParticipatingID();
         int index = listOfUsers.indexOf(user.getUid());
@@ -49,25 +53,30 @@ public class ConversationsAdapter extends FirestoreRecyclerAdapter<Conversation,
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view;
-        view = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_2, parent, false);
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_images_view, parent, false);
         return new ViewHolder(view);
 
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView textOfMessage, userName;
+        TextView textOfMessage, userName, chatIDtext;
+        ImageView imageOfUser;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            userName = itemView.findViewById(android.R.id.text1);
-            textOfMessage = itemView.findViewById(android.R.id.text2);
+            userName = itemView.findViewById(R.id.info_text);
+            textOfMessage = itemView.findViewById(R.id.message_text);
+            imageOfUser = itemView.findViewById(R.id.info_image);
+            chatIDtext = itemView.findViewById(R.id.chatID_text);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     int position = getAdapterPosition();
                     if (position != RecyclerView.NO_POSITION && listener != null) {
-                        listener.onItemClick(chatID, position);
+                        String chatIDofPosition = chatIDtext.getText().toString();
+                        listener.onItemClick(chatIDofPosition, position);
                     }
 
                 }

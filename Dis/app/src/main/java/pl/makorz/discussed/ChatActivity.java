@@ -1,38 +1,20 @@
 package pl.makorz.discussed;
 
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
 import pl.makorz.discussed.Adpaters.MessageInChatAdapter;
 import pl.makorz.discussed.Models.MessageInChat;
 
@@ -106,7 +88,7 @@ public class ChatActivity extends AppCompatActivity {
 //    public void sendMessage(View v) {
 //
 //        String message = messageText.getText().toString();
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmSS", Locale.getDefault());
 //        String currentDateAndTime = sdf.format(new Date());
 //        int messageNumber = 0;
 //

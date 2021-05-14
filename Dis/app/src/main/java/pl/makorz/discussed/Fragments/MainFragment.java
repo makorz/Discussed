@@ -1,7 +1,6 @@
 package pl.makorz.discussed.Fragments;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,17 +28,18 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.SetOptions;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import pl.makorz.discussed.ChatActivity;
-import pl.makorz.discussed.Functions.SearchUserAsync;
-import pl.makorz.discussed.Models.MessageInChat;
 import pl.makorz.discussed.Models.Topic;
 import pl.makorz.discussed.Models.TopicViewHolder;
 import pl.makorz.discussed.R;
@@ -48,12 +48,14 @@ import pl.makorz.discussed.R;
 public class MainFragment extends Fragment {
 
     private static final String TAG = "MainFragmentActivity";
-    private static String chatID = "";
-    private String nameOfUser = "";
-    private String nameOfOtherUser = "";
-    private String idOfSearchedUser = "";
+    private static String chatID;
+    private String nameOfUser;
+    private String nameOfOtherUser;
+    private String idOfSearchedUser;
     private View mainView;
     private RecyclerView topicsRecycler;
+    private DocumentSnapshot userSnapshot;
+    private DocumentSnapshot otherUserSnapshot;
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -72,45 +74,44 @@ public class MainFragment extends Fragment {
             @Override
             public void onClick(View v)
             {
-                //new SearchUserAsync().execute(user.getUid());
                 searchForUser();
-
-                generateChatInFirestore();
             }
         });
 
         return mainView;
     }
 
+    // Searching user with some parameters
     private void searchForUser() {
-        int numberOfUsers = 2;
-        int randomIndex = (int) Math.floor(Math.random() * numberOfUsers);
-        Query queryUser = FirebaseFirestore.getInstance().collection("search").whereNotEqualTo("idOfUser",user.getUid()).limit(1);
+
+        Random r = new Random();
+        int randomNrOfUser = r.nextInt(7 - 1) + 1;
+
+        Query queryUser = FirebaseFirestore.getInstance().collection("search/searchAll/searchNE").whereEqualTo ("randomNr",randomNrOfUser);
         queryUser.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                 idOfSearchedUser = document.get("idOfUser").toString();
+                                idOfSearchedUser = document.get("idOfUser").toString();
                                 Log.d(TAG, "onCompleteasfasf: " + idOfSearchedUser);
+                                if (idOfSearchedUser.equals(user.getUid())){
+                                    searchForUser();
+                                } else {
+                                    getUsersNames(idOfSearchedUser);
+                                }
 
                             }
-
                         }
                     }
                 });
 
     }
 
-
-    // Start chat activity and get chatID, which is needed for chatActivity
+    // Create Chat Activity
     private void generateChatInFirestore() {
-
-
         Map<String, Object> chat = new HashMap<>();
-
-        getUsersNames(idOfSearchedUser);
 
         db.collection("chats").add(chat)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -119,6 +120,7 @@ public class MainFragment extends Fragment {
                         chatID = documentReference.getId();
                         chat.put("chatID", chatID);
                         chat.put("dateOfChatCreation", new Date());
+                        Log.d(TAG, "onCdgsdgsdg: " + nameOfOtherUser);
                         chat.put("usersParticipatingName", Arrays.asList(nameOfUser,nameOfOtherUser));
                         chat.put("lastMessage","");
                         chat.put("usersParticipatingID", Arrays.asList(user.getUid(),idOfSearchedUser));
@@ -140,24 +142,6 @@ public class MainFragment extends Fragment {
                                         Log.w(TAG, "Error writing document", e);
                                     }
                                 });
-
-//                        Map<String, Object> otherUserDataToSend = new HashMap<>();
-//                        otherUserDataToSend.put("chatID", chatID);
-//                        otherUserDataToSend.put("dateOfChatCreation", new Date());
-//                        otherUserDataToSend.put("dateOfLastActivity", new Date());
-//                        otherUserDataToSend.put("nameOfOtherUser", nameOfUser );
-//
-//                        db.collection("users").document("brOA3T81WcXdb6IDJX2negMapTx2").collection("userChats")
-//                                .document("chat0").update(otherUserDataToSend);
-//
-//                        Map<String, Object> searchingUserDataToSend = new HashMap<>();
-//                        searchingUserDataToSend.put("chatID", chatID);
-//                        searchingUserDataToSend.put("dateOfChatCreation", new Date());
-//                        searchingUserDataToSend.put("dateOfLastActivity", new Date());
-//                        searchingUserDataToSend.put("nameOfOtherUser", nameOfOtherUser );
-//
-//                        db.collection("users").document(user.getUid()).collection("userChats").document("chat0")
-//                                .update(searchingUserDataToSend);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -168,7 +152,6 @@ public class MainFragment extends Fragment {
                 });
 
     }
-
 
     @Override
     public void onStart() {
@@ -203,32 +186,39 @@ public class MainFragment extends Fragment {
         topicsRecycler.setAdapter(topicAdapter);
     }
 
+    // Get names of user that was searched
     private void getUsersNames(String id) {
 
+        int numCores = Runtime.getRuntime().availableProcessors();
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(numCores * 2, numCores * 2,
+                60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
+
+        String str = id.replaceAll("\\s", "");
+
+        DocumentReference docRef2 = db.collection("users").document(str);
+        Task<DocumentSnapshot> taskOtherUser = docRef2.get();
+
         DocumentReference docRef = db.collection("users").document(user.getUid());
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    DocumentSnapshot document = task.getResult();
-                    nameOfUser = document.getString("displayName");
-                    Log.d(TAG, "NameOfUser:" + nameOfUser);
-               }
-        });
+        Task<DocumentSnapshot> taskUser = docRef.get();
 
-        DocumentReference docRef2 = db.collection("users").document(id);
-        docRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        taskUser.addOnCompleteListener(executor, new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                DocumentSnapshot document2 = task.getResult();
-                nameOfOtherUser = document2.getString("displayName");
-                Log.d(TAG, "NameOfOtherUser:" + nameOfOtherUser);
+                userSnapshot = task.getResult();
+                nameOfUser = userSnapshot.getString("displayName");
+                taskOtherUser.addOnCompleteListener(executor, new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
+                        otherUserSnapshot = task2.getResult();
+                        nameOfOtherUser = otherUserSnapshot.getString("displayName");
+                        Log.d(TAG, "onCompleteTASKSKAKSAKDK: " + nameOfOtherUser);
+                        generateChatInFirestore();
+                    }
+                });
+
             }
-
         });
     }
-
-
-
 }
 
 

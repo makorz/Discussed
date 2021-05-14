@@ -22,12 +22,35 @@
 
     <TextView
         android:id="@+id/info_text"
-        android:layout_width="225dp"
+        android:layout_width="245dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:gravity="center"
         android:textAlignment="center"
         android:textSize="15sp"
+        android:layout_gravity="end"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="15dp" />
+
+    <TextView
+        android:id="@+id/message_text"
+        android:layout_width="245dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:textAlignment="center"
+        android:textSize="12sp"
+        android:layout_gravity="end"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="15dp" />
+
+    <TextView
+        android:id="@+id/chatID_text"
+        android:layout_width="245dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:textAlignment="center"
+        android:visibility="invisible"
+        android:textSize="12sp"
         android:layout_gravity="end"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="15dp" />
