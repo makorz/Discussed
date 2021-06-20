@@ -1,4 +1,4 @@
-package pl.makorz.discussed;
+package pl.makorz.discussed.Controllers;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -9,16 +9,23 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.text.InputFilter;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -32,6 +39,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.SetOptions;
 
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -39,17 +48,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import pl.makorz.discussed.Controllers.Fragments.*;
 
-import pl.makorz.discussed.Fragments.BlindDateFragment;
-import pl.makorz.discussed.Fragments.ConversationsFragment;
-import pl.makorz.discussed.Fragments.MainFragment;
-import pl.makorz.discussed.Fragments.SettingsFragment;
-import pl.makorz.discussed.Fragments.AboutFragment;
+import pl.makorz.discussed.R;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private static int ageOfAccount = -1;
     private static int nrOfUsers = -1;
     private String[] titles;
     private ListView drawerList;
@@ -59,17 +64,40 @@ public class MainActivity extends AppCompatActivity {
     String searchID = "";
     private DocumentSnapshot userSnapshot;
     private DocumentSnapshot searchSnapshot;
+    private int USER_NEW_ACCOUNT = -1;
+
     private FirebaseAuth mAuth;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); //no dark theme
 
+        USER_NEW_ACCOUNT = getIntent().getIntExtra("USER_NEW_ACCOUNT",-1);
+        try {
+            fillUserDocument();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+//        new Thread() {
+//            public void run() {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        android.os.SystemClock.sleep(500);
+//                        try {
+//                            fillUserDocument();
+//                        } catch (ExecutionException | InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                });
+//            }
+//        }.start();
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); //no dark theme
         titles = getResources().getStringArray(R.array.titles);
         drawerList = findViewById(R.id.drawer);
         drawerLayout =  findViewById(R.id.drawer_layout);
@@ -137,6 +165,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
+        if (USER_NEW_ACCOUNT == 0) {
+            introAlertDialog();
+        }
 
 
     }
@@ -261,24 +292,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Thread t = new Thread(new Runnable() {
-            public void run() {
-                android.os.SystemClock.sleep(2000);
-                try {
-                    fillUserDocument();
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        t.start();
-    }
-
-
-    // update collections when user is first time in app
+    // Function updates collections when user is first time in app.
     private void fillUserDocument() throws ExecutionException, InterruptedException {
 
         // tasks are going too run in background treads
@@ -301,9 +315,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
                         searchSnapshot = task2.getResult();
-                        ageOfAccount = userSnapshot.getLong("age").intValue();
-                        if (ageOfAccount == 0) {
-
+                       // ageOfAccount = Objects.requireNonNull(userSnapshot.getLong("age")).intValue();
+                        if (USER_NEW_ACCOUNT == 0) {
                             nrOfUsers = searchSnapshot.getLong("nrOfUsers").intValue();
 
                             Map<String, Object> addToSearchCollection = new HashMap<>();
@@ -319,9 +332,6 @@ public class MainActivity extends AppCompatActivity {
                                         public void onSuccess(DocumentReference documentReference) {
                                             searchID = documentReference.getId();
                                             Map<String, Object> userCompletion = new HashMap<>();
-                                            userCompletion.put("photoURL1", "null");
-                                            userCompletion.put("photoURL2", "null");
-                                            userCompletion.put("photoURL3", "null");
                                             userCompletion.put("isActive", true);
                                             userCompletion.put("searchID", searchID);
                                             userCompletion.put("blindDateParticipationWill", true);
@@ -329,6 +339,24 @@ public class MainActivity extends AppCompatActivity {
                                             userCompletion.put("premium", false);
                                             userCompletion.put("genderFemale", false);
                                             userCompletion.put("ageOfUser", 0);
+                                            userCompletion.put("firstPhotoUri", "null");
+                                            userCompletion.put("firstPhotoUploadMade",false);
+                                            userCompletion.put("firstPhotoUploadDate",new Date(new Date().getTime() - 10 * 86400000)); // Previous date for first time
+                                            userCompletion.put("secondPhotoUri", "null");
+                                            userCompletion.put("secondPhotoUploadMade",false);
+                                            userCompletion.put("secondPhotoUploadDate",new Date(new Date().getTime() - 10 * 86400000));
+                                            userCompletion.put("thirdPhotoUri", "null");
+                                            userCompletion.put("thirdPhotoUploadMade",false);
+                                            userCompletion.put("thirdPhotoUploadDate",new Date(new Date().getTime() - 10 * 86400000));
+                                            userCompletion.put("locationUploadMade",false);
+                                            userCompletion.put("locationUploadDate",new Date(new Date().getTime() - 10 * 86400000));
+                                            userCompletion.put("descriptionUploadMade",false);
+                                            userCompletion.put("descriptionUploadDate",new Date(new Date().getTime() - 10 * 86400000));
+                                            userCompletion.put("ageUploadMade",false);
+                                            userCompletion.put("ageUploadDate",new Date(new Date().getTime() - 10 * 86400000));
+                                            userCompletion.put("topicsUploadMade",false);
+                                            userCompletion.put("topicsUploadDate",new Date(new Date().getTime() - 10 * 86400000));
+                                            userCompletion.put("chosenTopicsArray", Arrays.asList("null","null"));
                                             docRef.set(userCompletion, SetOptions.merge());
                                         }
                                     })
@@ -349,15 +377,37 @@ public class MainActivity extends AppCompatActivity {
                             searchAllUpdate.put("nrOfUsers", nrOfUsers + 1);
                             docRefSearch.update(searchAllUpdate);
 
+
                         }
 
                     }
+
                 });
 
             }
         });
 
     }
+
+    // PopUp with entry info about app.
+    private void introAlertDialog() {
+
+        LayoutInflater inflaterDialog = LayoutInflater.from(this);
+        View introDialogView = inflaterDialog.inflate(R.layout.intro_dialog_box, null);
+
+        AlertDialog introDialog = new AlertDialog.Builder(this)
+                .setView(introDialogView)  // What to use in dialog box
+                .setPositiveButton("OK, I get it!", null)
+                .show();
+
+        introDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                introDialog.dismiss();
+                }
+            });
+    }
+
 }
 
 

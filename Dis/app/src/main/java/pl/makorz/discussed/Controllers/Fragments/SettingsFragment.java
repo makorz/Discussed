@@ -1,4 +1,4 @@
-package pl.makorz.discussed.Fragments;
+package pl.makorz.discussed.Controllers.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import pl.makorz.discussed.LoginActivity;
+import pl.makorz.discussed.Controllers.LoginActivity;
 import pl.makorz.discussed.R;
 
 public class SettingsFragment extends Fragment {

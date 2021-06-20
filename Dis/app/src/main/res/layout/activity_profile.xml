@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:padding="5dp"
-    tools:context="pl.makorz.discussed.ProfileActivity">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/layout_Constraint_Profile"
+    tools:context="pl.makorz.discussed.Controllers.ProfileActivity">
 
     <TextView
         android:id="@+id/title_my_profile"
@@ -12,8 +17,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="14dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="15dp"
         android:text="@string/profile_title"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
@@ -24,7 +29,7 @@
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/firstphoto"
+        android:src="@drawable/default_view_profile_background"
         app:civ_border_width="2dp"
         android:layout_marginTop="15dp"
         android:layout_marginStart="25dp"
@@ -38,7 +43,7 @@
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/secondphoto"
+        android:src="@drawable/default_view_profile_background"
         app:civ_border_width="2dp"
         android:layout_marginTop="15dp"
         app:civ_border_color="@color/white"
@@ -52,7 +57,7 @@
     <de.hdodenhof.circleimageview.CircleImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/thirdphoto"
+        android:src="@drawable/default_view_profile_background"
         app:civ_border_width="2dp"
         android:layout_marginTop="15dp"
         app:civ_border_color="@color/white"
@@ -97,10 +102,10 @@
         android:id="@+id/name_my_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp"
+        android:layout_margin="10dp"
         android:layout_marginStart="15dp"
-        android:layout_marginEnd="14dp"
-        android:hint=""
+        android:layout_marginEnd="15dp"
+        android:hint="@string/name_text_view_profile"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
         app:layout_constraintEnd_toEndOf="parent"
@@ -110,7 +115,7 @@
 
     <Button
         android:id="@+id/name_own_change"
-        android:layout_width="0dp"
+        android:layout_width="215dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
         android:layout_marginEnd="60dp"
@@ -124,9 +129,9 @@
         android:id="@+id/own_description_my_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp"
+        android:layout_margin="10dp"
         android:layout_marginStart="15dp"
-        android:layout_marginEnd="14dp"
+        android:layout_marginEnd="15dp"
         android:hint="@string/description_edit_view"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
@@ -137,7 +142,7 @@
 
     <Button
         android:id="@+id/description_own_change"
-        android:layout_width="0dp"
+        android:layout_width="215dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
         android:layout_marginEnd="60dp"
@@ -151,9 +156,9 @@
         android:id="@+id/own_location_my_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp"
+        android:layout_margin="10dp"
         android:layout_marginStart="15dp"
-        android:layout_marginEnd="14dp"
+        android:layout_marginEnd="15dp"
         android:hint="@string/location_edit_view"
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
@@ -164,7 +169,7 @@
 
     <Button
         android:id="@+id/location_own_change"
-        android:layout_width="0dp"
+        android:layout_width="215dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
         android:layout_marginEnd="60dp"
@@ -178,7 +183,7 @@
         android:id="@+id/own_age_my_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp"
+        android:layout_margin="10dp"
         android:layout_marginStart="15dp"
         android:layout_marginEnd="14dp"
         android:hint="@string/age_edit_view"
@@ -190,7 +195,7 @@
 
     <Button
         android:id="@+id/age_own_change"
-        android:layout_width="0dp"
+        android:layout_width="215dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="60dp"
         android:layout_marginEnd="60dp"
@@ -200,5 +205,48 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/own_age_my_profile" />
 
+    <TextView
+        android:id="@+id/title_of_topic_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="14dp"
+        android:text="@string/own_topic_title_of_list"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/age_own_change" />
+
+    <ListView
+        android:id="@+id/picked_topics_own_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_of_topic_list"
+        tools:ignore="NestedScrolling" />
+
+    <Button
+        android:id="@+id/topics_own_change"
+        android:layout_width="215dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="60dp"
+        android:layout_marginEnd="60dp"
+        android:layout_marginTop="10dp"
+        android:text="@string/change_your_topics_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/picked_topics_own_profile" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

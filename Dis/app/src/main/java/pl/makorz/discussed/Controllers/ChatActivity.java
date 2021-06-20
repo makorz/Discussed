@@ -1,4 +1,4 @@
-package pl.makorz.discussed;
+package pl.makorz.discussed.Controllers;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,8 +15,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import java.util.Date;
-import pl.makorz.discussed.Adpaters.MessageInChatAdapter;
+import pl.makorz.discussed.Models.Adapters.MessageInChatAdapter;
 import pl.makorz.discussed.Models.MessageInChat;
+import pl.makorz.discussed.R;
 
 
 public class ChatActivity extends AppCompatActivity {

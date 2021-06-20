@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:padding="2dp"
-    tools:context="pl.makorz.discussed.AlienProfileActivity">
+    tools:context="pl.makorz.discussed.Controllers.AlienProfileActivity">
 
     <TextView
         android:id="@+id/title_alien_profile_textview"

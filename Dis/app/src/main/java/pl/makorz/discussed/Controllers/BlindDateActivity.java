@@ -1,9 +1,11 @@
-package pl.makorz.discussed;
+package pl.makorz.discussed.Controllers;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
+
+import pl.makorz.discussed.R;
 
 public class BlindDateActivity extends AppCompatActivity {
 

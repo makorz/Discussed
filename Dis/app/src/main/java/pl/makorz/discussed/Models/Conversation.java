@@ -16,11 +16,13 @@ import java.util.List;
 import java.util.Map;
 
 public class Conversation {
+
     private String lastMessage;
     private String chatID;
     private List<String> usersParticipatingName, usersParticipatingID;
     private Date dateOfChatCreation;
     private final String TAG = "Conversation";
+    private int imageResourceId;
 
     public String getLastMessage() {
         return lastMessage;
@@ -30,10 +32,7 @@ public class Conversation {
         this.lastMessage = lastMessage;
     }
 
-    private int imageResourceId;
-
     public List<String> getUsersParticipatingName() {
-
         return usersParticipatingName;
     }
 
@@ -41,15 +40,12 @@ public class Conversation {
         return usersParticipatingID;
     }
 
-
     public Conversation() {
     }
 
     public void getTextOfMessage(String chatID) {
         checkLastMessage(chatID);
     }
-
-
 
     public void setUsersParticipatingName(List<String> usersParticipatingName) {
         this.usersParticipatingName = usersParticipatingName;
@@ -86,6 +82,7 @@ public class Conversation {
     public void checkLastMessage(final String chatID) {
         Query queryMessages = FirebaseFirestore.getInstance().collection("chats").document(chatID)
                 .collection("messages").orderBy("dateOfMessage", Query.Direction.DESCENDING).limit(1);
+
         queryMessages.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -100,12 +97,9 @@ public class Conversation {
                                 chat.put("lastMessage", textShort);
                                 FirebaseFirestore.getInstance().collection("chats").document(chatID).set(chat, SetOptions.merge());
                             }
-
                         }
                     }
                 });
-
-
     }
 
 }

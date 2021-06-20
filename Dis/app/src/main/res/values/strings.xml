@@ -26,8 +26,8 @@
     <!--Own Profile strings-->
     <string name="change_image_button">Change image</string>
     <string name="profile_title">WELCOME TO YOUR PROFILE</string>
-    <string name="change_your_description_button">Change Your Description</string>
-    <string name="change_your_location_button">Change Your Location</string>
+    <string name="change_your_description_button">Change Description</string>
+    <string name="change_your_location_button">Change Location</string>
     <string name="description_edit_view">Your description has not been created yet!</string>
     <string name="description_dialog_enter">Enter Your Description</string>
     <string name="age_edit_view">Your age has not been set, yet!</string>
@@ -62,6 +62,17 @@
     <string name="terms_and_conditions">Terms and Conditions</string>
     <string name="delete_account">DELETE ACCOUNT</string>
     <string name="change_name_button">CHANGE NAME</string>
+    <string name="agreeAgeCheckBox">I\'m over 18 years old.</string>
+    <string name="name_text_view_profile">Your name</string>
+    <string name="change_your_topics_button">Pick up topics</string>
+    <string name="own_topic_title_of_list">Chosen topics for disscussions:</string>
+    <string name="alert_dialog_loading_profile">Loading profile…</string>
+    <string name="info_dialog_box_text1"><b>\nWelcome to my application!</b> \n \nWhile using this magic, well looking piece of software, You can find someone who wants to talk on similar
+        topic with You.</string>
+    <string name="info_dialog_box_text2">But before You start searching You need to complete Your profile (top-right corner of screen) with following information\'s (Remember that those information\'s
+        can be edited once every 3 days, so BE CAREFUL while You enter them): \n\n1. Location. \n2. Name. \n3. Age. \n4. Personal description. \n5. 3 photos. \n6. Favorite topics.
+        \n\nAfter that You can start searching another soul to connect to!</string>
+    <string name="dialog_box_upload_photo">Uploading photo...</string>
 
 
     <!--AboutFragment strings-->

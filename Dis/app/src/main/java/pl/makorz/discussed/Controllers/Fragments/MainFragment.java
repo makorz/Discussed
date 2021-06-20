@@ -1,4 +1,4 @@
-package pl.makorz.discussed.Fragments;
+package pl.makorz.discussed.Controllers.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -38,8 +40,7 @@ import java.util.Random;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import pl.makorz.discussed.ChatActivity;
+import pl.makorz.discussed.Controllers.ChatActivity;
 import pl.makorz.discussed.Models.Topic;
 import pl.makorz.discussed.Models.TopicViewHolder;
 import pl.makorz.discussed.R;
@@ -65,15 +66,23 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         mainView = inflater.inflate(R.layout.fragment_main,container,false);
-        topicsRecycler = mainView.findViewById(R.id.topics_recycler);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        topicsRecycler.setLayoutManager(layoutManager);
 
+//        topicsRecycler = mainView.findViewById(R.id.topics_recycler);
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+//        topicsRecycler.setLayoutManager(layoutManager);
+
+        ProgressBar waitUntilChatAppears = mainView.findViewById(R.id.progressBarOfSearch);
+        RelativeLayout layoutToDimWhenSearching = mainView.findViewById(R.id.relativeLayoutOfSearch);
         Button buttonChat = (Button) mainView.findViewById(R.id.button_search_chatmate);
+        Button buttonBlindDate = (Button) mainView.findViewById(R.id.button_start_blinddate);
+
         buttonChat.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
+                buttonChat.setEnabled(false);
+                buttonBlindDate.setEnabled(false);
+                layoutToDimWhenSearching.setAlpha(0.4f);
+                waitUntilChatAppears.setVisibility(View.VISIBLE);
                 searchForUser();
             }
         });
@@ -86,6 +95,7 @@ public class MainFragment extends Fragment {
 
         Random r = new Random();
         int randomNrOfUser = r.nextInt(7 - 1) + 1;
+
 
         Query queryUser = FirebaseFirestore.getInstance().collection("search/searchAll/searchNE").whereEqualTo ("randomNr",randomNrOfUser);
         queryUser.get()
@@ -156,34 +166,34 @@ public class MainFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        // Initialize Cloud Firestore
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        // Ask the Cloud Firestore
-        Query queryListOfTopics = db.collection("topics").orderBy("position");
-        //Configuring adapter to populate recyclerview
-        FirestoreRecyclerOptions<Topic> options = new FirestoreRecyclerOptions.Builder<Topic>()
-                .setQuery(queryListOfTopics, Topic.class)
-                .setLifecycleOwner(this)
-                .build();
-
-        FirestoreRecyclerAdapter topicAdapter = new FirestoreRecyclerAdapter<Topic, TopicViewHolder>(options) {
-            @Override
-            public void onBindViewHolder(TopicViewHolder holder, int position, Topic model) {
-                // Bind the Ch at object to the ChatHolder
-                TextView topicTitle = holder.itemView.findViewById(android.R.id.text1);
-                topicTitle.setText(model.getTopicTitle());
-            }
-
-            @Override
-            public TopicViewHolder onCreateViewHolder(ViewGroup group, int i) {
-                // Create a new instance of the ViewHolder, in this case we are using a custom
-                // layout called R.layout.message for each item
-                mainView = LayoutInflater.from(group.getContext())
-                        .inflate(android.R.layout.simple_expandable_list_item_1, group, false);
-                return new TopicViewHolder(mainView);
-            }
-        };
-        topicsRecycler.setAdapter(topicAdapter);
+//        // Initialize Cloud Firestore
+//        FirebaseFirestore db = FirebaseFirestore.getInstance();
+//        // Ask the Cloud Firestore
+//        Query queryListOfTopics = db.collection("topics").orderBy("position");
+//        //Configuring adapter to populate recyclerview
+//        FirestoreRecyclerOptions<Topic> options = new FirestoreRecyclerOptions.Builder<Topic>()
+//                .setQuery(queryListOfTopics, Topic.class)
+//                .setLifecycleOwner(this)
+//                .build();
+//
+//        FirestoreRecyclerAdapter topicAdapter = new FirestoreRecyclerAdapter<Topic, TopicViewHolder>(options) {
+//            @Override
+//            public void onBindViewHolder(TopicViewHolder holder, int position, Topic model) {
+//                // Bind the Ch at object to the ChatHolder
+//                TextView topicTitle = holder.itemView.findViewById(android.R.id.text1);
+//                topicTitle.setText(model.getTopicTitle());
+//            }
+//
+//            @Override
+//            public TopicViewHolder onCreateViewHolder(ViewGroup group, int i) {
+//                // Create a new instance of the ViewHolder, in this case we are using a custom
+//                // layout called R.layout.message for each item
+//                mainView = LayoutInflater.from(group.getContext())
+//                        .inflate(android.R.layout.simple_expandable_list_item_1, group, false);
+//                return new TopicViewHolder(mainView);
+//            }
+//        };
+//        topicsRecycler.setAdapter(topicAdapter);
     }
 
     // Get names of user that was searched
@@ -206,7 +216,7 @@ public class MainFragment extends Fragment {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 userSnapshot = task.getResult();
                 nameOfUser = userSnapshot.getString("displayName");
-                taskOtherUser.addOnCompleteListener(executor, new OnCompleteListener<DocumentSnapshot>() {
+                taskOtherUser.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
                         otherUserSnapshot = task2.getResult();
@@ -215,6 +225,16 @@ public class MainFragment extends Fragment {
                         generateChatInFirestore();
                     }
                 });
+
+//                        .addOnCompleteListener(executor, new OnCompleteListener<DocumentSnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
+//                        otherUserSnapshot = task2.getResult();
+//                        nameOfOtherUser = otherUserSnapshot.getString("displayName");
+//                        Log.d(TAG, "onCompleteTASKSKAKSAKDK: " + nameOfOtherUser);
+//                        generateChatInFirestore();
+//                    }
+//                });
 
             }
         });

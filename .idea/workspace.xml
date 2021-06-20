@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="717cebdd-cfe5-49aa-9eae-1029e3371534" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Adpaters/ConversationsAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Models/Adapters/ConversationsAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Adpaters/ImagesAdapterCardView.java" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Models/Adapters/ImagesAdapterCardView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Adpaters/MessageInChatAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Models/Adapters/MessageInChatAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Adpaters/TopicsAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Models/Adapters/TopicsAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/AlienProfileActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Controllers/AlienProfileActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/BlindDateActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Controllers/BlindDateActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/ChatActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Controllers/ChatActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Fragments/AboutFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Controllers/Fragments/AboutFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Fragments/BlindDateFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Controllers/Fragments/BlindDateFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Fragments/ConversationsFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Controllers/Fragments/ConversationsFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Fragments/MainFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Controllers/Fragments/MainFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Fragments/SettingsFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Controllers/Fragments/SettingsFragment.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Functions/DescriptionFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Controllers/Functions/DescriptionFilter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/LoginActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Controllers/LoginActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Controllers/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Models/Conversation.java" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Models/Conversation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Models/ConverstionViewHolder.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/ProfileActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/java/pl/makorz/discussed/Controllers/ProfileActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/res/layout/activity_alien_profile.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/res/layout/activity_alien_profile.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/res/layout/activity_blind_date.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/res/layout/activity_blind_date.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/res/layout/activity_chat.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/res/layout/activity_chat.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/res/layout/activity_login.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/res/layout/activity_login.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/res/layout/activity_profile.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/res/layout/activity_profile.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/res/layout/fragment_conversations.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/res/layout/fragment_conversations.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/res/layout/fragment_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/res/layout/fragment_main.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/res/layout/fragment_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/res/layout/fragment_settings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/res/menu/menu_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/res/menu/menu_main.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dis/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Dis/app/src/main/res/values/strings.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1u5PLLJwdJBHZku9ZkrCcTrfFdX" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
+    <property name="settings.editor.selected.configurable" value="AndroidSdkUpdater" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="717cebdd-cfe5-49aa-9eae-1029e3371534" name="Default Changelist" comment="" />
+      <created>1623952419902</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1623952419902</updated>
+    </task>
+    <servers />
+  </component>
+</project>

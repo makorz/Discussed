@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    tools:context=".Controllers.LoginActivity">
 
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/button_sign_in_google"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="25dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/logo_login_View" />
 
@@ -58,7 +58,7 @@
         android:id="@+id/textOfTerms"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="10dp"
         android:text="@string/agreeTermsCheckBox"
         android:textAlignment="center"
@@ -69,5 +69,31 @@
         app:layout_constraintEnd_toEndOf="@+id/button_sign_in_google"
         app:layout_constraintTop_toBottomOf="@+id/button_sign_in_google" />
 
+    <CheckBox
+        android:id="@+id/checkAgreeAge"
+        android:theme="@style/MainCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:checked="false"
+        android:layout_marginEnd="2dp"
+        android:textColor="@color/grey"
+        app:layout_constraintEnd_toStartOf="@+id/textOfTerms"
+        app:layout_constraintTop_toBottomOf="@+id/checkAgreeTerms" />
+
+    <TextView
+        android:id="@+id/textOfAge"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:text="@string/agreeAgeCheckBox"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        android:textColor="@color/teal_brown_700"
+        android:textSize="10dp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/button_sign_in_google"
+        app:layout_constraintTop_toBottomOf="@+id/textOfTerms" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

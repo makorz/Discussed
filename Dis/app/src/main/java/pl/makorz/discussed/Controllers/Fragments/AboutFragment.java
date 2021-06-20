@@ -1,4 +1,4 @@
-package pl.makorz.discussed.Fragments;
+package pl.makorz.discussed.Controllers.Fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

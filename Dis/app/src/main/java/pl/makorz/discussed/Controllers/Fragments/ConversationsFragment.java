@@ -1,10 +1,12 @@
-package pl.makorz.discussed.Fragments;
+package pl.makorz.discussed.Controllers.Fragments;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -19,8 +21,8 @@ import com.google.firebase.firestore.Query;
 
 import java.util.Objects;
 
-import pl.makorz.discussed.Adpaters.ConversationsAdapter;
-import pl.makorz.discussed.ChatActivity;
+import pl.makorz.discussed.Models.Adapters.ConversationsAdapter;
+import pl.makorz.discussed.Controllers.ChatActivity;
 import pl.makorz.discussed.Models.Conversation;
 import pl.makorz.discussed.R;
 
@@ -30,6 +32,7 @@ public class ConversationsFragment extends Fragment  {
     private RecyclerView conversationRecycler;
     private static final String TAG = "ConversationsFragment";
     private ConversationsAdapter adapter;
+    private AlertDialog dialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -82,6 +85,5 @@ public class ConversationsFragment extends Fragment  {
         super.onStop();
         adapter.stopListening();
     }
-
 
 }

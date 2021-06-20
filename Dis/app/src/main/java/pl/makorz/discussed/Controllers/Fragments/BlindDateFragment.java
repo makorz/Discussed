@@ -1,4 +1,4 @@
-package pl.makorz.discussed.Fragments;
+package pl.makorz.discussed.Controllers.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import pl.makorz.discussed.Adpaters.ImagesAdapterCardView;
-import pl.makorz.discussed.BlindDateActivity;
+import pl.makorz.discussed.Models.Adapters.ImagesAdapterCardView;
+import pl.makorz.discussed.Controllers.BlindDateActivity;
 import pl.makorz.discussed.Models.BlindDate;
 import pl.makorz.discussed.R;
 

@@ -3,6 +3,7 @@
     package="pl.makorz.discussed">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -14,12 +15,12 @@
 
 
 
-        <activity android:name=".BlindDateActivity"
+        <activity android:name=".Controllers.BlindDateActivity"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_blindDate"
             />
 
-        <activity android:name=".LoginActivity"
+        <activity android:name=".Controllers.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
             <intent-filter>
@@ -30,39 +31,39 @@
         </activity>
 
         <!--Prevent Keyboard Editext to popup window soft input-->
-        <activity android:name=".MainActivity"
+        <activity android:name=".Controllers.MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden"
             >
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".LoginActivity" />
+                android:value=".Controllers.LoginActivity" />
         </activity>
 
         <activity
-            android:name=".ProfileActivity"
+            android:name=".Controllers.ProfileActivity"
             android:label="@string/title_activity_profile"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".Controllers.MainActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".Controllers.MainActivity" />
         </activity>
 
         <activity
-            android:name=".ChatActivity"
+            android:name=".Controllers.ChatActivity"
             android:label="@string/title_activity_chat"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".Controllers.MainActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".AlienProfileActivity"
+            android:name=".Controllers.AlienProfileActivity"
             android:label="@string/title_activity_alien_profile"
-            android:parentActivityName=".ProfileActivity"
+            android:parentActivityName=".Controllers.ProfileActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".Controllers.MainActivity" />
         </activity>
 
         <meta-data

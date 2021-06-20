@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_margin="10dp"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="@string/info_dialog_box_text1"/>
+
+    <ImageView
+        android:id="@+id/logo_chat_View"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="5dp"
+        android:layout_gravity="center"
+        android:scaleType="centerInside"
+        android:src="@drawable/logo_discussed" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_margin="10dp"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="@string/info_dialog_box_text2"/>
+
+</LinearLayout>

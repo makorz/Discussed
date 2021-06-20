@@ -1,4 +1,4 @@
-package pl.makorz.discussed.Functions;
+package pl.makorz.discussed.Controllers.Functions;
 
 import android.content.Context;
 import android.text.InputFilter;

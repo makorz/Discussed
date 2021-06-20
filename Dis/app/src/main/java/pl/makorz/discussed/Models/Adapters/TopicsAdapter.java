@@ -1,4 +1,4 @@
-package pl.makorz.discussed.Adpaters;
+package pl.makorz.discussed.Models.Adapters;
 
 import android.view.ViewGroup;
 
