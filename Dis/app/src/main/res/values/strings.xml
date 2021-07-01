@@ -3,7 +3,7 @@
     <string name="action_show_my_profile">My Profile</string>
     <string name="action_show_alien_profile">Stranger Profile</string>
     <string name="title_activity_profile">Profile</string>
-    <string name="title_activity_alien_profile">Profile Of Someone Else</string>
+    <string name="title_activity_alien_profile">Profile of Stranger</string>
     <string name="title_activity_chat">Chat</string>
     <string name="title_activity_blindDate">Blind Date</string>
     <string name="title_top">Main fragment</string>
@@ -26,24 +26,31 @@
     <!--Own Profile strings-->
     <string name="change_image_button">Change image</string>
     <string name="profile_title">WELCOME TO YOUR PROFILE</string>
-    <string name="change_your_description_button">Change Description</string>
+    <string name="change_your_description_button">Change description</string>
     <string name="change_your_location_button">Change Location</string>
     <string name="description_edit_view">Your description has not been created yet!</string>
     <string name="description_dialog_enter">Enter Your Description</string>
     <string name="age_edit_view">Your age has not been set, yet!</string>
     <string name="change_your_age_button">Change Age</string>
     <string name="location_edit_view">Where are You?</string>
+    <string name="dialog_box_upload_photo">Uploading photo…</string>
+    <string name="change_your_gender_button">Change Gender</string>
+    <string name="gender_edit_view">What gender?</string>
+    <string name="your_topics_text_view">Your topics: </string>
 
     <!--Alien Profile strings-->
-    <string name="alien_profile_title">WELCOME TO PROFILE OF STRANGER</string>
+    <string name="alien_profile_title">PROFILE OF STRANGER</string>
     <string name="uncover_alien_description">Uncover description (3p)</string>
     <string name="uncover_image_button">Uncover photo (5p)</string>
     <string name="alien_description_text_view">Description of Stranger To Uncover</string>
     <string name="alien_location_text_view">Location of Stranger To Uncover</string>
     <string name="uncover_alien_location">Uncover location (2p)</string>
     <string name="alien_age_text_view">Exact Age of Stranger To Uncover</string>
-    <string name="uncover_alien_age">Uncover age (2p)</string>
+    <string name="uncover_alien_age">Uncover age \n (2p)</string>
+    <string name="uncover_alien_gender">Uncover gender \n (1p)</string>
+    <string name="uncover_alien_topics">Uncover topics \n (1p)</string>
     <string name="points_left_to_use_alien">Nr of points left to use:</string>
+    <string name="alien_hint_before_uncover">\???????</string>
 
     <!--MainFragment strings-->
     <string name="search_chatmate_button">Search Chat Mate</string>
@@ -58,22 +65,155 @@
     <string name="title_settings">What would You like to do in settings?</string>
 
     <!--LoginFragment strings-->
-    <string name="agreeTermsCheckBox">I Agree to Terms and Conditions of using app "Discussed"</string>
+    <string name="agreeTermsCheckBox">I Agree to <b><u>Terms and Conditions</u></b> of using app "Discussed"</string>
     <string name="terms_and_conditions">Terms and Conditions</string>
     <string name="delete_account">DELETE ACCOUNT</string>
-    <string name="change_name_button">CHANGE NAME</string>
+    <string name="change_name_button">Change name</string>
     <string name="agreeAgeCheckBox">I\'m over 18 years old.</string>
     <string name="name_text_view_profile">Your name</string>
     <string name="change_your_topics_button">Pick up topics</string>
-    <string name="own_topic_title_of_list">Chosen topics for disscussions:</string>
+    <string name="own_topic_title_of_list">Chosen topics for discussions:</string>
     <string name="alert_dialog_loading_profile">Loading profile…</string>
-    <string name="info_dialog_box_text1"><b>\nWelcome to my application!</b> \n \nWhile using this magic, well looking piece of software, You can find someone who wants to talk on similar
-        topic with You.</string>
-    <string name="info_dialog_box_text2">But before You start searching You need to complete Your profile (top-right corner of screen) with following information\'s (Remember that those information\'s
-        can be edited once every 3 days, so BE CAREFUL while You enter them): \n\n1. Location. \n2. Name. \n3. Age. \n4. Personal description. \n5. 3 photos. \n6. Favorite topics.
+    <string name="info_dialog_box_text1"><b>\nWelcome to my application!</b></string>
+    <string name="info_dialog_box_text2">While using this magic, well looking piece of software, You can find someone who wants to talk on similar topic with You.\n</string>
+    <string name="info_dialog_box_text3">But before You start searching You need to complete Your profile (top-right corner of screen) with following information\'s: \n\n1. Location. \n2. Name. \n3. Age. \n4. Personal description. \n5. 3 photos. \n6. Favorite topics.
         \n\nAfter that You can start searching another soul to connect to!</string>
-    <string name="dialog_box_upload_photo">Uploading photo...</string>
+    <string name="info_dialog_box_text4">\nTo access Your profile tap icon in top right corner. \n\nThen You can edit all information mentioned before, Remember that those information\'s
+        can be edited once every 7 days (except topics - those You can edit how often You want). This restriction is made to exclude people who are not serious about themselves. \n\n
+        So BE CAREFUL while You enter them! \n\nGood luck and I hope You find what You need!</string>
+    <string name="terms_and_conditions_text_title">\nTERMS AND CONDITIONS\n</string>
+    <string name="terms_and_conditions_text"><b>Please read these terms of use carefully.</b> \n\n These Terms govern and apply to your access and use of Discussed services available via Discussed mobile app (collectively,
+    the "Service" and each instance an "App") and any information, text, graphics, photos or other materials uploaded, downloaded or appearing on the Service (collectively referred to as "Content"). By accessing or using our Service,
+    you agree comply with and to be bound all of the terms and conditions described in these Terms. If you do not agree to all of these terms and conditions, do not use our Service. \n\n <b>Use of the Service</b> \n\n
 
+The Discussed App is only available to persons 18 years or older. By agreeing to these terms of service you are stating that you are at least 18 years old. \n\n
+
+The Discussed App allows you to create, access, view and store / share multimedia messages for yourself, with your friends or the public. As long as you comply with these Terms, you have the right to download and install
+        a copy of the App to your mobile device, and to access and use the Service, for your own personal use. Discussed gives you a personal, worldwide, royalty-free, non-assignable and non-exclusive license to use the
+        software provided to you by Discussed. This license is for the sole purpose of enabling you to use and enjoy the benefit of Discussed services, in the manner permitted by these terms. You may not: \n\n
+
+    copy, modify or distribute the App for any purpose;
+    transfer, sublicense, lease, lend, rent or otherwise distribute the App or the Service to any third party;
+    decompile, reverse-engineer, disassemble, or create derivative works of the App or the Service;
+    make the functionality of the App or the Service available to multiple users through any means;
+    use the Service in any unlawful manner, for any unlawful purpose, or in any manner inconsistent with these Terms. \n\n
+
+The following terms apply to any App accessed through or downloaded from any app store or distribution platform where the App is made available (each such distribution platform an "App Provider"). You acknowledge and agree that: \n\n
+
+    these Terms are concluded between you and Discussed, and not with the App Provider, and that Discussed (not the App Provider), is solely responsible for the App.
+    the App Provider has no obligation to furnish any maintenance and support services with respect to the App. \n\n
+
+In the event of any failure of the App to conform to any applicable warranty, you may notify the App Provider, and the App Provider will refund the purchase price for the App to you (if applicable) and to the maximum extent
+        permitted by applicable law, the App Provider will have no other warranty obligation whatsoever with respect to the App. Any other claims, losses, liabilities, damages, costs or expenses attributable to any failure to
+        conform to any warranty will be the sole responsibility of Discussed. \n\n
+
+If you download our App, such as a stand-alone software product, you agree that from time to time, the software may download upgrades, updates and additional features from us in order to improve, enhance and further develop
+        the software, Service or App. \n\n
+
+Our Service may change from time to time and/or we may stop (permanently or temporarily) providing the Service (or features within the Service), possibly without prior notice to you. \n\n <b>Discussed Access</b> \n\n
+
+In order to access and use Discussed, you will need to register and create an account (your "Account"). By creating an Account, you represent that you are of legal age to form a binding contract and are not a person barred
+        from receiving services under the laws of the United States or other applicable jurisdiction. When creating an Account, you may be required to provide certain personal and contact information about yourself or your
+        organization, including information such as your phone number and e-mail address, and other information. By creating an Account, you represent that you have the authority to do so for yourself, your publisher or your
+        organization. We reserve the right to verify information prior to activating an account subject to confirm the Account\'s authenticity. You agree to provide accurate, current and complete information about your Account.
+        Discussed reserves the right to update and modify the terms of establishing an account or to change the types of accounts offered by Discussed without notice to you. \n\n
+
+You may choose to provide Discussed with e-mail addresses and phone numbers of third parties whom you wish to use the Service with. You hereby give your express consent to Discussed to use the e-mail addresses and phone numbers
+        you provide for use in providing you access and use of the Service. \n\n
+
+When creating an Account, don\'t: \n\n
+
+    as an individual, provide any false personal information to us (including a false username) or create any account for anyone other than yourself without such other person\'s permission;
+    as a company, provide any false contact information to us (including a false username) or create any account for anyone other than the company you represent without their permission;
+    use another person\'s or organization\'s e-mail address and phone number without their permission;
+    use a username that is the name of another person or organization with the intent to impersonate that person or organization;
+    use a username that is subject to rights of another person without appropriate authorization; or
+    use a username that is offensive, vulgar or obscene or otherwise in bad taste. \n\n
+
+We reserve the right to suspend or terminate your Account if any information provided during the registration process or thereafter proves to be inaccurate, false or misleading or to reclaim any username that you create through
+        the Service that violates our Terms. You are responsible for maintaining the confidentiality of your access to the Account, and agree to notify us if your password is lost, stolen, or disclosed to an unauthorized third party,
+        or otherwise may have been compromised. You are responsible for activities that occur under your Account. \n\n
+
+You may link your Account to various webmail, social networking, and other online accounts. You may only link your own accounts. We will access and retrieve your account information from these sites on your behalf (in some cases,
+        by using your username and password) to make certain information or services available to you through the Service. By linking your other accounts, you expressly authorize us to access your account information from those third
+        party accounts, on your behalf as your agent and permit us to access, use and, in some cases, store your account information to accomplish the foregoing. \n\n
+
+You must notify Discussed immediately of any breach of security or unauthorized use of your phone or other mobile device from which you access your account or use the Service. Although Discussed will not be liable for your losses
+        caused by any unauthorized use of your account, you may be liable for the losses of Discussed or others due to such unauthorized use. You can notify us at terms@chatcenter.me. \n\n
+
+You agree not to use or launch any automated system, including without limitation, "robots," "spiders," "offline readers," etc. or "load testers" that accesses the Service in a manner that sends more request messages
+        to the Discussed servers in a given period of time than a human can reasonably produce in the same period by using a Discussed application, and you are forbidden from ripping the content unless specifically allowed.
+        Notwithstanding the foregoing, Discussed may grant the operators of public search engines permission to use spiders to copy materials from the public portions of the App for the sole purpose of creating publicly available
+        searchable indices of the materials, but not caches or archives of such materials. Discussed reserves the right to revoke these exceptions either generally or in specific cases. You agree not to reverse- engineer our system,
+        our protocols, or explore outside the boundaries of the normal requests made by Discussed clients. You agree not use any tools to explore or harm, penetrate or test the App. You must secure our permission before you measure,
+        test, health check or otherwise monitor any network equipment, servers or assets hosted on our domain. You agree not to collect or harvest any personally identifiable information, including account names, from the Service, nor
+        to use the communication systems provided by the Service for any commercial solicitation or spam purposes. You agree not to solicit, for commercial purposes, any users of the Service with respect to their public posts. \n\n
+
+Content Submissions
+
+Our Service allows you and other users to post and take Content to and from the App. You are responsible for the Content, whether publicly posted or privately transmitted, that you post to the Service, including its legality, reliability, and appropriateness. We monitor all Public Content posted via the Service and allow you and other users to flag inappropriate content. We will remove any inappropriate content, regardless of how it is discovered and in addition will delete accounts of those users that continue to post inappropriate content. However, despite the aforementioned efforts, you understand that by using the Service you may be exposed to Content that might be offensive, harmful, inaccurate, deceptive or inappropriate. Under no circumstances will Discussed be liable in any way for any Content, including, but not limited to, any errors or omissions in any Content, or any loss or damage of any kind incurred as a result of the use of any Content posted, transmitted or otherwise made available via the Service or broadcast elsewhere. You acknowledge sole responsibility for and assume all risk arising from your use or reliance of any Content.
+
+Our Service enables you to create messages. Your Private messages are hosted by Discussed for your use exclusively.
+
+In the initial release of Discussed there is no ability for users to delete content. You can remove Content that you posted in the initial release by specifically emailing support@chatcenter.me with your Discussed handle and the title and date of the message you wish to delete. In certain instances, however, some Content (such as public posts or comments you make) may not be completely removed and copies of your Content may continue to exist on parts of the Service and/or elsewhere. We are not responsible or liable for the removal or deletion of (or the failure to remove or delete) any Public Content on the Service unless it has been reported to us and is deemed inappropriate. Our intent is to provide users with the ability to delete, and even recall, messages in subsequent releases of the Discussed.
+
+You represent and warrant that: (i) the Content is yours (you own it), or you have the right to use it and grant us the rights and license as provided in these Terms, and (ii) the posting of your Content on or through the Service does not violate the privacy rights, publicity rights, copyrights, contract rights or any other rights of any person.
+
+We ask that you respect our on-line community and other users when posting Content and using the Service. When submitting Content to or otherwise using the Service, you agree not to:
+
+    submit material that violates a third party\'s proprietary rights, including privacy and publicity rights, or that otherwise violates any applicable law;
+    publish falsehoods or misrepresentations that could damage us, our users or any third party;
+    publish any private information of someone, like their address, phone number, email address, financial information or similar information without their permission;
+    submit material that is unlawful, obscene, defamatory, libelous, threatening, pornographic, harassing, hateful, racially or ethnically offensive, or encourages conduct that would be considered a criminal offense, give rise to civil liability, violate any law, or is otherwise inappropriate;
+    as an individual account holder, post advertisements;
+    impersonate another person or represent yourself as affiliated with us, our staff or other industry professionals;
+    solicit a user\'s password or other account information; or
+    harvest user names, addresses, or email addresses for any purpose.
+
+This list is an example and is not intended to be complete or exclusive. We have the right to enable/ disable your access to or use of the Service for the purpose of operating the Service, to ensure your compliance with these Terms, or to comply with applicable law or the order or requirement of a court, administrative agency or other governmental body. We reserve the right, at any time and without prior notice, to remove or disable access to any Content, that we consider, in our sole discretion, to be in violation of these Terms or otherwise harmful to the Service.
+Copyright Policy
+
+We do not permit copyright infringing activities and infringement of intellectual property rights on the Service and will remove any such Content if properly notified that such Content infringes on another\'s intellectual property rights. If you are a copyright owner or an agent thereof and believe that any Content infringes upon your copyrights, you may submit a notification pursuant to the Digital Millennium Copyright Act (DMCA) by providing us with the following information to our copyright agent at copyright@chatcenter.me in writing (see 17 U.S.C 512©(3) for further detail):
+
+    an electronic or physical signature of the person authorized to act on behalf of the owner of the copyright\'s interest;
+    a description of the copyrighted work that you claim has been infringed, including the URL (i.e., web page address) of the location where the copyrighted work exists or a copy of the copyrighted work;
+    identification of the URL or other specific location on the Service where the material that you claim is infringing is located;
+    your address, telephone number, and email address;
+    a statement by you that you have a good faith belief that the disputed use is not authorized by the copyright owner, its agent, or the law;
+    a statement by you, made under penalty of perjury, that the above information in your notice is accurate and that you are the copyright owner or authorized to act on the copyright owner\'s behalf.
+
+You can contact our copyright agent via email at makorzdev@gmail.com
+
+Our Service may be used and accessed for lawful purposes only. You agree that you will not do any of the following while using or accessing the Service: (i) attempt to access or search the Service or download Content from the Service through the use of any engine, software, tool, agent, device or mechanism (including spiders, robots, crawlers, data mining tools or the like) other than the software and/or search agents provided by us or other generally available third party web browsers; (ii) access, tamper with, or use non-public areas of the Service, our computer systems, or the technical delivery systems of our providers; (iii) gather and use information, such as other users\' names, real names, email addresses, available through the Service to transmit any unsolicited advertising, junk mail, spam or other form of solicitation; (iv) use the Service for any commercial purpose or for the benefit of any third party or in any manner not by these Terms; (v) violate any applicable law or regulation; or (vi) encourage or enable any other individual to do any of the foregoing. We reserve the right to investigate and prosecute violations of any of the above and/or involve and cooperate with law enforcement authorities in prosecuting users who violate these Terms.
+Indemnity
+
+You agree to indemnify and hold us harmless from and against any and all costs, damages, liabilities, and expenses (including attorneys\' fees) we incur in relation to, arising from, or for the purpose of avoiding, any claim or demand from a third party that your use of the Service or the use of the Service by any person using your Account violates any applicable law or regulation, or the rights of any third party.
+Links to Third Party Sites
+
+The Service may include links to other sites and services that are not operated by us. We are providing these links to you only as a convenience and are not responsible for the content or links displayed on such sites. You are responsible for and assume all risk arising from your use or reliance of any third party sites.
+Ownership
+
+Our App and Service are protected by copyright, trademark, and other laws of the United States and foreign countries. Except as expressly provided in these Terms, we (or our licensors) exclusively own all right, title and interest in and to the App and the Service, including all associated intellectual property rights. You may not remove, alter or obscure any copyright, trademark, service mark or other proprietary rights notices incorporated in or accompanying the App or the Service, including in any Content. You acknowledge and agree that any feedback, comments or suggestions you may provide regarding the App or the Service ("Feedback") will be the sole and exclusive property of Discussed and you hereby irrevocably assign to us all of your right, title and interest in and to all Feedback.
+Termination
+
+If you breach any of the terms of these Terms, we have the right to suspend or disable your access to or use of the App and/or Service.
+Disclaimer
+
+You understand and agree that the App and the Service are provided to you "AS IS" and on an "AS AVAILABLE" basis. Without limiting the foregoing, Discussed EXPLICITLY DISCLAIMS ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON- INFRINGEMENT, AND ANY WARRANTIES ARISING OUT OF CO URSE OF DEALING OR USAGE OF TRADE. We make no warranty that the App or the Service will meet your requirements or be available on an uninterrupted, secure, or error-free basis.
+Limitation of Liability
+
+OUR TOTAL LIABILITY TO YOU FROM ALL CAUSES OF ACTION AND UNDER ALL THEORIES OF LIABILITY WILL BE LIMITED TO THE AMOUNT YOU PAID FOR THE APP, AND IN NO EVENT WILL IT EXCEED $10. WE WILL NOT BE LIABLE TO YOU FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL OR PUNITIVE DAMAGES, INCLUDING WITHOUT LIMITATION, LOSS OF PROFITS, DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES, RESULTING FROM (i) YOUR ACCESS TO OR USE OF OR INABILITY TO ACCESS OR USE THE APP AND/OR SERVICE; (ii) ANY CONDUCT OR CONTENT OF ANY THIRD PARTY ON THE SERVICE; (iii) ANY CONTENT OBTAINED FROM THE SERVICE; AND (iv) UNAUTHORIZED ACCESS, USE OR ALTERATION OF YOUR TRANSMISSIONS OR CONTENT, WHETHER BASED ON WARRANTY, CONTRACT, TORT (INCLUDING NEGLIGENCE) OR ANY OTHER LEGAL THEORY, WHETHER OR NOT WE HAVE BEEN INFORMED OF THE POSSIBILITY OF SUCH DAMAGE, AND EVEN IF A REMEDY SET FORTH HEREIN IS FOUND TO HAVE FAILED OF ITS ESSENTIAL PURPOSE.
+Exclusions
+
+Some jurisdictions do not allow the exclusion of certain warranties or the exclusion or limitation of liability for consequential or incidental damages, so the limitations above may not apply to you.
+General
+
+These Terms are governed by the laws of the State of California, without regard to any conflict of laws rules or principles. You agree to submit to the jurisdiction of the California courts. Our failure to enforce any right or provision of these Terms will not be considered a waiver of those rights. If any provision of these Terms is held to be invalid or unenforceable by a court, the remaining provisions of these Terms will remain in effect. These Terms constitute the entire agreement between us regarding our Service, and supersede and replace any prior agreements we might have between us regarding the Service. We may revise these Terms from time to time, and we will try to provide at least 10 days notice prior to any new terms taking effect. By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms.
+Questions &amp; Contact Information \n\n
+
+        Please contact us if you have any questions about our Terms at <b>makorzdev@gmail.com </b></string>
+    <string name="date_alert_text">You can\'t change this, right now! \n Nr of days left: </string>
+    <string name="text_search_availbility_box">You have not fully filled the profile card. You still need to add: \n\n </string>
 
     <!--AboutFragment strings-->
     <string-array name="about_options">

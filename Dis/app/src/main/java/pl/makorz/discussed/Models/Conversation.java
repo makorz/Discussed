@@ -19,10 +19,9 @@ public class Conversation {
 
     private String lastMessage;
     private String chatID;
-    private List<String> usersParticipatingName, usersParticipatingID;
+    private List<String> usersParticipatingName, usersParticipatingID, usersParticipatingFirstImageUri;
+    private List<Boolean> isFirstPhotoOfUserUncovered;
     private Date dateOfChatCreation;
-    private final String TAG = "Conversation";
-    private int imageResourceId;
 
     public String getLastMessage() {
         return lastMessage;
@@ -41,6 +40,22 @@ public class Conversation {
     }
 
     public Conversation() {
+    }
+
+    public List<Boolean> getIsFirstPhotoOfUserUncovered() {
+        return isFirstPhotoOfUserUncovered;
+    }
+
+    public void setIsFirstPhotoOfUserUncovered(List<Boolean> isFirstPhotoOfUserUncovered) {
+        this.isFirstPhotoOfUserUncovered = isFirstPhotoOfUserUncovered;
+    }
+
+    public List<String> getUsersParticipatingFirstImageUri() {
+        return usersParticipatingFirstImageUri;
+    }
+
+    public void setUsersParticipatingFirstImageUri(List<String> usersParticipatingFirstImageUri) {
+        this.usersParticipatingFirstImageUri = usersParticipatingFirstImageUri;
     }
 
     public void getTextOfMessage(String chatID) {
@@ -69,14 +84,6 @@ public class Conversation {
 
     public void setDateOfChatCreation(Date dateOfChatCreation) {
         this.dateOfChatCreation = dateOfChatCreation;
-    }
-
-    public int getImageResourceId() {
-        return imageResourceId;
-    }
-
-    public void setImageResourceId(int imageResourceId) {
-        this.imageResourceId = imageResourceId;
     }
 
     public void checkLastMessage(final String chatID) {

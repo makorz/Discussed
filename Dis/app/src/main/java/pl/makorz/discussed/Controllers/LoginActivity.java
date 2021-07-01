@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -56,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
     private GoogleSignInClient client;
     private FirebaseAuth mAuth;
     private CheckBox checkTermsBox, checkAgeBox;
+    private TextView termsTextView;
     FirebaseUser user;
     private int USER_NEW_ACCOUNT = -1;
 
@@ -89,6 +91,10 @@ public class LoginActivity extends AppCompatActivity {
         if (requestCode == RC_GOOGLE_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
+                if (user == null) {
+                    USER_NEW_ACCOUNT = -1;
+                    Log.w(TAG, "User is null, not going to navigate");
+                }
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
@@ -111,6 +117,9 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             Toast.makeText(LoginActivity.this, "WELCOME!!!", Toast.LENGTH_SHORT).show();
+                            boolean isNew = Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getAdditionalUserInfo()).isNewUser();
+                            if (isNew) USER_NEW_ACCOUNT = 0;
+                            Log.d(TAG, String.valueOf(USER_NEW_ACCOUNT));
                             user = mAuth.getCurrentUser();
                             updateUI(user);
                         } else {
@@ -131,12 +140,13 @@ public class LoginActivity extends AppCompatActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         updateUI(currentUser);
+
+
     }
 
     private void updateUI(FirebaseUser currentUser) {
         //Navigate to Main Activity
         if (currentUser == null) {
-            USER_NEW_ACCOUNT = 0;
             Log.w(TAG, "User is null, not going to navigate");
             return;
         }
@@ -161,6 +171,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void termsAgreementCheck () {
+        termsTextView = findViewById(R.id.textOfTerms);
         checkTermsBox = findViewById(R.id.checkAgreeTerms);
         checkAgeBox = findViewById(R.id.checkAgreeAge);
         checkTermsBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -173,6 +184,31 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 buttonSignInGoogle.setEnabled(checkTermsBox.isChecked() && checkAgeBox.isChecked());
+            }
+        });
+        termsTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                termsAndConditionsAlertDialog();
+            }
+        });
+    }
+
+    public void termsAndConditionsAlertDialog() {
+
+        LayoutInflater inflaterDialog = LayoutInflater.from(this);
+        View termsDialogView = inflaterDialog.inflate(R.layout.terms_dialog_box, null);
+
+        AlertDialog termsDialog = new AlertDialog.Builder(this)
+                .setView(termsDialogView)  // What to use in dialog box
+                .setPositiveButton("I UNDERSTAND AND ACCEPT", null)
+                .show();
+
+        termsDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                    checkTermsBox.setChecked(true);
+                    termsDialog.dismiss();
             }
         });
     }

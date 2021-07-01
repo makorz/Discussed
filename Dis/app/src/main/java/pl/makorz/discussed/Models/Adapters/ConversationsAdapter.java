@@ -1,5 +1,7 @@
 package pl.makorz.discussed.Models.Adapters;
 
+import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -22,24 +25,30 @@ import pl.makorz.discussed.R;
 
 public class ConversationsAdapter extends FirestoreRecyclerAdapter<Conversation, ConversationsAdapter.ViewHolder> {
 
-    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private static OnItemClickListener listener;
-    private static String chatID;
+    private Context context;
+    private final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
     @Override
     protected void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull Conversation model) {
 
-        chatID = model.getChatID();
+        String chatID = model.getChatID();
         model.checkLastMessage(chatID);
-        holder.imageOfUser.setImageResource(R.drawable.main_logo_icon_transparent2);
+
         holder.chatIDtext.setText(model.getChatID());
         holder.textOfMessage.setText(model.getLastMessage());
         List<String> listOfUsers = model.getUsersParticipatingID();
-        int index = listOfUsers.indexOf(user.getUid());
+        int index = listOfUsers.indexOf(currentUser.getUid());
         if (index == 0) {
             index++;
         } else {
             index--;
+        }
+        Boolean isFirstPhotoUncovered = model.getIsFirstPhotoOfUserUncovered().get(index);
+        if (isFirstPhotoUncovered) {
+            Glide.with(context).load(model.getUsersParticipatingFirstImageUri().get(index)).into(holder.imageOfUser);
+        } else {
+            holder.imageOfUser.setImageResource(R.drawable.main_logo_icon_transparent2);
         }
         holder.userName.setText(model.getUsersParticipatingName().get(index));
     }
@@ -53,8 +62,10 @@ public class ConversationsAdapter extends FirestoreRecyclerAdapter<Conversation,
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view;
-        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_images_view, parent, false);
-        return new ViewHolder(view);
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_conversation_view, parent, false);
+        ViewHolder vh = new ViewHolder(view);
+        context = parent.getContext();
+        return vh;
 
     }
 

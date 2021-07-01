@@ -1,252 +1,326 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginBottom="10dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/layout_Constraint_Profile"
-    tools:context="pl.makorz.discussed.Controllers.ProfileActivity">
-
-    <TextView
-        android:id="@+id/title_my_profile"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_Constraint_Profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="15dp"
-        android:text="@string/profile_title"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        tools:context="pl.makorz.discussed.Controllers.ProfileActivity">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/default_view_profile_background"
-        app:civ_border_width="2dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginStart="25dp"
-        app:civ_border_color="@color/white"
-        android:id="@+id/imageview_first_image_own_profile"
-        android:scaleType="centerCrop"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_my_profile"
-        />
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/linear_alien_title">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/default_view_profile_background"
-        app:civ_border_width="2dp"
-        android:layout_marginTop="15dp"
-        app:civ_border_color="@color/white"
-        android:id="@+id/imageview_second_image_own_profile"
-        android:scaleType="centerCrop"
-        app:layout_constraintEnd_toStartOf="@+id/imageview_third_image_own_profile"
-        app:layout_constraintTop_toBottomOf="@+id/title_my_profile"
-        app:layout_constraintStart_toEndOf="@+id/imageview_first_image_own_profile"
-        />
+                <TextView
+                    android:id="@+id/title_alien_profile_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:text="@string/profile_title"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title" />
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/default_view_profile_background"
-        app:civ_border_width="2dp"
-        android:layout_marginTop="15dp"
-        app:civ_border_color="@color/white"
-        android:id="@+id/imageview_third_image_own_profile"
-        android:scaleType="centerCrop"
-        app:layout_constraintStart_toEndOf="@id/imageview_second_image_own_profile"
-        app:layout_constraintTop_toBottomOf="@+id/title_my_profile"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
+            </LinearLayout>
 
-    <Button
-        android:id="@+id/first_image_change"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="25dp"
-        android:text="@string/change_image_button"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageview_first_image_own_profile" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:orientation="horizontal"
+                android:id="@+id/linear_space_to_images_alien"
+                android:background="#B240241A"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
+                app:layout_constraintTop_toBottomOf="@+id/linear_alien_title"/>
 
-    <Button
-        android:id="@+id/second_image_change"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:text="@string/change_image_button"
-        app:layout_constraintEnd_toStartOf="@+id/third_image_change"
-        app:layout_constraintStart_toEndOf="@+id/first_image_change"
-        app:layout_constraintTop_toBottomOf="@+id/imageview_second_image_own_profile" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/linear_alien_photos"
+                android:layout_marginTop="15dp"
+                app:layout_constraintTop_toBottomOf="@+id/linear_space_to_images_alien">
 
-    <Button
-        android:id="@+id/third_image_change"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="25dp"
-        android:text="@string/change_image_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageview_third_image_own_profile" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/imageview_first_image_alien_profile"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_margin="5dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/default_view_profile_background"
+                    app:civ_border_color="@color/white"
+                    android:layout_weight="1"
+                    app:civ_border_width="2dp" />
 
-    <TextView
-        android:id="@+id/name_my_profile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:hint="@string/name_text_view_profile"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/second_image_change" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/imageview_second_image_alien_profile"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_margin="5dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/default_view_profile_background"
+                    app:civ_border_color="@color/white"
+                    app:civ_border_width="2dp"
+                    android:layout_weight="1" />
 
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/imageview_third_image_alien_profile"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_margin="5dp"
+                    android:scaleType="centerCrop"
+                    android:layout_weight="1"
+                    android:src="@drawable/default_view_profile_background"
+                    app:civ_border_color="@color/white"
+                    app:civ_border_width="2dp" />
 
-    <Button
-        android:id="@+id/name_own_change"
-        android:layout_width="215dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginEnd="60dp"
-        android:layout_marginTop="10dp"
-        android:text="@string/change_name_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name_my_profile" />
+            </LinearLayout>
 
-    <TextView
-        android:id="@+id/own_description_my_profile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:hint="@string/description_edit_view"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/name_own_change" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/linear_alien_photos_buttons"
+                android:layout_marginEnd="2dp"
+                app:layout_constraintTop_toBottomOf="@+id/linear_alien_photos">
 
+                <Button
+                    android:id="@+id/first_image_change"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/change_image_button"
+                    android:layout_margin="5dp"
+                    style="?android:attr/buttonBarButtonStyle" />
 
-    <Button
-        android:id="@+id/description_own_change"
-        android:layout_width="215dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginEnd="60dp"
-        android:layout_marginTop="10dp"
-        android:text="@string/change_your_description_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/own_description_my_profile" />
+                <Button
+                    android:id="@+id/second_image_change"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/change_image_button"
+                    android:layout_weight="1"
+                    android:layout_margin="5dp"
+                    style="?android:attr/buttonBarButtonStyle" />
 
-    <TextView
-        android:id="@+id/own_location_my_profile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:hint="@string/location_edit_view"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/description_own_change" />
+                <Button
+                    android:id="@+id/third_image_change"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/change_image_button"
+                    android:layout_weight="1"
+                    android:layout_margin="5dp"
+                    style="?android:attr/buttonBarButtonStyle" />
 
+            </LinearLayout>
 
-    <Button
-        android:id="@+id/location_own_change"
-        android:layout_width="215dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginEnd="60dp"
-        android:layout_marginTop="10dp"
-        android:text="@string/change_your_location_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/own_location_my_profile" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:orientation="horizontal"
+                android:id="@+id/linear_alien_space_to_personal"
+                android:background="#B240241A"
+                android:layout_marginEnd="10dp"
+                android:layout_marginStart="10dp"
 
-    <TextView
-        android:id="@+id/own_age_my_profile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="14dp"
-        android:hint="@string/age_edit_view"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/location_own_change" />
+                app:layout_constraintTop_toBottomOf="@+id/linear_alien_photos_buttons"/>
 
-    <Button
-        android:id="@+id/age_own_change"
-        android:layout_width="215dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginEnd="60dp"
-        android:layout_marginTop="10dp"
-        android:text="@string/change_your_age_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/own_age_my_profile" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/linear_name"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                app:layout_constraintTop_toBottomOf="@+id/linear_alien_space_to_personal">
 
-    <TextView
-        android:id="@+id/title_of_topic_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="14dp"
-        android:text="@string/own_topic_title_of_list"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/age_own_change" />
+                <TextView
+                    android:id="@+id/name_my_profile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/style_text_view_profile"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2" />
 
-    <ListView
-        android:id="@+id/picked_topics_own_profile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:textAlignment="center"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_of_topic_list"
-        tools:ignore="NestedScrolling" />
+                <Button
+                    android:id="@+id/name_own_change"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    android:maxWidth="120dp"
+                    android:minWidth="120dp"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/change_name_button"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    style="?android:attr/buttonBarButtonStyle"/>
 
-    <Button
-        android:id="@+id/topics_own_change"
-        android:layout_width="215dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"
-        android:layout_marginEnd="60dp"
-        android:layout_marginTop="10dp"
-        android:text="@string/change_your_topics_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/picked_topics_own_profile" />
+            </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/linear_alien_description"
+            android:layout_marginStart="15dp"
+            app:layout_constraintTop_toBottomOf="@+id/linear_name">
 
+            <TextView
+                android:id="@+id/own_description_my_profile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/style_text_view_profile"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/description_own_change"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:maxWidth="120dp"
+                android:minWidth="120dp"
+                android:layout_gravity="center_vertical"
+                android:text="@string/change_your_description_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                style="?android:attr/buttonBarButtonStyle"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/linear_alien_location"
+            android:layout_marginStart="15dp"
+            app:layout_constraintTop_toBottomOf="@+id/linear_alien_description">
+
+            <TextView
+                android:id="@+id/own_location_my_profile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/style_text_view_profile"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2" />
+
+            <Button
+                android:id="@+id/location_own_change"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:maxWidth="120dp"
+                android:minWidth="120dp"
+                android:layout_gravity="center_vertical"
+                android:text="@string/change_your_location_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                style="?android:attr/buttonBarButtonStyle"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/linear_alien_age"
+            android:layout_marginStart="15dp"
+            app:layout_constraintTop_toBottomOf="@+id/linear_alien_location">
+
+            <TextView
+                android:id="@+id/own_age_my_profile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="10"
+                android:background="@drawable/style_text_view_profile"
+                android:layout_gravity="center_vertical"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2" />
+
+            <Button
+                android:id="@+id/age_own_change"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:maxWidth="120dp"
+                android:minWidth="120dp"
+                android:layout_marginEnd="5dp"
+                android:layout_gravity="center_vertical"
+                android:text="@string/change_your_age_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                style="?android:attr/buttonBarButtonStyle"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/linear_alien_gender"
+            android:layout_marginStart="15dp"
+            app:layout_constraintTop_toBottomOf="@+id/linear_alien_age">
+
+            <TextView
+                android:id="@+id/own_gender_my_profile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/style_text_view_profile"
+                android:layout_weight="10"
+                android:layout_gravity="center_vertical"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2" />
+
+            <Button
+                android:id="@+id/gender_own_change"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:maxWidth="120dp"
+                android:layout_marginEnd="5dp"
+                android:layout_gravity="center_vertical"
+                android:text="@string/change_your_gender_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                style="?android:attr/buttonBarButtonStyle"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/linear_alien_topics"
+            android:layout_marginStart="15dp"
+            app:layout_constraintTop_toBottomOf="@+id/linear_alien_gender">
+
+            <TextView
+                android:id="@+id/topics_my_profile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="10"
+                android:background="@drawable/style_text_view_profile"
+                android:layout_gravity="center_vertical"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2" />
+
+            <Button
+                android:id="@+id/topics_own_change"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:maxWidth="120dp"
+                android:layout_marginEnd="5dp"
+                android:layout_gravity="center_vertical"
+                android:text="@string/change_your_topics_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                style="?android:attr/buttonBarButtonStyle"/>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

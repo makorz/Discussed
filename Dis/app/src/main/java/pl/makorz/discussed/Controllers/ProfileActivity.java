@@ -1,6 +1,7 @@
 package pl.makorz.discussed.Controllers;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,17 +18,21 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -36,24 +41,30 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
-import pl.makorz.discussed.Controllers.Functions.*;
+import pl.makorz.discussed.Models.Adapters.TopicsAdapter;
+import pl.makorz.discussed.Models.Topic;
 import pl.makorz.discussed.R;
+import static com.google.firebase.firestore.FieldValue.arrayUnion;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -63,16 +74,32 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public static final String DESCRIPTION_FIELD = "description";
     public static final String NAME_FIELD = "displayName";
     public static final String LOCATION_FIELD = "location";
-    public static final String TOPICS_FIELD = "chosenTopics";
+    public static final String TOPICS_ARRAY = "chosenTopicsArray";
+    public static final String GENDER_FIELD = "genderFemale";
     public static final String FIRST_PHOTO_URI = "firstPhotoUri";
     public static final String SECOND_PHOTO_URI = "secondPhotoUri";
     public static final String THIRD_PHOTO_URI = "thirdPhotoUri";
+    public static final String CAN_USER_SEARCH = "canUserSearch";
+
     public static final String FIRST_PHOTO_UPLOAD_MADE = "firstPhotoUploadMade";
     public static final String SECOND_PHOTO_UPLOAD_MADE = "secondPhotoUploadMade";
     public static final String THIRD_PHOTO_UPLOAD_MADE = "thirdPhotoUploadMade";
+    public static final String LOCATION_UPLOAD_MADE = "locationUploadMade";
+    public static final String TOPICS_UPLOAD_MADE = "topicsUploadMade";
+    public static final String AGE_UPLOAD_MADE = "ageUploadMade";
+    public static final String DESCRIPTION_UPLOAD_MADE = "descriptionUploadMade";
+    public static final String GENDER_UPLOAD_MADE = "genderUploadMade";
+    public static final String NAME_UPLOAD_MADE = "nameUploadMade";
+
     public static final String FIRST_PHOTO_UPLOAD_DATE = "firstPhotoUploadDate";
     public static final String SECOND_PHOTO_UPLOAD_DATE = "secondPhotoUploadDate";
     public static final String THIRD_PHOTO_UPLOAD_DATE = "thirdPhotoUploadDate";
+    public static final String AGE_UPLOAD_DATE = "ageUploadDate";
+    public static final String GENDER_UPLOAD_DATE = "genderUploadDate";
+    public static final String LOCATION_UPLOAD_DATE = "locationUploadDate";
+    public static final String TOPICS_UPLOAD_DATE = "topicsUploadDate";
+    public static final String DESCRIPTION_UPLOAD_DATE = "descriptionUploadDate";
+    public static final String NAME_UPLOAD_DATE = "nameUploadDate";
 
     public static int whatButtonPressed = -1;
     private Uri imagePath;
@@ -81,14 +108,22 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-    private TextView profileDescriptionText, ageText, locationText, nameText, titleText;
     public Button buttonDescriptionChange, buttonAgeChange, buttonLocationChange, buttonNameChange, buttonTopicsChange, buttonFirstImageChange,
-            buttonSecondImageChange, buttonThirdImageChange;
-    private ImageView firstImageView, secondImageView, thirdImageView, imageFullView;
-    private Boolean firstPhotoUploadMade, secondPhotoUploadMade, thirdPhotoUploadMade, locationUploadMade, descriptionUploadMade, ageUploadMade, topicsUploadMade;
+            buttonSecondImageChange, buttonThirdImageChange, buttonGenderChange;
+    private TextView profileDescriptionText, ageText, locationText, nameText, titleText, topicsText, genderText;
+    private ImageView firstImageView;
+    private ImageView secondImageView;
+    private ImageView thirdImageView;
+    private Boolean firstPhotoUploadMade, secondPhotoUploadMade, thirdPhotoUploadMade, locationUploadMade, descriptionUploadMade, ageUploadMade, topicsUploadMade,
+            genderUploadMade, nameUploadMade, whatGender, canUserSearch;
     private AlertDialog dialog;
     private TextView messageAlertView;
     private String firstPhotoUri, secondPhotoUri, thirdPhotoUri;
+    private ConstraintLayout layoutToDimWhenSearching;
+    private ArrayList<String> topicList;
+    private TopicsAdapter adapterTopics;
+    private Date currentDate, firstPhotoUploadDate, secondPhotoUploadDate, thirdPhotoUploadDate, locationUploadDate, descriptionUploadDate, ageUploadDate,
+            genderUploadDate, nameUploadDate;
 
     // Main function of creating activity
     @Override
@@ -96,12 +131,16 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().hide();
 
         // Alert of loading data of profile from server
         loadingAlertDialog();
         messageAlertView.setText(R.string.alert_dialog_loading_profile);
+        layoutToDimWhenSearching = findViewById(R.id.layout_Constraint_Profile);
+        layoutToDimWhenSearching.setAlpha(0.0f);
         initView();
+
         // Loading data from server in second thread
         new Thread() {
             public void run() {
@@ -110,8 +149,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     public void run() {
                         try {
                             updateUserCollection();
-                            android.os.SystemClock.sleep(1000);
-                            dialog.dismiss();
                         } catch (ExecutionException | InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -120,6 +157,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 });
             }
         }.start();
+
+        currentDate = new Date(new Date().getTime());
 
     }
 
@@ -136,6 +175,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
                         String age = Integer.toString(document.getDouble(AGE_FIELD).intValue());
                         ageText.setText(age);
+
 
                         double latitude = document.getGeoPoint(LOCATION_FIELD).getLatitude();
                         double longitude = document.getGeoPoint(LOCATION_FIELD).getLongitude();
@@ -154,6 +194,50 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         firstPhotoUploadMade = document.getBoolean(FIRST_PHOTO_UPLOAD_MADE);
                         secondPhotoUploadMade = document.getBoolean(SECOND_PHOTO_UPLOAD_MADE);
                         thirdPhotoUploadMade = document.getBoolean(THIRD_PHOTO_UPLOAD_MADE);
+                        locationUploadMade = document.getBoolean(LOCATION_UPLOAD_MADE);
+                        nameUploadMade = document.getBoolean(NAME_UPLOAD_MADE);
+                        ageUploadMade = document.getBoolean(AGE_UPLOAD_MADE);
+                        topicsUploadMade = document.getBoolean(TOPICS_UPLOAD_MADE);
+                        descriptionUploadMade = document.getBoolean(DESCRIPTION_UPLOAD_MADE);
+                        genderUploadMade = document.getBoolean(GENDER_UPLOAD_MADE);
+
+                        if (firstPhotoUploadMade && secondPhotoUploadMade && thirdPhotoUploadMade && locationUploadMade && nameUploadMade && ageUploadMade && topicsUploadMade
+                                && descriptionUploadMade && genderUploadMade ) {
+
+                                db.collection("users").document(currentUser.getUid())
+                                        .update(CAN_USER_SEARCH, true);
+                                canUserSearch = true;
+                        }
+
+                        firstPhotoUploadDate = document.getDate(FIRST_PHOTO_UPLOAD_DATE);
+                        secondPhotoUploadDate = document.getDate(SECOND_PHOTO_UPLOAD_DATE);
+                        thirdPhotoUploadDate = document.getDate(THIRD_PHOTO_UPLOAD_DATE);
+                        locationUploadDate = document.getDate(LOCATION_UPLOAD_DATE);
+                        nameUploadDate = document.getDate(NAME_UPLOAD_DATE);
+                        ageUploadDate = document.getDate(AGE_UPLOAD_DATE);
+                        descriptionUploadDate = document.getDate(DESCRIPTION_UPLOAD_DATE);
+                        genderUploadDate = document.getDate(GENDER_UPLOAD_DATE);
+
+                        topicList = (ArrayList<String>) document.get(TOPICS_ARRAY);
+                        StringBuilder topicsListInTextView = new StringBuilder("Your topics: \n\n");
+                        for(int i = 0; i < topicList.size(); i++) {
+                            String addTopic;
+                            String nrOfTopic = String.valueOf(i + 1);
+                            if (i == topicList.size() - 1) {
+                                addTopic = nrOfTopic + ". " + topicList.get(i);
+                            } else {
+                                addTopic = nrOfTopic + ". " + topicList.get(i)+ "\n";
+                            }
+                            topicsListInTextView.append(addTopic);
+                        }
+                        topicsText.setText(topicsListInTextView);
+
+                        whatGender = document.getBoolean(GENDER_FIELD);
+                        if (!whatGender) {
+                            genderText.setText("Male");
+                        } else {
+                            genderText.setText("Female");
+                        }
 
                         if (firstPhotoUploadMade) {
                             Glide.with(getApplicationContext()).load(firstPhotoUri).into(firstImageView);
@@ -164,6 +248,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         if (thirdPhotoUploadMade) {
                             Glide.with(getApplicationContext()).load(thirdPhotoUri).into(thirdImageView);
                         }
+
+                        layoutToDimWhenSearching.setAlpha(1.0f);
+                        dialog.dismiss();
 
                     } else {
                         Log.d("LOGGER", "No such document");
@@ -178,7 +265,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     // This functions show dialog boxes where user can input specific data
-    private void showAlertDialog(String whatFieldUpdate, String titleDialogBox) {
+    private void descriptionAgeNameChangeDialog(String whatFieldUpdate, String titleDialogBox) {
 
         // Layout dialog box
         LayoutInflater inflaterDialog = LayoutInflater.from(this);
@@ -189,13 +276,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             editDialogText.setHint("Enter Your age (Between 18 and 115)");
             editDialogText.setInputType(InputType.TYPE_CLASS_NUMBER);
         } else if (whatFieldUpdate.equals(DESCRIPTION_FIELD)) {
-            editDialogText.setHint("Describe Yourself (Between 50-500 letters)");
-            DescriptionFilter descriptionFilter = new DescriptionFilter(ProfileActivity.this);
+            editDialogText.setHint("Describe Yourself (max 500 letters)");
+           // DescriptionFilter descriptionFilter = new DescriptionFilter(ProfileActivity.this);
             InputFilter lengthFilter = new InputFilter.LengthFilter(500);
             editDialogText.setFilters(new InputFilter[]{lengthFilter});
-            editDialogText.setFilters(new DescriptionFilter[]{descriptionFilter});
+            //editDialogText.setFilters(new DescriptionFilter[]{descriptionFilter});
         } else if (whatFieldUpdate.equals(NAME_FIELD)) {
-            editDialogText.setHint("Enter Your name (Between 3-35 letters)");
+            editDialogText.setHint("Enter Your name (max 35 letters)");
             InputFilter lengthFilter = new InputFilter.LengthFilter(35);
             editDialogText.setFilters(new InputFilter[]{lengthFilter});
         }
@@ -219,6 +306,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
                         db.collection("users").document(currentUser.getUid())
                                 .update(whatFieldUpdate, valueEntered);//what you update
+                        if (!ageUploadMade) {
+                            db.collection("users").document(currentUser.getUid())
+                                    .update(AGE_UPLOAD_MADE, true);
+                        }
+                        db.collection("users").document(currentUser.getUid())
+                                .update(AGE_UPLOAD_DATE, new Date());
                         try {
                             updateUserCollection();
                         } catch (ExecutionException | InterruptedException e) {
@@ -234,6 +327,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     } else {
                         db.collection("users").document(currentUser.getUid())
                                 .update(whatFieldUpdate, valueEntered); //what you update
+                        if (!descriptionUploadMade) {
+                            db.collection("users").document(currentUser.getUid())
+                                    .update(DESCRIPTION_UPLOAD_MADE, true);
+                        }
+                        db.collection("users").document(currentUser.getUid())
+                                .update(DESCRIPTION_UPLOAD_DATE, new Date());
                         try {
                             updateUserCollection();
                         } catch (ExecutionException | InterruptedException e) {
@@ -248,6 +347,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     } else {
                         db.collection("users").document(currentUser.getUid())
                                 .update(whatFieldUpdate, valueEntered); //what you update
+                        if (!nameUploadMade) {
+                            db.collection("users").document(currentUser.getUid())
+                                    .update(NAME_UPLOAD_MADE, true);
+                        }
+                        db.collection("users").document(currentUser.getUid())
+                                .update(NAME_UPLOAD_DATE, new Date());
                         try {
                             updateUserCollection();
                         } catch (ExecutionException | InterruptedException e) {
@@ -267,12 +372,14 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         profileDescriptionText = findViewById(R.id.own_description_my_profile);
         ageText = findViewById(R.id.own_age_my_profile);
         nameText = findViewById(R.id.name_my_profile);
-        titleText = findViewById(R.id.title_my_profile);
+        titleText = findViewById(R.id.title_alien_profile_textview);
         locationText = findViewById(R.id.own_location_my_profile);
+        topicsText = findViewById(R.id.topics_my_profile);
+        genderText = findViewById(R.id.own_gender_my_profile);
 
-        firstImageView = findViewById(R.id.imageview_first_image_own_profile);
-        secondImageView = findViewById(R.id.imageview_second_image_own_profile);
-        thirdImageView = findViewById(R.id.imageview_third_image_own_profile);
+        firstImageView = findViewById(R.id.imageview_first_image_alien_profile);
+        secondImageView = findViewById(R.id.imageview_second_image_alien_profile);
+        thirdImageView = findViewById(R.id.imageview_third_image_alien_profile);
 
         buttonDescriptionChange = findViewById(R.id.description_own_change);
         buttonAgeChange = findViewById(R.id.age_own_change);
@@ -282,6 +389,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         buttonFirstImageChange = findViewById(R.id.first_image_change);
         buttonSecondImageChange = findViewById(R.id.second_image_change);
         buttonThirdImageChange = findViewById(R.id.third_image_change);
+        buttonGenderChange = findViewById(R.id.gender_own_change);
 
         buttonDescriptionChange.setOnClickListener(this);
         buttonAgeChange.setOnClickListener(this);
@@ -291,6 +399,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         buttonFirstImageChange.setOnClickListener(this);
         buttonSecondImageChange.setOnClickListener(this);
         buttonThirdImageChange.setOnClickListener(this);
+        buttonGenderChange.setOnClickListener(this);
+
         firstImageView.setOnClickListener(this);
         secondImageView.setOnClickListener(this);
         thirdImageView.setOnClickListener(this);
@@ -369,7 +479,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     // This function uploads photo on Firebase Storage and shows alert dialog of uploading
-    private void uploadImage(String nameOfPhoto, ImageView imageView, String userParameter1, String userParameter2, String userParameter3) {
+    private void uploadImage(String nameOfPhoto, ImageView imageView, String photoUri, String wasPhotoUploadMade, String dateOfPhotoUpload) {
 
         if (imagePath != null) {
 
@@ -384,8 +494,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             ByteArrayOutputStream boos = new ByteArrayOutputStream();
             bitmap = scaleDown(bitmap, 1280, true);
             bitmap.compress(Bitmap.CompressFormat.JPEG, 80, boos);
-
-
             byte[] data = boos.toByteArray();
 
             //UploadImage
@@ -403,10 +511,18 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         @Override
                         public void onSuccess(Uri uri) {
 
+                            if (photoUri.equals("firstPhotoUri")) {
+                                firstPhotoUri = uri.toString();
+                            } else if (photoUri.equals("secondPhotoUri")) {
+                                secondPhotoUri = uri.toString();
+                            } else if (photoUri.equals("thirdPhotoUri")) {
+                                thirdPhotoUri = uri.toString();
+                            }
+
                             Map<String, Object> userCompletion = new HashMap<>();
-                            userCompletion.put(userParameter1, uri.toString());
-                            userCompletion.put(userParameter2, true);
-                            userCompletion.put(userParameter3, new Date());
+                            userCompletion.put(photoUri, uri.toString());
+                            userCompletion.put(wasPhotoUploadMade, true);
+                            userCompletion.put(dateOfPhotoUpload, new Date());
                             db.collection("users").document(currentUser.getUid()).set(userCompletion, SetOptions.merge());
                         }
                     });
@@ -428,54 +544,172 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     // This function starts functions correlated with certain button
     @Override
     public void onClick(View view) {
+        int daysToChange = 3;
+        long nrOfDaysSinceChange;
+        long dateDiff;
+
         switch (view.getId()) {
             case R.id.description_own_change:
-                showAlertDialog(DESCRIPTION_FIELD, "Your Description");
+                dateDiff = currentDate.getTime() - descriptionUploadDate.getTime();
+                nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
+                if ( nrOfDaysSinceChange > daysToChange) {
+                    descriptionAgeNameChangeDialog(DESCRIPTION_FIELD, "Your Description");
+                } else {
+                    timeOfChangeAlertDialog(nrOfDaysSinceChange);
+                }
                 whatButtonPressed = 1;
                 break;
             case R.id.age_own_change:
-                showAlertDialog(AGE_FIELD, "Your Age");
+                dateDiff = currentDate.getTime() - ageUploadDate.getTime();
+                nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
+                if (nrOfDaysSinceChange > daysToChange) {
+                    descriptionAgeNameChangeDialog(AGE_FIELD, "Your Age");
+                } else {
+                    timeOfChangeAlertDialog(nrOfDaysSinceChange);
+                }
                 whatButtonPressed = 2;
                 break;
             case R.id.location_own_change:
-                showAlertDialog(LOCATION_FIELD, "Your Location");
+                dateDiff = currentDate.getTime() - locationUploadDate.getTime();
+                nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
+                if (nrOfDaysSinceChange > daysToChange) {
+                    descriptionAgeNameChangeDialog(LOCATION_FIELD, "Your Location");
+                } else {
+                    timeOfChangeAlertDialog(nrOfDaysSinceChange);
+                }
                 whatButtonPressed = 3;
                 break;
             case R.id.name_own_change:
-                showAlertDialog(NAME_FIELD, "Your Name");
+                dateDiff = currentDate.getTime() - nameUploadDate.getTime();
+                nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
+                if (nrOfDaysSinceChange > daysToChange) {
+                    descriptionAgeNameChangeDialog(NAME_FIELD, "Your Name");
+                } else {
+                    timeOfChangeAlertDialog(nrOfDaysSinceChange);
+                }
                 whatButtonPressed = 4;
                 break;
             case R.id.first_image_change:
-                chooseImage(1);
+                dateDiff = currentDate.getTime() - firstPhotoUploadDate.getTime();
+                nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
+                if (nrOfDaysSinceChange > daysToChange) {
+                    chooseImage(1);
+                } else {
+                    timeOfChangeAlertDialog(nrOfDaysSinceChange);
+                }
                 whatButtonPressed = 5;
                 break;
             case R.id.second_image_change:
-                chooseImage(2);
+                dateDiff = currentDate.getTime() - secondPhotoUploadDate.getTime();
+                nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
+                if (nrOfDaysSinceChange > daysToChange) {
+                    chooseImage(2);
+                } else {
+                    timeOfChangeAlertDialog(nrOfDaysSinceChange);
+                }
                 whatButtonPressed = 6;
                 break;
             case R.id.third_image_change:
-                chooseImage(3);
+                dateDiff = currentDate.getTime() - thirdPhotoUploadDate.getTime();
+                nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
+                if (nrOfDaysSinceChange > daysToChange) {
+                    chooseImage(3);
+                } else {
+                    timeOfChangeAlertDialog(nrOfDaysSinceChange);
+                }
                 whatButtonPressed = 7;
                 break;
             case R.id.topics_own_change:
-                pickUpTopics();
+                pickUpTopicsDialog();
                 whatButtonPressed = 8;
                 break;
-            case R.id.imageview_first_image_own_profile:
+            case R.id.imageview_first_image_alien_profile:
                 photoShowDialog(firstPhotoUri);
                 whatButtonPressed = 9;
                 break;
-            case R.id.imageview_second_image_own_profile:
+            case R.id.imageview_second_image_alien_profile:
                 photoShowDialog(secondPhotoUri);
                 whatButtonPressed = 10;
                 break;
-            case R.id.imageview_third_image_own_profile:
+            case R.id.imageview_third_image_alien_profile:
                 photoShowDialog(thirdPhotoUri);
                 whatButtonPressed = 11;
+                break;
+            case R.id.gender_own_change:
+                dateDiff = currentDate.getTime() - genderUploadDate.getTime();
+                nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
+                if (nrOfDaysSinceChange > daysToChange) {
+                    genderChangeDialog();
+                } else {
+                    timeOfChangeAlertDialog(nrOfDaysSinceChange);
+                }
+                whatButtonPressed = 12;
                 break;
             default:
                 break;
         }
+    }
+
+    public void genderChangeDialog() {
+
+        LayoutInflater inflaterDialog = LayoutInflater.from(this);
+        View dialogView = inflaterDialog.inflate(R.layout.dialog_gender_change, null);
+
+        RadioGroup genderGroup = dialogView.findViewById(R.id.gender_pick_radio_group);
+        int maleID = 20;
+        int femaleID = 21;
+        RadioButton maleButton = dialogView.findViewById(R.id.male_radio);
+        maleButton.setId(maleID);
+        RadioButton femaleButton = dialogView.findViewById(R.id.female_radio);
+        femaleButton.setId(femaleID);
+
+        AlertDialog genderChangeDialog = new AlertDialog.Builder(this)
+                .setTitle("Chose Your gender")
+                .setView(dialogView)  // What to use in dialog box
+                .setNegativeButton("Abort!", null)
+                .setPositiveButton("OK", null)
+                .show();
+
+        genderChangeDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int selectedID = genderGroup.getCheckedRadioButtonId();
+                switch (selectedID) {
+                    case 20:
+                        db.collection("users").document(currentUser.getUid())
+                                .update(GENDER_FIELD, false);
+                        if (!genderUploadMade) {
+                            db.collection("users").document(currentUser.getUid())
+                                    .update(GENDER_UPLOAD_MADE, true);
+                        }
+                        db.collection("users").document(currentUser.getUid())
+                                .update(GENDER_UPLOAD_DATE, new Date());
+                        break;
+                    case 21:
+                        db.collection("users").document(currentUser.getUid())
+                                .update(GENDER_FIELD, true);
+                        if (!genderUploadMade) {
+                            db.collection("users").document(currentUser.getUid())
+                                    .update(GENDER_UPLOAD_MADE, true);
+                        }
+                        db.collection("users").document(currentUser.getUid())
+                                .update(GENDER_UPLOAD_DATE, new Date());
+                        break;
+                    default:
+                        break;
+                }
+
+                try {
+                    updateUserCollection();
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+                genderChangeDialog.dismiss();
+
+            }
+        });
+
+
     }
 
     // This function shows AlertDialog
@@ -492,7 +726,85 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     //This function let's You pick up Your favorite topics
-    public void pickUpTopics() {
+    public void pickUpTopicsDialog() {
+        LayoutInflater inflaterDialog = LayoutInflater.from(this);
+        View topicsView = inflaterDialog.inflate(R.layout.dialog_topics_change, null);
+        RecyclerView topicsRecycler = topicsView.findViewById(R.id.picked_topics_own_profile);
+
+        // Load Main Topics List and set the Recyclerview inside the DialogBox
+        Query queryListOfTopics = db.collection("topics").orderBy("topicTitle");
+
+        FirestoreRecyclerOptions<Topic> options = new FirestoreRecyclerOptions.Builder<Topic>()
+                .setQuery(queryListOfTopics, Topic.class)
+                .setLifecycleOwner(this)
+                .build();
+
+        adapterTopics = new TopicsAdapter(options);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        topicsRecycler.setLayoutManager(layoutManager);
+        topicsRecycler.setAdapter(adapterTopics);
+
+        AlertDialog topicsChangeDialog = new AlertDialog.Builder(this)
+                .setTitle("Pick Your Topics (from 2 to 5)")
+                .setView(topicsView)  // What to use in dialog box
+                .setNegativeButton("Abort!", null)
+                .setPositiveButton("OK", null)
+                .show();
+
+        // Create a list of chosen topics and prevent from choosing more than 10
+        adapterTopics.startListening();
+        ArrayList<String> topics = new ArrayList<>();
+        adapterTopics.setOnItemCLickListener(new TopicsAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(boolean isFavorite, int position, String topicTitle, CompoundButton cb) {
+                if (topics.size() < 5) {
+                    if (!topics.contains(topicTitle)){
+                        topics.add(topicTitle);
+                    } else {
+                        topics.remove(topicTitle);
+                        cb.setChecked(false);
+                    }
+                } else {
+                    topics.remove(topicTitle);
+                    cb.setChecked(false);
+                    Toast.makeText(ProfileActivity.this, "Maximum 5 topics!!!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        topicsChangeDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (topics.size() < 2) {
+                    int howManyTopicsLeft = 2 - topics.size();
+                    Toast.makeText(ProfileActivity.this, "Please choose " + howManyTopicsLeft + " more topic!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.i(TAG, "Clicked positive!");
+                    adapterTopics.stopListening();
+                    // Delete the old array
+                    db.collection("users").document(currentUser.getUid())
+                            .update(TOPICS_ARRAY, FieldValue.delete());
+                    // Update the chosenTopicsArray in User document
+                    for (int i = 0; i < topics.size(); i++) {
+                        db.collection("users").document(currentUser.getUid())
+                                .update(TOPICS_ARRAY, arrayUnion(topics.get(i)));
+                    }
+                    if (!topicsUploadMade) {
+                        db.collection("users").document(currentUser.getUid())
+                                .update(TOPICS_UPLOAD_MADE, true);
+                    }
+                    db.collection("users").document(currentUser.getUid())
+                            .update(TOPICS_UPLOAD_DATE, new Date());
+
+                    try {
+                        updateUserCollection();
+                    } catch (ExecutionException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    topicsChangeDialog.dismiss();
+                }
+            }
+       });
     }
 
     // this function scales down uploaded images sizes to save server space
@@ -549,12 +861,44 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
         View dialogAlertView = inflater.inflate(R.layout.photo_full_screen, null);
-        imageFullView = dialogAlertView.findViewById(R.id.full_screen_photo_show);
+        ImageView imageFullView = dialogAlertView.findViewById(R.id.full_screen_photo_show);
         Glide.with(getApplicationContext()).load(imagePath).into(imageFullView);
         builder.setView(dialogAlertView);
         dialog = builder.create();
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.show();
     }
+
+    // This function tells user that time for change hasn't been reached yet.
+    public void timeOfChangeAlertDialog(long nrOfDaysSinceChange) {
+        LayoutInflater inflaterDialog = LayoutInflater.from(this);
+        View alertDateDialogView = inflaterDialog.inflate(R.layout.dialog_date_alert, null);
+        TextView dateAlertTitle = alertDateDialogView.findViewById(R.id.title_of_date_alert_box);
+        TextView dateAlertText = alertDateDialogView.findViewById(R.id.text_of_date_alert_box);
+        dateAlertTitle.setText(getString(R.string.date_alert_text));
+        dateAlertText.setText(String.valueOf(3 - nrOfDaysSinceChange));
+
+        AlertDialog alertDateDialog = new AlertDialog.Builder(this)
+                .setView(alertDateDialogView)  // What to use in dialog box
+                .setPositiveButton("OK", null)
+                .show();
+
+        alertDateDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                alertDateDialog.dismiss();
+            }
+        });
+
+    }
+
+    // This function let's You set Your localisation
+    public void locationChangeDialog() {}
+
+    // This function updates placement of User in Search collection (UserID, User Gender, User Location, User Age, User Topics)
+    public void updateUserSpotInSearchCollection() {}
+
+
 
 }

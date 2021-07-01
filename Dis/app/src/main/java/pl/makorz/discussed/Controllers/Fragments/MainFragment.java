@@ -1,5 +1,7 @@
 package pl.makorz.discussed.Controllers.Fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -7,17 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -37,44 +35,50 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import pl.makorz.discussed.Controllers.ChatActivity;
-import pl.makorz.discussed.Models.Topic;
-import pl.makorz.discussed.Models.TopicViewHolder;
 import pl.makorz.discussed.R;
-
 
 public class MainFragment extends Fragment {
 
     private static final String TAG = "MainFragmentActivity";
+    public static final String CAN_USER_SEARCH = "canUserSearch";
+    public static final String FIRST_PHOTO_UPLOAD_MADE = "firstPhotoUploadMade";
+    public static final String SECOND_PHOTO_UPLOAD_MADE = "secondPhotoUploadMade";
+    public static final String THIRD_PHOTO_UPLOAD_MADE = "thirdPhotoUploadMade";
+    public static final String LOCATION_UPLOAD_MADE = "locationUploadMade";
+    public static final String TOPICS_UPLOAD_MADE = "topicsUploadMade";
+    public static final String AGE_UPLOAD_MADE = "ageUploadMade";
+    public static final String DESCRIPTION_UPLOAD_MADE = "descriptionUploadMade";
+    public static final String GENDER_UPLOAD_MADE = "genderUploadMade";
+    public static final String NAME_UPLOAD_MADE = "nameUploadMade";
     private static String chatID;
-    private String nameOfUser;
-    private String nameOfOtherUser;
-    private String idOfSearchedUser;
-    private View mainView;
-    private RecyclerView topicsRecycler;
-    private DocumentSnapshot userSnapshot;
-    private DocumentSnapshot otherUserSnapshot;
+    private String nameOfUser, nameOfOtherUser, firstPhotoUriOfUser, firstPhotoUriOfOtherUser, idOfOtherUser;
+    private DocumentSnapshot userSnapshot, otherUserSnapshot;
+    Button buttonChat, buttonBlindDate;
+    ProgressBar waitUntilChatAppears;
+    LinearLayout layoutToDimWhenSearching;
+    private Boolean firstPhotoUploadMade, secondPhotoUploadMade, thirdPhotoUploadMade, locationUploadMade, descriptionUploadMade, ageUploadMade, topicsUploadMade,
+            genderUploadMade, nameUploadMade, whatGender, canUserSearch;
+    Map<String, Boolean> userSearchAvailability = new HashMap<>();
+
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mainView = inflater.inflate(R.layout.fragment_main,container,false);
-
-//        topicsRecycler = mainView.findViewById(R.id.topics_recycler);
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-//        topicsRecycler.setLayoutManager(layoutManager);
-
-        ProgressBar waitUntilChatAppears = mainView.findViewById(R.id.progressBarOfSearch);
-        RelativeLayout layoutToDimWhenSearching = mainView.findViewById(R.id.relativeLayoutOfSearch);
-        Button buttonChat = (Button) mainView.findViewById(R.id.button_search_chatmate);
-        Button buttonBlindDate = (Button) mainView.findViewById(R.id.button_start_blinddate);
+        View mainView = inflater.inflate(R.layout.fragment_main, container, false);
+        waitUntilChatAppears = mainView.findViewById(R.id.progressBarOfSearch);
+        layoutToDimWhenSearching = mainView.findViewById(R.id.linearLayoutOfSearch);
+        buttonChat = (Button) mainView.findViewById(R.id.button_search_chatmate);
+        buttonBlindDate = (Button) mainView.findViewById(R.id.button_start_blinddate);
 
         buttonChat.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -83,9 +87,15 @@ public class MainFragment extends Fragment {
                 buttonBlindDate.setEnabled(false);
                 layoutToDimWhenSearching.setAlpha(0.4f);
                 waitUntilChatAppears.setVisibility(View.VISIBLE);
-                searchForUser();
+                try {
+                    checkIfUserCanSearch();
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+
             }
         });
+
 
         return mainView;
     }
@@ -104,12 +114,12 @@ public class MainFragment extends Fragment {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                idOfSearchedUser = document.get("idOfUser").toString();
-                                Log.d(TAG, "onCompleteasfasf: " + idOfSearchedUser);
-                                if (idOfSearchedUser.equals(user.getUid())){
+                                idOfOtherUser = document.get("idOfUser").toString();
+                                Log.d(TAG, "onCompleteasfasf: " + idOfOtherUser);
+                                if (idOfOtherUser.equals(user.getUid())){
                                     searchForUser();
                                 } else {
-                                    getUsersNames(idOfSearchedUser);
+                                    getUsersNames(idOfOtherUser);
                                 }
 
                             }
@@ -133,8 +143,10 @@ public class MainFragment extends Fragment {
                         Log.d(TAG, "onCdgsdgsdg: " + nameOfOtherUser);
                         chat.put("usersParticipatingName", Arrays.asList(nameOfUser,nameOfOtherUser));
                         chat.put("lastMessage","");
-                        chat.put("usersParticipatingID", Arrays.asList(user.getUid(),idOfSearchedUser));
+                        chat.put("usersParticipatingFirstImageUri",Arrays.asList(firstPhotoUriOfUser,firstPhotoUriOfOtherUser));
+                        chat.put("usersParticipatingID", Arrays.asList(user.getUid(),idOfOtherUser));
                         chat.put("usersNrOfPoints",Arrays.asList(0,0));
+                        chat.put("isFirstPhotoOfUserUncovered",Arrays.asList(false,false));
 
                         db.collection("chats").document(chatID).set(chat)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -143,6 +155,8 @@ public class MainFragment extends Fragment {
                                         Log.d(TAG, "DocumentSnapshot successfully written! " + chatID);
                                         Intent intent = new Intent(getActivity(), ChatActivity.class);
                                         intent.putExtra("chatIdIntent", chatID);
+                                        intent.putExtra("otherUserName", nameOfOtherUser);
+                                        intent.putExtra("idOfOtherUser",idOfOtherUser);
                                         Objects.requireNonNull(getActivity()).startActivity(intent);
                                     }
                                 })
@@ -161,39 +175,6 @@ public class MainFragment extends Fragment {
                     }
                 });
 
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-//        // Initialize Cloud Firestore
-//        FirebaseFirestore db = FirebaseFirestore.getInstance();
-//        // Ask the Cloud Firestore
-//        Query queryListOfTopics = db.collection("topics").orderBy("position");
-//        //Configuring adapter to populate recyclerview
-//        FirestoreRecyclerOptions<Topic> options = new FirestoreRecyclerOptions.Builder<Topic>()
-//                .setQuery(queryListOfTopics, Topic.class)
-//                .setLifecycleOwner(this)
-//                .build();
-//
-//        FirestoreRecyclerAdapter topicAdapter = new FirestoreRecyclerAdapter<Topic, TopicViewHolder>(options) {
-//            @Override
-//            public void onBindViewHolder(TopicViewHolder holder, int position, Topic model) {
-//                // Bind the Ch at object to the ChatHolder
-//                TextView topicTitle = holder.itemView.findViewById(android.R.id.text1);
-//                topicTitle.setText(model.getTopicTitle());
-//            }
-//
-//            @Override
-//            public TopicViewHolder onCreateViewHolder(ViewGroup group, int i) {
-//                // Create a new instance of the ViewHolder, in this case we are using a custom
-//                // layout called R.layout.message for each item
-//                mainView = LayoutInflater.from(group.getContext())
-//                        .inflate(android.R.layout.simple_expandable_list_item_1, group, false);
-//                return new TopicViewHolder(mainView);
-//            }
-//        };
-//        topicsRecycler.setAdapter(topicAdapter);
     }
 
     // Get names of user that was searched
@@ -216,29 +197,108 @@ public class MainFragment extends Fragment {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 userSnapshot = task.getResult();
                 nameOfUser = userSnapshot.getString("displayName");
+                firstPhotoUriOfUser = userSnapshot.getString("firstPhotoUri");
                 taskOtherUser.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
                         otherUserSnapshot = task2.getResult();
                         nameOfOtherUser = otherUserSnapshot.getString("displayName");
+                        firstPhotoUriOfOtherUser = otherUserSnapshot.getString("firstPhotoUri");
                         Log.d(TAG, "onCompleteTASKSKAKSAKDK: " + nameOfOtherUser);
                         generateChatInFirestore();
                     }
                 });
-
-//                        .addOnCompleteListener(executor, new OnCompleteListener<DocumentSnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
-//                        otherUserSnapshot = task2.getResult();
-//                        nameOfOtherUser = otherUserSnapshot.getString("displayName");
-//                        Log.d(TAG, "onCompleteTASKSKAKSAKDK: " + nameOfOtherUser);
-//                        generateChatInFirestore();
-//                    }
-//                });
-
             }
         });
     }
+
+    public void profileNotFiledAlertDialog() {
+
+        layoutToDimWhenSearching.setAlpha(1f);
+        waitUntilChatAppears.setVisibility(View.INVISIBLE);
+        LayoutInflater inflaterDialog = LayoutInflater.from(getContext());
+        View alertNotFiledProfileDialogView = inflaterDialog.inflate(R.layout.dialog_search_not_available, null);
+        TextView notFiledProfileAlertTitle = alertNotFiledProfileDialogView.findViewById(R.id.title_of_search_availability_box);
+        int i = 0;
+        StringBuilder whatWasNotFilled = new StringBuilder("You have not fully filled the profile card. You still need to add: \n\n");
+        for (Map.Entry<String,Boolean> entry : userSearchAvailability.entrySet()) {
+            String addTopic = "";
+            if (!entry.getValue()) {
+                i++;
+                String nrOfTopic = String.valueOf(i);
+                addTopic = nrOfTopic + ". " + entry.getKey() + "\n";
+            }
+            whatWasNotFilled.append(addTopic);
+        }
+        notFiledProfileAlertTitle.setText(whatWasNotFilled);
+        userSearchAvailability.clear();
+
+        AlertDialog alertDateDialog = new AlertDialog.Builder(getContext())
+                .setView(alertNotFiledProfileDialogView)  // What to use in dialog box
+                .setPositiveButton("OK", null)
+                .show();
+
+        alertDateDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                buttonChat.setEnabled(true);
+                buttonBlindDate.setEnabled(true);
+                alertDateDialog.dismiss();
+            }
+        });
+
+    }
+
+    private void checkIfUserCanSearch() throws ExecutionException, InterruptedException {
+        // Download document of current user, to retrieve actual info to profile view
+        DocumentReference docRef = db.collection("users").document(user.getUid());
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document != null) {
+                        canUserSearch = document.getBoolean(CAN_USER_SEARCH);
+
+                        if (canUserSearch) {
+                            searchForUser();
+                        } else {
+                            firstPhotoUploadMade = document.getBoolean(FIRST_PHOTO_UPLOAD_MADE);
+                            secondPhotoUploadMade = document.getBoolean(SECOND_PHOTO_UPLOAD_MADE);
+                            thirdPhotoUploadMade = document.getBoolean(THIRD_PHOTO_UPLOAD_MADE);
+                            locationUploadMade = document.getBoolean(LOCATION_UPLOAD_MADE);
+                            nameUploadMade = document.getBoolean(NAME_UPLOAD_MADE);
+                            ageUploadMade = document.getBoolean(AGE_UPLOAD_MADE);
+                            topicsUploadMade = document.getBoolean(TOPICS_UPLOAD_MADE);
+                            descriptionUploadMade = document.getBoolean(DESCRIPTION_UPLOAD_MADE);
+                            genderUploadMade = document.getBoolean(GENDER_UPLOAD_MADE);
+
+                            userSearchAvailability.put("First Photo",firstPhotoUploadMade);
+                            userSearchAvailability.put("Second Photo",secondPhotoUploadMade);
+                            userSearchAvailability.put("Third Photo",thirdPhotoUploadMade);
+                            userSearchAvailability.put("Location",locationUploadMade);
+                            userSearchAvailability.put("Name",nameUploadMade);
+                            userSearchAvailability.put("Age",ageUploadMade);
+                            userSearchAvailability.put("Topics",topicsUploadMade);
+                            userSearchAvailability.put("Description",descriptionUploadMade);
+                            userSearchAvailability.put("Gender",genderUploadMade);
+
+                            profileNotFiledAlertDialog();
+                        }
+
+                    } else {
+                        Log.d("LOGGER", "No such document");
+                    }
+
+                } else {
+                    Log.d("LOGGER", "get failed with ", task.getException());
+                }
+            }
+        });
+
+    }
+
+
 }
 
 

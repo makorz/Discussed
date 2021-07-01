@@ -42,7 +42,7 @@ public class ImagesAdapterCardView extends RecyclerView.Adapter<ImagesAdapterCar
     @Override
     public ImagesAdapterCardView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         CardView cv = (CardView) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.card_images_view, parent, false);
+                .inflate(R.layout.card_conversation_view, parent, false);
         return new ImagesAdapterCardView.ViewHolder(cv);
     }
 

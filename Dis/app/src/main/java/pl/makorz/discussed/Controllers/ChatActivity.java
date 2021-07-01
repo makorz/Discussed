@@ -2,19 +2,35 @@ package pl.makorz.discussed.Controllers;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NavUtils;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
+
 import pl.makorz.discussed.Models.Adapters.MessageInChatAdapter;
 import pl.makorz.discussed.Models.MessageInChat;
 import pl.makorz.discussed.R;
@@ -24,6 +40,10 @@ public class ChatActivity extends AppCompatActivity {
 
     private static final String TAG = "ChatActivity";
     private String chatIdIntent;
+    private String idOfOtherUser;
+    ArrayList<String> usersIDList;
+    public static final String USERS_ID_ARRAY = "usersParticipatingID";
+    public static final String NAME_FIELD = "displayName";
    // public static final String EXTRA_CHAT_INFO = "chatNumber";
 //    public static final String TEXT_OF_MESSAGE = "textOfMessage";
 //    public static final String DATE_OF_MESSAGE = "dateOfMessage";
@@ -45,8 +65,13 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
+
         Intent intent = getIntent();
         chatIdIntent = intent.getStringExtra("chatIdIntent");
+        String otherUserName = intent.getStringExtra("otherUserName");
+        idOfOtherUser = intent.getStringExtra("idOfOtherUser");
+        getSupportActionBar().setTitle(otherUserName);
         messageText = findViewById(R.id.messageEditText);
 
         // What happens after send button click
@@ -56,7 +81,6 @@ public class ChatActivity extends AppCompatActivity {
                 MessageInChat messageChat = new MessageInChat(messageText.getText().toString(), user.getUid(), user.getDisplayName(), new Date());
                 db.collection("chats").document(chatIdIntent).collection("messages").add(messageChat);
                 messageText.setText("");
-
 
             }
         });
@@ -194,14 +218,22 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        finish();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_show_alien_profile:
                 Intent intent = new Intent(this, AlienProfileActivity.class);
+                intent.putExtra("idOfOtherUser",idOfOtherUser);
+                intent.putExtra("chatID",chatIdIntent);
                 startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
 }

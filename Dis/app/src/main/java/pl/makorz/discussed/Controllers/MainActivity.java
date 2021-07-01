@@ -62,9 +62,10 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle drawerToggle;
     private int currentPosition = 0;
     String searchID = "";
-    private DocumentSnapshot userSnapshot;
-    private DocumentSnapshot searchSnapshot;
+    private DocumentSnapshot searchSnapshot,userSnapshot;
     private int USER_NEW_ACCOUNT = -1;
+    private int introPage = 0;
+
 
     private FirebaseAuth mAuth;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -74,28 +75,31 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initView(savedInstanceState);
 
         USER_NEW_ACCOUNT = getIntent().getIntExtra("USER_NEW_ACCOUNT",-1);
-        try {
-            fillUserDocument();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+        if (USER_NEW_ACCOUNT == 0) {
+            introAlertDialog();
+            new Thread() {
+                public void run() {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            android.os.SystemClock.sleep(1500);
+                            try {
+                                fillUserDocument();
+                            } catch (ExecutionException | InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            }.start();
         }
-//        new Thread() {
-//            public void run() {
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        android.os.SystemClock.sleep(500);
-//                        try {
-//                            fillUserDocument();
-//                        } catch (ExecutionException | InterruptedException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                });
-//            }
-//        }.start();
+    }
+
+    public void initView(Bundle savedInstanceState) {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); //no dark theme
         titles = getResources().getStringArray(R.array.titles);
@@ -165,10 +169,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
-        if (USER_NEW_ACCOUNT == 0) {
-            introAlertDialog();
-        }
-
 
     }
 
@@ -208,6 +208,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             default:
                 fragment = new MainFragment();
+
         }
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.content_frame, fragment, "visible_fragment");
@@ -311,11 +312,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 userSnapshot = task.getResult();
-                taskSearch.addOnCompleteListener(executor, new OnCompleteListener<DocumentSnapshot>() {
+                taskSearch.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
                         searchSnapshot = task2.getResult();
-                       // ageOfAccount = Objects.requireNonNull(userSnapshot.getLong("age")).intValue();
                         if (USER_NEW_ACCOUNT == 0) {
                             nrOfUsers = searchSnapshot.getLong("nrOfUsers").intValue();
 
@@ -331,32 +331,39 @@ public class MainActivity extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(DocumentReference documentReference) {
                                             searchID = documentReference.getId();
+                                            Date dateIntro = new Date(new Date().getTime() - 10 * 86400000); // Previous date for first time
                                             Map<String, Object> userCompletion = new HashMap<>();
                                             userCompletion.put("isActive", true);
                                             userCompletion.put("searchID", searchID);
+                                            userCompletion.put("canUserSearch", false);
                                             userCompletion.put("blindDateParticipationWill", true);
                                             userCompletion.put("filledNecessaryInfo", false);
                                             userCompletion.put("premium", false);
+                                            userCompletion.put("displayName", "");
                                             userCompletion.put("genderFemale", false);
                                             userCompletion.put("ageOfUser", 0);
                                             userCompletion.put("firstPhotoUri", "null");
                                             userCompletion.put("firstPhotoUploadMade",false);
-                                            userCompletion.put("firstPhotoUploadDate",new Date(new Date().getTime() - 10 * 86400000)); // Previous date for first time
+                                            userCompletion.put("firstPhotoUploadDate",dateIntro);
                                             userCompletion.put("secondPhotoUri", "null");
                                             userCompletion.put("secondPhotoUploadMade",false);
-                                            userCompletion.put("secondPhotoUploadDate",new Date(new Date().getTime() - 10 * 86400000));
+                                            userCompletion.put("secondPhotoUploadDate",dateIntro);
                                             userCompletion.put("thirdPhotoUri", "null");
                                             userCompletion.put("thirdPhotoUploadMade",false);
-                                            userCompletion.put("thirdPhotoUploadDate",new Date(new Date().getTime() - 10 * 86400000));
+                                            userCompletion.put("thirdPhotoUploadDate",dateIntro);
                                             userCompletion.put("locationUploadMade",false);
-                                            userCompletion.put("locationUploadDate",new Date(new Date().getTime() - 10 * 86400000));
+                                            userCompletion.put("locationUploadDate",dateIntro);
                                             userCompletion.put("descriptionUploadMade",false);
-                                            userCompletion.put("descriptionUploadDate",new Date(new Date().getTime() - 10 * 86400000));
+                                            userCompletion.put("descriptionUploadDate",dateIntro);
                                             userCompletion.put("ageUploadMade",false);
-                                            userCompletion.put("ageUploadDate",new Date(new Date().getTime() - 10 * 86400000));
+                                            userCompletion.put("ageUploadDate",dateIntro);
+                                            userCompletion.put("nameUploadMade",false);
+                                            userCompletion.put("nameUploadDate",dateIntro);
+                                            userCompletion.put("genderUploadMade",false);
+                                            userCompletion.put("genderUploadDate",dateIntro);
                                             userCompletion.put("topicsUploadMade",false);
-                                            userCompletion.put("topicsUploadDate",new Date(new Date().getTime() - 10 * 86400000));
-                                            userCompletion.put("chosenTopicsArray", Arrays.asList("null","null"));
+                                            userCompletion.put("topicsUploadDate",dateIntro);
+                                            userCompletion.put("chosenTopicsArray", Arrays.asList("","",""));
                                             docRef.set(userCompletion, SetOptions.merge());
                                         }
                                     })
@@ -397,13 +404,32 @@ public class MainActivity extends AppCompatActivity {
 
         AlertDialog introDialog = new AlertDialog.Builder(this)
                 .setView(introDialogView)  // What to use in dialog box
-                .setPositiveButton("OK, I get it!", null)
+                .setPositiveButton("NEXT", null)
                 .show();
 
         introDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                introDialog.dismiss();
+                if (introPage == 0) {
+                    View introDialogView2 = inflaterDialog.inflate(R.layout.intro_dialog_box2, null);
+
+                    AlertDialog introDialog2 = new AlertDialog.Builder(MainActivity.this)
+                            .setView(introDialogView2)  // What to use in dialog box
+                            .setPositiveButton("OK, I GET IT!", null)
+                            .show();
+                    introPage++;
+                    introDialog2.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            introDialog2.dismiss();
+
+                        }
+                    });
+                    introDialog.dismiss();
+                } else if (introPage == 1) {
+                    introDialog.dismiss();
+                }
+
                 }
             });
     }

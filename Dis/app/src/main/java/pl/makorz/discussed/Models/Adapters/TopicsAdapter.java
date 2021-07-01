@@ -1,35 +1,93 @@
 package pl.makorz.discussed.Models.Adapters;
 
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class TopicsAdapter extends RecyclerView.Adapter<TopicsAdapter.ViewHolder> {
+import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+
+import pl.makorz.discussed.Models.Topic;
+import pl.makorz.discussed.R;
+
+public class TopicsAdapter extends FirestoreRecyclerAdapter<Topic,TopicsAdapter.ViewHolder> {
+
+
+    private static OnItemClickListener listener;
+//    public static final String TOPICS_ARRAY = "chosenTopicsArray";
+//    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//    FirebaseFirestore db = FirebaseFirestore.getInstance();
+//    Boolean isFavorite = false;
+
+    public TopicsAdapter(@NonNull FirestoreRecyclerOptions<Topic> options) {
+        super(options);
+    }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+
+        View view;
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.topics_view, parent, false);
+        return new TopicsAdapter.ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    protected void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull Topic model) {
+        String topic = model.getTopicTitle() ;
+        holder.topicTitle.setText(topic);
+        holder.isTopicInFavorites.isClickable();
 
-    }
-
-    @Override
-    public int getItemCount() {
-        return 0;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        private CardView cardView;
-        public ViewHolder(CardView v) {
-            super(v);
-            cardView=v;
+
+        TextView topicTitle;
+        CheckBox isTopicInFavorites;
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            topicTitle = itemView.findViewById(R.id.single_topic_name);
+            isTopicInFavorites = itemView.findViewById(R.id.is_topic_favorite_check);
+
+            isTopicInFavorites.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION && listener != null) {
+                        boolean isFavorite;
+                        isFavorite = isTopicInFavorites.isChecked();
+                        listener.onItemClick(isFavorite, position, topicTitle.getText().toString(),isTopicInFavorites);
+                    }
+
+                }
+            });
+
         }
     }
+
+    // This methods below allow to send data from adapter to activity
+    public interface OnItemClickListener {
+        void onItemClick(boolean isFavorite, int position, String topicTitle, CompoundButton cb);
+    }
+
+    public void setOnItemCLickListener(OnItemClickListener listener) {
+        TopicsAdapter.listener = listener;
+    }
+
 }
