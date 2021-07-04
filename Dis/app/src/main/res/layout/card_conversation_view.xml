@@ -7,7 +7,11 @@
     android:layout_width="match_parent"
     android:layout_height="80dp"
     android:layout_margin="5dp"
-    card_view:cardCornerRadius="20dp">
+    card_view:cardCornerRadius="20dp"
+    android:focusable="true"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    >
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/info_image"

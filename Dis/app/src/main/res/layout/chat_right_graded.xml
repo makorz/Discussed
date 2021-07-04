@@ -3,17 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    >
+    android:gravity="end">
 
     <LinearLayout
-        android:id="@+id/chatLeftLayout"
+        android:id="@+id/chatRightGradedLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/chat_left_bubble2"
+        android:background="@drawable/chat_right_bubble_maybe"
         android:orientation="vertical"
         android:layout_marginBottom="5dp"
         tools:ignore="UselessParent"
         android:focusable="true"
+        android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
         >
 
@@ -21,19 +22,22 @@
             android:id="@+id/userNameID"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
-            android:maxWidth="300dp"
+            android:gravity="end"
+            android:layout_marginStart="12dp"
             android:minWidth="75dp"
-            android:textColor="@color/teal_brown_700" />
+            android:maxWidth="300dp"
+            android:textColor="@color/brown_500" />
 
         <TextView
             android:id="@+id/textOfMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:maxWidth="300dp"
-            android:minWidth="75dp"
+            android:gravity="end"
+            android:textAlignment="viewEnd"
+            android:layout_marginEnd="5dp"
             android:layout_marginTop="8dp"
+            android:minWidth="75dp"
+            android:maxWidth="300dp"
             android:textAppearance="@style/TextAppearance.AppCompat.Light.Widget.PopupMenu.Small"
             android:textColor="@android:color/white" />
 
@@ -41,13 +45,13 @@
             android:id="@+id/dateOfMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="end"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="8dp"
-            android:maxWidth="300dp"
-            android:minWidth="75dp"
             android:textSize="11sp"
-            android:textColor="@color/teal_brown_700" />
+            android:layout_marginEnd="12dp"
+            android:layout_marginTop="8dp"
+            android:minWidth="75dp"
+            android:maxWidth="300dp"
+            android:textColor="@color/brown_500" />
+
 
     </LinearLayout>
 
@@ -68,12 +72,6 @@
         android:maxWidth="300dp"
         android:textColor="@color/brown_500" />
 
-    <!--    <TextView-->
-<!--        android:layout_width="40dp"-->
-<!--        android:layout_marginTop="25dp"-->
-<!--        android:layout_marginStart="10dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        />-->
-
-
 </LinearLayout>
+
+

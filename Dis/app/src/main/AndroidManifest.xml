@@ -2,8 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="pl.makorz.discussed">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <!--
+         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
+         Google Maps Android API v2, but you must specify either coarse or fine
+         location permissions for the "MyLocation" functionality.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
 
     <application
         android:allowBackup="true"
@@ -13,14 +20,30 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Discussed">
 
+        <!--
+             The API key for Google Maps-based APIs is defined as a string resource.
+             (See the file "res/values/google_maps_api.xml").
+             Note that the API key is linked to the encryption key used to sign the APK.
+             You need a different API key for each encryption key, including the release key that is used to
+             sign the APK for publishing.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
 
+        <activity
+            android:name=".Controllers.LocationActivity"
+            android:label="@string/title_activity_location"
+            android:theme="@style/Theme.AppCompat.Light.Dialog"/>
 
-        <activity android:name=".Controllers.BlindDateActivity"
-            android:screenOrientation="portrait"
+        <activity
+            android:name=".Controllers.BlindDateActivity"
             android:label="@string/title_activity_blindDate"
-            />
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".Controllers.LoginActivity"
+        <activity
+            android:name=".Controllers.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
             <intent-filter>
@@ -30,12 +53,11 @@
             </intent-filter>
         </activity>
 
-        <!--Prevent Keyboard Editext to popup window soft input-->
-        <activity android:name=".Controllers.MainActivity"
+        <!-- Prevent Keyboard Editext to popup window soft input -->
+        <activity
+            android:name=".Controllers.MainActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateHidden"
-            >
-
+            android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Controllers.LoginActivity" />
@@ -50,12 +72,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Controllers.MainActivity" />
         </activity>
-
         <activity
             android:name=".Controllers.ChatActivity"
             android:label="@string/title_activity_chat"
             android:parentActivityName=".Controllers.MainActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".Controllers.AlienProfileActivity"
             android:label="@string/title_activity_alien_profile"
@@ -69,7 +91,6 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-
     </application>
 
 </manifest>

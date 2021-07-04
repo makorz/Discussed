@@ -40,6 +40,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import pl.makorz.discussed.Controllers.ChatActivity;
+import pl.makorz.discussed.Controllers.MainActivity;
 import pl.makorz.discussed.R;
 
 public class MainFragment extends Fragment {
@@ -68,11 +69,14 @@ public class MainFragment extends Fragment {
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private int introPage = 0;
+    private int USER_NEW_ACCOUNT = -1;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
 
         View mainView = inflater.inflate(R.layout.fragment_main, container, false);
         waitUntilChatAppears = mainView.findViewById(R.id.progressBarOfSearch);
@@ -85,7 +89,7 @@ public class MainFragment extends Fragment {
             public void onClick(View v) {
                 buttonChat.setEnabled(false);
                 buttonBlindDate.setEnabled(false);
-                layoutToDimWhenSearching.setAlpha(0.4f);
+                layoutToDimWhenSearching.setAlpha(0.3f);
                 waitUntilChatAppears.setVisibility(View.VISIBLE);
                 try {
                     checkIfUserCanSearch();
@@ -104,10 +108,11 @@ public class MainFragment extends Fragment {
     private void searchForUser() {
 
         Random r = new Random();
-        int randomNrOfUser = r.nextInt(7 - 1) + 1;
+        int randomNrOfUser = 4;
+                //r.nextInt(4 - 1) + 1;
 
 
-        Query queryUser = FirebaseFirestore.getInstance().collection("search/searchAll/searchNE").whereEqualTo ("randomNr",randomNrOfUser);
+        Query queryUser = FirebaseFirestore.getInstance().collection("search/searchAll/searchNE").whereEqualTo("randomNr",randomNrOfUser).limit(1);
         queryUser.get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -115,7 +120,6 @@ public class MainFragment extends Fragment {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 idOfOtherUser = document.get("idOfUser").toString();
-                                Log.d(TAG, "onCompleteasfasf: " + idOfOtherUser);
                                 if (idOfOtherUser.equals(user.getUid())){
                                     searchForUser();
                                 } else {
@@ -132,6 +136,8 @@ public class MainFragment extends Fragment {
     // Create Chat Activity
     private void generateChatInFirestore() {
         Map<String, Object> chat = new HashMap<>();
+        Map<String, Object> user1 = new HashMap<>();
+        Map<String, Object> user2 = new HashMap<>();
 
         db.collection("chats").add(chat)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -140,23 +146,47 @@ public class MainFragment extends Fragment {
                         chatID = documentReference.getId();
                         chat.put("chatID", chatID);
                         chat.put("dateOfChatCreation", new Date());
-                        Log.d(TAG, "onCdgsdgsdg: " + nameOfOtherUser);
                         chat.put("usersParticipatingName", Arrays.asList(nameOfUser,nameOfOtherUser));
                         chat.put("lastMessage","");
+                        chat.put("lastMessageDate",new Date());
                         chat.put("usersParticipatingFirstImageUri",Arrays.asList(firstPhotoUriOfUser,firstPhotoUriOfOtherUser));
                         chat.put("usersParticipatingID", Arrays.asList(user.getUid(),idOfOtherUser));
-                        chat.put("usersNrOfPoints",Arrays.asList(0,0));
                         chat.put("isFirstPhotoOfUserUncovered",Arrays.asList(false,false));
 
+                        user1.put("userID", user.getUid());
+                        user1.put("pointsFromOtherUser", (Integer) 0);
+                        user1.put("userName", nameOfUser);
+                        user1.put("uncoverStrangerFirstPhoto",false);
+                        user1.put("uncoverStrangerSecondPhoto",false);
+                        user1.put("uncoverStrangerThirdPhoto",false);
+                        user1.put("uncoverStrangerDescription",false);
+                        user1.put("uncoverStrangerAge",false);
+                        user1.put("uncoverStrangerLocation",false);
+                        user1.put("uncoverStrangerGender",false);
+                        db.collection("chats").document(chatID).collection("chatUsers").document(user.getUid()).set(user1);
+
+                        user2.put("userID", idOfOtherUser);
+                        user2.put("pointsFromOtherUser", (Integer) 0);
+                        user2.put("userName", nameOfOtherUser);
+                        user2.put("uncoverStrangerFirstPhoto",false);
+                        user2.put("uncoverStrangerSecondPhoto",false);
+                        user2.put("uncoverStrangerThirdPhoto",false);
+                        user2.put("uncoverStrangerDescription",false);
+                        user2.put("uncoverStrangerAge",false);
+                        user2.put("uncoverStrangerLocation",false);
+                        user2.put("uncoverStrangerGender",false);
+                        db.collection("chats").document(chatID).collection("chatUsers").document(idOfOtherUser).set(user2);
+
                         db.collection("chats").document(chatID).set(chat)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
-                                    public void onSuccess(Void aVoid) {
-                                        Log.d(TAG, "DocumentSnapshot successfully written! " + chatID);
+                                    public void onComplete(@NonNull Task<Void> task) {
+
                                         Intent intent = new Intent(getActivity(), ChatActivity.class);
                                         intent.putExtra("chatIdIntent", chatID);
                                         intent.putExtra("otherUserName", nameOfOtherUser);
                                         intent.putExtra("idOfOtherUser",idOfOtherUser);
+                                        waitUntilChatAppears.setVisibility(View.INVISIBLE);
                                         Objects.requireNonNull(getActivity()).startActivity(intent);
                                     }
                                 })
@@ -297,6 +327,7 @@ public class MainFragment extends Fragment {
         });
 
     }
+
 
 
 }

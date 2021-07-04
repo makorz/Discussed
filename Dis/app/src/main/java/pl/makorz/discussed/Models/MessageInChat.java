@@ -4,17 +4,36 @@ import java.util.Date;
 
 public class MessageInChat {
 
-    public String textOfMessage, userID, userNameID;
+    public String textOfMessage, userID, userNameID, messageID;
     Date dateOfMessage;
+    public boolean wasGraded;
+
 
     public MessageInChat() {
     }
 
-    public MessageInChat(String textOfMessage, String userID, String userNameID, Date dateOfMessage) {
+    public MessageInChat(String textOfMessage, String userID, String userNameID, Date dateOfMessage, boolean wasGraded) {
         this.textOfMessage = textOfMessage;
         this.userID = userID;
         this.userNameID = userNameID;
         this.dateOfMessage = dateOfMessage;
+        this.wasGraded = wasGraded;
+    }
+
+    public String getMessageID() {
+        return messageID;
+    }
+
+    public void setMessageID(String messageID) {
+        this.messageID = messageID;
+    }
+
+    public boolean wasGraded() {
+        return wasGraded;
+    }
+
+    public void setWasGraded(boolean wasGraded) {
+        this.wasGraded = wasGraded;
     }
 
     public String getTextOfMessage() {

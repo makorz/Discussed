@@ -18,10 +18,12 @@ import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -33,6 +35,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -73,13 +76,16 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public static final String AGE_FIELD = "ageOfUser";
     public static final String DESCRIPTION_FIELD = "description";
     public static final String NAME_FIELD = "displayName";
-    public static final String LOCATION_FIELD = "location";
+    public static final String LOCATION_FIELD = "locationLatLng";
     public static final String TOPICS_ARRAY = "chosenTopicsArray";
     public static final String GENDER_FIELD = "genderFemale";
     public static final String FIRST_PHOTO_URI = "firstPhotoUri";
     public static final String SECOND_PHOTO_URI = "secondPhotoUri";
     public static final String THIRD_PHOTO_URI = "thirdPhotoUri";
     public static final String CAN_USER_SEARCH = "canUserSearch";
+    public static final String COUNTRY_NAME_FIELD = "locationCountryName";
+    public static final String COUNTRY_CODE_FIELD = "locationCountryCode";
+    public static final String PLACE_NAME_FIELD = "placeName";
 
     public static final String FIRST_PHOTO_UPLOAD_MADE = "firstPhotoUploadMade";
     public static final String SECOND_PHOTO_UPLOAD_MADE = "secondPhotoUploadMade";
@@ -111,9 +117,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public Button buttonDescriptionChange, buttonAgeChange, buttonLocationChange, buttonNameChange, buttonTopicsChange, buttonFirstImageChange,
             buttonSecondImageChange, buttonThirdImageChange, buttonGenderChange;
     private TextView profileDescriptionText, ageText, locationText, nameText, titleText, topicsText, genderText;
-    private ImageView firstImageView;
-    private ImageView secondImageView;
-    private ImageView thirdImageView;
+    private ImageView firstImageView, secondImageView, thirdImageView;
     private Boolean firstPhotoUploadMade, secondPhotoUploadMade, thirdPhotoUploadMade, locationUploadMade, descriptionUploadMade, ageUploadMade, topicsUploadMade,
             genderUploadMade, nameUploadMade, whatGender, canUserSearch;
     private AlertDialog dialog;
@@ -173,24 +177,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     DocumentSnapshot document = task.getResult();
                     if (document != null) {
 
-                        String age = Integer.toString(document.getDouble(AGE_FIELD).intValue());
-                        ageText.setText(age);
-
-
-                        double latitude = document.getGeoPoint(LOCATION_FIELD).getLatitude();
-                        double longitude = document.getGeoPoint(LOCATION_FIELD).getLongitude();
-                        String location = "[ " + latitude + ", " + longitude + " ]";
-                        locationText.setText(location);
-
-                        nameText.setText(document.getString(NAME_FIELD));
-                        profileDescriptionText.setText(document.getString(DESCRIPTION_FIELD));
-                        String title = "Welcome " + document.getString(NAME_FIELD) + " to Your profile!";
-                        titleText.setText(title);
-
-                        firstPhotoUri = document.getString(FIRST_PHOTO_URI);
-                        secondPhotoUri = document.getString(SECOND_PHOTO_URI);
-                        thirdPhotoUri = document.getString(THIRD_PHOTO_URI);
-
                         firstPhotoUploadMade = document.getBoolean(FIRST_PHOTO_UPLOAD_MADE);
                         secondPhotoUploadMade = document.getBoolean(SECOND_PHOTO_UPLOAD_MADE);
                         thirdPhotoUploadMade = document.getBoolean(THIRD_PHOTO_UPLOAD_MADE);
@@ -200,6 +186,41 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         topicsUploadMade = document.getBoolean(TOPICS_UPLOAD_MADE);
                         descriptionUploadMade = document.getBoolean(DESCRIPTION_UPLOAD_MADE);
                         genderUploadMade = document.getBoolean(GENDER_UPLOAD_MADE);
+
+                        firstPhotoUri = document.getString(FIRST_PHOTO_URI);
+                        secondPhotoUri = document.getString(SECOND_PHOTO_URI);
+                        thirdPhotoUri = document.getString(THIRD_PHOTO_URI);
+
+                        String title = "Welcome " + document.getString(NAME_FIELD) + " to Your profile!";
+                        titleText.setText(title);
+
+                        nameText.setText(R.string.not_filled);
+                        if (nameUploadMade) {
+                            nameText.setText(document.getString(NAME_FIELD));
+                        }
+                        profileDescriptionText.setText(R.string.not_filled);
+                        if (descriptionUploadMade) {
+                            profileDescriptionText.setText(document.getString(DESCRIPTION_FIELD));
+                        }
+
+
+
+
+
+
+
+                        ageText.setText(R.string.not_filled);
+                        if (ageUploadMade) {
+                            String age = Integer.toString(document.getDouble(AGE_FIELD).intValue());
+                            ageText.setText(age);
+                        }
+                        locationText.setText(R.string.not_filled);
+                        if (locationUploadMade) {
+                            String placeName = document.getString(PLACE_NAME_FIELD);
+                            String countryName = document.getString(COUNTRY_NAME_FIELD);
+                            String localisation = placeName + ", " + countryName + ".";
+                            locationText.setText(localisation);
+                        }
 
                         if (firstPhotoUploadMade && secondPhotoUploadMade && thirdPhotoUploadMade && locationUploadMade && nameUploadMade && ageUploadMade && topicsUploadMade
                                 && descriptionUploadMade && genderUploadMade ) {
@@ -218,27 +239,32 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         descriptionUploadDate = document.getDate(DESCRIPTION_UPLOAD_DATE);
                         genderUploadDate = document.getDate(GENDER_UPLOAD_DATE);
 
-                        topicList = (ArrayList<String>) document.get(TOPICS_ARRAY);
-                        StringBuilder topicsListInTextView = new StringBuilder("Your topics: \n\n");
-                        for(int i = 0; i < topicList.size(); i++) {
-                            String addTopic;
-                            String nrOfTopic = String.valueOf(i + 1);
-                            if (i == topicList.size() - 1) {
-                                addTopic = nrOfTopic + ". " + topicList.get(i);
-                            } else {
-                                addTopic = nrOfTopic + ". " + topicList.get(i)+ "\n";
+                        topicsText.setText(R.string.not_filled);
+                        if (topicsUploadMade) {
+                            topicList = (ArrayList<String>) document.get(TOPICS_ARRAY);
+                            StringBuilder topicsListInTextView = new StringBuilder("Your topics: \n\n");
+                            for (int i = 0; i < topicList.size(); i++) {
+                                String addTopic;
+                                String nrOfTopic = String.valueOf(i + 1);
+                                if (i == topicList.size() - 1) {
+                                    addTopic = nrOfTopic + ". " + topicList.get(i);
+                                } else {
+                                    addTopic = nrOfTopic + ". " + topicList.get(i) + "\n";
+                                }
+                                topicsListInTextView.append(addTopic);
                             }
-                            topicsListInTextView.append(addTopic);
-                        }
-                        topicsText.setText(topicsListInTextView);
-
-                        whatGender = document.getBoolean(GENDER_FIELD);
-                        if (!whatGender) {
-                            genderText.setText("Male");
-                        } else {
-                            genderText.setText("Female");
+                            topicsText.setText(topicsListInTextView);
                         }
 
+                        genderText.setText(R.string.not_filled);
+                        if (genderUploadMade){
+                            whatGender = document.getBoolean(GENDER_FIELD);
+                            if (!whatGender) {
+                                genderText.setText("Male");
+                            } else {
+                                genderText.setText("Female");
+                            }
+                        }
                         if (firstPhotoUploadMade) {
                             Glide.with(getApplicationContext()).load(firstPhotoUri).into(firstImageView);
                         }
@@ -475,6 +501,37 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else if (requestCode == 5  ) {
+
+            if (resultCode == RESULT_OK) {
+                // location activity for result
+                String placeName = data.getStringExtra("placeName");
+                String countryName = data.getStringExtra("countryName");
+                String countryCode = data.getStringExtra("countryCode");
+                LatLng latLngParameters = new LatLng(data.getDoubleExtra("latitude", 0), data.getDoubleExtra("longitude", 0));
+
+                db.collection("users").document(currentUser.getUid())
+                        .update(PLACE_NAME_FIELD, placeName);
+                db.collection("users").document(currentUser.getUid())
+                        .update(COUNTRY_NAME_FIELD, countryName);
+                db.collection("users").document(currentUser.getUid())
+                        .update(COUNTRY_CODE_FIELD, countryCode);
+                db.collection("users").document(currentUser.getUid())
+                        .update(LOCATION_FIELD, latLngParameters);
+
+                if (!locationUploadMade && placeName.length() > 1 && countryCode.length() > 1 && countryName.length() > 1) {
+                    db.collection("users").document(currentUser.getUid())
+                            .update(LOCATION_UPLOAD_MADE, true);
+                }
+                db.collection("users").document(currentUser.getUid())
+                        .update(LOCATION_UPLOAD_DATE, new Date());
+                try {
+                    updateUserCollection();
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
     }
 
@@ -544,7 +601,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     // This function starts functions correlated with certain button
     @Override
     public void onClick(View view) {
-        int daysToChange = 3;
+        int daysToChange = 0;
         long nrOfDaysSinceChange;
         long dateDiff;
 
@@ -552,7 +609,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.description_own_change:
                 dateDiff = currentDate.getTime() - descriptionUploadDate.getTime();
                 nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
-                if ( nrOfDaysSinceChange > daysToChange) {
+                if ( nrOfDaysSinceChange >= daysToChange) {
                     descriptionAgeNameChangeDialog(DESCRIPTION_FIELD, "Your Description");
                 } else {
                     timeOfChangeAlertDialog(nrOfDaysSinceChange);
@@ -572,8 +629,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.location_own_change:
                 dateDiff = currentDate.getTime() - locationUploadDate.getTime();
                 nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
-                if (nrOfDaysSinceChange > daysToChange) {
-                    descriptionAgeNameChangeDialog(LOCATION_FIELD, "Your Location");
+                if (nrOfDaysSinceChange >= daysToChange) {
+                    locationChange();
                 } else {
                     timeOfChangeAlertDialog(nrOfDaysSinceChange);
                 }
@@ -708,8 +765,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
             }
         });
-
-
     }
 
     // This function shows AlertDialog
@@ -720,7 +775,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         View dialogAlertView = inflater.inflate(R.layout.progress_bar, null);
         messageAlertView = dialogAlertView.findViewById(R.id.loading_msg);
         builder.setView(dialogAlertView);
-        messageAlertView.setText("Profile info loading...");
+        messageAlertView.setText(R.string.alert_dialog_loading_profile);
         dialog = builder.create();
         dialog.show();
     }
@@ -893,8 +948,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
-    // This function let's You set Your localisation
-    public void locationChangeDialog() {}
+    // This function send to LocationActivity to set location
+    public void locationChange() {
+        int LAUNCH_LOCATION_ACTIVITY = 5;
+        Intent i = new Intent(this, LocationActivity.class);
+        startActivityForResult(i, LAUNCH_LOCATION_ACTIVITY);
+    }
 
     // This function updates placement of User in Search collection (UserID, User Gender, User Location, User Age, User Topics)
     public void updateUserSpotInSearchCollection() {}

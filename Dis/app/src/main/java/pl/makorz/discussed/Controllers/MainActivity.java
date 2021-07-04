@@ -27,6 +27,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -63,9 +64,8 @@ public class MainActivity extends AppCompatActivity {
     private int currentPosition = 0;
     String searchID = "";
     private DocumentSnapshot searchSnapshot,userSnapshot;
-    private int USER_NEW_ACCOUNT = -1;
+    public int USER_NEW_ACCOUNT = -1;
     private int introPage = 0;
-
 
     private FirebaseAuth mAuth;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -74,10 +74,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        USER_NEW_ACCOUNT = getIntent().getIntExtra("USER_NEW_ACCOUNT",-1);
         setContentView(R.layout.activity_main);
         initView(savedInstanceState);
 
-        USER_NEW_ACCOUNT = getIntent().getIntExtra("USER_NEW_ACCOUNT",-1);
         if (USER_NEW_ACCOUNT == 0) {
             introAlertDialog();
             new Thread() {
@@ -353,6 +353,10 @@ public class MainActivity extends AppCompatActivity {
                                             userCompletion.put("thirdPhotoUploadDate",dateIntro);
                                             userCompletion.put("locationUploadMade",false);
                                             userCompletion.put("locationUploadDate",dateIntro);
+                                            userCompletion.put("locationCountryName","");
+                                            userCompletion.put("locationCountryCode","");
+                                            userCompletion.put("placeName","");
+                                            userCompletion.put("locationLatLng",new LatLng(0,0));
                                             userCompletion.put("descriptionUploadMade",false);
                                             userCompletion.put("descriptionUploadDate",dateIntro);
                                             userCompletion.put("ageUploadMade",false);

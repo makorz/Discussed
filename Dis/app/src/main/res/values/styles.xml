@@ -20,4 +20,13 @@
         <item name="android:textColorSecondary">@color/brown_700</item>
     </style>
 
+    <style name="Theme.AppCompat.Light.Dialog.Button" parent = "@style/Theme.AppCompat.Light.Dialog">
+        <item name="android:colorButtonNormal">@color/brown_700</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+
+
+
+
 </resources>

@@ -24,31 +24,29 @@
 
 
     <!--Own Profile strings-->
-    <string name="change_image_button">Change image</string>
-    <string name="profile_title">WELCOME TO YOUR PROFILE</string>
-    <string name="change_your_description_button">Change description</string>
-    <string name="change_your_location_button">Change Location</string>
+    <string name="change_image_button"><b>Change image</b></string>
+    <string name="profile_title"><b>WELCOME TO YOUR PROFILE</b></string>
+    <string name="change_your_description_button"><b>Change description</b></string>
+    <string name="change_your_location_button"><b>Change Location</b></string>
     <string name="description_edit_view">Your description has not been created yet!</string>
     <string name="description_dialog_enter">Enter Your Description</string>
     <string name="age_edit_view">Your age has not been set, yet!</string>
-    <string name="change_your_age_button">Change Age</string>
+    <string name="change_your_age_button"><b>Change Age</b></string>
     <string name="location_edit_view">Where are You?</string>
     <string name="dialog_box_upload_photo">Uploading photo…</string>
-    <string name="change_your_gender_button">Change Gender</string>
+    <string name="change_your_gender_button"><b>Change Gender</b></string>
     <string name="gender_edit_view">What gender?</string>
     <string name="your_topics_text_view">Your topics: </string>
 
     <!--Alien Profile strings-->
     <string name="alien_profile_title">PROFILE OF STRANGER</string>
-    <string name="uncover_alien_description">Uncover description (3p)</string>
-    <string name="uncover_image_button">Uncover photo (5p)</string>
+    <string name="uncover_alien_description"><b>Uncover description</b></string>
+    <string name="uncover_image_button"><b>Uncover photo</b></string>
     <string name="alien_description_text_view">Description of Stranger To Uncover</string>
     <string name="alien_location_text_view">Location of Stranger To Uncover</string>
-    <string name="uncover_alien_location">Uncover location (2p)</string>
+    <string name="uncover_alien_location"><b>Uncover location</b></string>
     <string name="alien_age_text_view">Exact Age of Stranger To Uncover</string>
-    <string name="uncover_alien_age">Uncover age \n (2p)</string>
-    <string name="uncover_alien_gender">Uncover gender \n (1p)</string>
-    <string name="uncover_alien_topics">Uncover topics \n (1p)</string>
+    <string name="uncover_alien_age"><b>Uncover\n age</b></string>
     <string name="points_left_to_use_alien">Nr of points left to use:</string>
     <string name="alien_hint_before_uncover">\???????</string>
 
@@ -68,10 +66,10 @@
     <string name="agreeTermsCheckBox">I Agree to <b><u>Terms and Conditions</u></b> of using app "Discussed"</string>
     <string name="terms_and_conditions">Terms and Conditions</string>
     <string name="delete_account">DELETE ACCOUNT</string>
-    <string name="change_name_button">Change name</string>
+    <string name="change_name_button"><b>Change name</b></string>
     <string name="agreeAgeCheckBox">I\'m over 18 years old.</string>
     <string name="name_text_view_profile">Your name</string>
-    <string name="change_your_topics_button">Pick up topics</string>
+    <string name="change_your_topics_button"><b>Pick up topics</b></string>
     <string name="own_topic_title_of_list">Chosen topics for discussions:</string>
     <string name="alert_dialog_loading_profile">Loading profile…</string>
     <string name="info_dialog_box_text1"><b>\nWelcome to my application!</b></string>
@@ -221,5 +219,12 @@ Questions &amp; Contact Information \n\n
         <item>Version number</item>
         <item>Quick guide</item>
     </string-array>
+
+    <string name="title_activity_location">Map</string>
+    <string name="button_localisation_choose">I ACCEPT MARKED LOCALISATION</string>
+    <string name="localisation_text_view_title">Your current location has been marked on map, if this location is OK click button on bottom of the screen. If You want to choose different
+        localisation, mark it on map and then click button on bottom of the screen.</string>
+    <string name="localisation_not_turned_on_title">Localisation not turned on!</string>
+    <string name="not_filled">NOT FILLED</string>
 
 </resources>

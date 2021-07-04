@@ -116,10 +116,10 @@ public class LoginActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            Toast.makeText(LoginActivity.this, "WELCOME!!!", Toast.LENGTH_SHORT).show();
                             boolean isNew = Objects.requireNonNull(Objects.requireNonNull(task.getResult()).getAdditionalUserInfo()).isNewUser();
-                            if (isNew) USER_NEW_ACCOUNT = 0;
-                            Log.d(TAG, String.valueOf(USER_NEW_ACCOUNT));
+                            if (isNew) {
+                                USER_NEW_ACCOUNT = 0;
+                            }
                             user = mAuth.getCurrentUser();
                             updateUI(user);
                         } else {

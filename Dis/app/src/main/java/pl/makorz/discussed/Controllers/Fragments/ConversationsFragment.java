@@ -26,6 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import pl.makorz.discussed.Models.Adapters.ConversationsAdapter;
@@ -35,22 +36,21 @@ import pl.makorz.discussed.R;
 
 public class ConversationsFragment extends Fragment  {
 
-    private View conversationView;
     private RecyclerView conversationRecycler;
     private static final String TAG = "ConversationsFragment";
     private ConversationsAdapter adapter;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    ArrayList<String> usersIDList;
-    String userID;
+    String otherUserID;
     private String otherUserName;
     public static final String USERS_ID_ARRAY = "usersParticipatingID";
     public static final String NAME_FIELD = "displayName";
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        conversationView = inflater.inflate(R.layout.fragment_conversations,container,false);
+        View conversationView = inflater.inflate(R.layout.fragment_conversations, container, false);
         conversationRecycler = conversationView.findViewById(R.id.users_recycler);
         setUpRecyclerView();
 
@@ -65,11 +65,16 @@ public class ConversationsFragment extends Fragment  {
                             DocumentSnapshot document = task.getResult();
                             if (document != null) {
 
-                                usersIDList = (ArrayList<String>) document.get(USERS_ID_ARRAY);
-                                userID = usersIDList.get(1);
-                                userID = userID.replaceAll("\\s+","");
+                                List<String> listOfUsers = (List<String>) document.get(USERS_ID_ARRAY);
+                                int index = listOfUsers.indexOf(user.getUid());
+                                if (index == 0) {
+                                    index++;
+                                } else {
+                                    index--;
+                                }
+                                otherUserID = listOfUsers.get(index);
 
-                                DocumentReference docRef2 = db.collection("users").document(userID);
+                                DocumentReference docRef2 = db.collection("users").document(otherUserID);
                                 docRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -78,11 +83,14 @@ public class ConversationsFragment extends Fragment  {
                                             if (document2 != null) {
                                                 otherUserName = document2.getString(NAME_FIELD);
                                                 Intent intent = new Intent(getActivity(), ChatActivity.class);
+                                                adapter.stopListening();
                                                 intent.putExtra("chatIdIntent", chatID);
                                                 intent.putExtra("otherUserName",otherUserName);
-                                                intent.putExtra("idOfOtherUser",userID);
-                                                Objects.requireNonNull(getActivity()).startActivity(intent);
+                                                intent.putExtra("idOfOtherUser",otherUserID);
+                                                intent.putExtra("currentUserID",user.getUid());
+                                                startActivity(intent);
                                                 Toast.makeText(getContext(), "Position: " + position + " ChatID: " + chatID , Toast.LENGTH_SHORT).show();
+
 
                                             } else {
                                                 Log.d("LOGGER", "No such document");
@@ -130,11 +138,17 @@ public class ConversationsFragment extends Fragment  {
         super.onStart();
         adapter.startListening();
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        adapter.startListening();
+    }
 
     @Override
     public void onStop() {
         super.onStop();
         adapter.stopListening();
+
     }
 
 

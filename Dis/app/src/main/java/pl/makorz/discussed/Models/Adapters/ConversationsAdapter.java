@@ -34,7 +34,6 @@ public class ConversationsAdapter extends FirestoreRecyclerAdapter<Conversation,
 
         String chatID = model.getChatID();
         model.checkLastMessage(chatID);
-
         holder.chatIDtext.setText(model.getChatID());
         holder.textOfMessage.setText(model.getLastMessage());
         List<String> listOfUsers = model.getUsersParticipatingID();

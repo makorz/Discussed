@@ -6,10 +6,10 @@
     >
 
     <LinearLayout
-        android:id="@+id/chatLeftLayout"
+        android:id="@+id/chatLeftGradedLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/chat_left_bubble2"
+        android:background="@drawable/chat_left_bubble_maybe"
         android:orientation="vertical"
         android:layout_marginBottom="5dp"
         tools:ignore="UselessParent"
@@ -22,8 +22,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="12dp"
-            android:maxWidth="300dp"
             android:minWidth="75dp"
+            android:maxWidth="300dp"
             android:textColor="@color/teal_brown_700" />
 
         <TextView
@@ -69,11 +69,11 @@
         android:textColor="@color/brown_500" />
 
     <!--    <TextView-->
-<!--        android:layout_width="40dp"-->
-<!--        android:layout_marginTop="25dp"-->
-<!--        android:layout_marginStart="10dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        />-->
+    <!--        android:layout_width="40dp"-->
+    <!--        android:layout_marginTop="25dp"-->
+    <!--        android:layout_marginStart="10dp"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        />-->
 
 
 </LinearLayout>

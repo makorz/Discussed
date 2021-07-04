@@ -106,25 +106,25 @@
                     app:layout_constraintTop_toBottomOf="@+id/linear_alien_photos">
 
                     <Button
-                        android:id="@+id/first_image_change"
+                        android:id="@+id/first_image_uncover"
+                        style="?android:attr/buttonBarButtonStyle"
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
                         android:layout_weight="1"
+                        android:text="@string/uncover_image_button" />
+
+                    <Button
+                        android:id="@+id/second_image_uncover"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
                         android:text="@string/uncover_image_button"
+                        android:layout_weight="1"
                         android:layout_margin="5dp"
                         style="?android:attr/buttonBarButtonStyle" />
 
                     <Button
-                        android:id="@+id/second_image_change"
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
-                        android:text="@string/uncover_image_button"
-                        android:layout_weight="1"
-                        android:layout_margin="5dp"
-                        style="?android:attr/buttonBarButtonStyle" />
-
-                    <Button
-                        android:id="@+id/third_image_change"
+                        android:id="@+id/third_image_uncover"
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:text="@string/uncover_image_button"
@@ -248,63 +248,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:id="@+id/linear_alien_gender"
-                android:layout_marginStart="15dp"
-                app:layout_constraintTop_toBottomOf="@+id/linear_alien_age">
-
-                <TextView
-                    android:id="@+id/alien_gender_profile_textview"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/style_text_view_profile"
-                    android:layout_weight="10"
-                    android:hint="@string/alien_hint_before_uncover"
-                    android:layout_gravity="center_vertical"
-                    android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2" />
-
-                <Button
-                    android:id="@+id/gender_alien_uncover_button"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:maxWidth="120dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/uncover_alien_gender"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    style="?android:attr/buttonBarButtonStyle"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:id="@+id/linear_alien_topics"
                 android:layout_marginStart="15dp"
-                app:layout_constraintTop_toBottomOf="@+id/linear_alien_gender">
+                android:layout_marginEnd="15dp"
+                app:layout_constraintTop_toBottomOf="@+id/linear_alien_age">
 
                 <TextView
                     android:id="@+id/topics_alien_profile_textview"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="10"
-                    android:hint="@string/alien_hint_before_uncover"
                     android:background="@drawable/style_text_view_profile"
                     android:layout_gravity="center_vertical"
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2" />
-
-                <Button
-                    android:id="@+id/topics_alien_uncover_button"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:maxWidth="120dp"
-                    android:layout_marginEnd="5dp"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/uncover_alien_topics"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    style="?android:attr/buttonBarButtonStyle"/>
 
             </LinearLayout>
 
