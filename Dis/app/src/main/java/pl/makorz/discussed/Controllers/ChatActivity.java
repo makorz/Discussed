@@ -52,9 +52,7 @@ public class ChatActivity extends AppCompatActivity {
     private static final String TAG = "ChatActivity";
     private String chatIdIntent, idOfOtherUser, otherUserName;
     public static final String USERS_ID_ARRAY = "usersParticipatingID";
-    public static final String USERS_NR_OF_POINTS = "usersNrOfPoints";
     public static final String WAS_GRADED = "wasGraded";
-    public static final String DATE_OF_UPDATE_POINTS = "nrOfPointsDateOfUpdate";
     public static final String NAME_FIELD = "displayName";
     public static final String USERS_NAME_ARRAY = "usersParticipatingName";
     public static final String USERS_PHOTO_URI_ARRAY = "usersParticipatingFirstImageUri";

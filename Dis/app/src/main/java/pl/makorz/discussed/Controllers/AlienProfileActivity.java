@@ -33,6 +33,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -64,6 +65,10 @@ public class AlienProfileActivity extends AppCompatActivity implements View.OnCl
     public static final String UNCOVER_SECOND_PHOTO_MADE = "uncoverStrangerSecondPhoto";
     public static final String UNCOVER_THIRD_PHOTO_MADE = "uncoverStrangerThirdPhoto";
     public static final String POINTS_TO_USE = "pointsFromOtherUser";
+
+    public static final String USERS_ID_ARRAY = "usersParticipatingID";
+    public static final String USERS_FIRST_PHOTO_UNCOVERED = "isFirstPhotoOfUserUncovered";
+
 
     private String otherUserName, chatIdIntent, idOfOtherUser, currentUserID;
     private String firstPhotoUri, secondPhotoUri, thirdPhotoUri;
@@ -359,6 +364,38 @@ public class AlienProfileActivity extends AppCompatActivity implements View.OnCl
                             .update(POINTS_TO_USE, FieldValue.increment(-pointsCost));
 
                     if (whatUncovered.equals(UNCOVER_FIRST_PHOTO_MADE)) {
+
+                        DocumentReference docRef3 = db.collection("chats").document(chatIdIntent);
+                        docRef3.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot documentOfChat = task.getResult();
+                                    if (documentOfChat != null) {
+
+                                        List<String> listOfUsers = (List<String>) documentOfChat.get(USERS_ID_ARRAY);
+                                        List<Boolean> listOfUsersUncoveredFirstPhoto = (List<Boolean>) documentOfChat.get(USERS_FIRST_PHOTO_UNCOVERED);
+                                        int index = listOfUsers.indexOf(currentUserID);
+
+                                        Boolean a =  true;
+                                        Boolean b = listOfUsersUncoveredFirstPhoto.get(index);
+
+                                        db.collection("chats").document(chatIdIntent)
+                                                .update(USERS_FIRST_PHOTO_UNCOVERED, FieldValue.delete());
+                                        if (index == 0) {
+                                            docRef3.update(USERS_FIRST_PHOTO_UNCOVERED, FieldValue.arrayUnion(b,a));
+                                        } else {
+                                            docRef3.update(USERS_FIRST_PHOTO_UNCOVERED, FieldValue.arrayUnion(a,b));
+                                        }
+
+                                    } else {
+                                        Log.d("LOGGER", "No such document");
+                                    }
+                                } else {
+                                    Log.d("LOGGER", "get failed with ", task.getException());
+                                }
+                            }
+                        });
 
                     }
 
