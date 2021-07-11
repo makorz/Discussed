@@ -1,13 +1,12 @@
 package pl.makorz.discussed.Controllers.Fragments;
 
-import android.app.AlertDialog;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,10 +23,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import pl.makorz.discussed.Models.Adapters.ConversationsAdapter;
 import pl.makorz.discussed.Controllers.ChatActivity;

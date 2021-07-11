@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import pl.makorz.discussed.Models.Adapters.ImagesAdapterCardView;
+import pl.makorz.discussed.Models.Adapters.BlindDatesAdapter;
 import pl.makorz.discussed.Controllers.BlindDateActivity;
 import pl.makorz.discussed.Models.BlindDate;
 import pl.makorz.discussed.R;
@@ -32,11 +32,11 @@ public class BlindDateFragment extends Fragment {
             blindDateImages[i] = BlindDate.blindDates[i].getImageResourceId();
         }
 
-        ImagesAdapterCardView adapter = new ImagesAdapterCardView(blindDateMembersNames, blindDateImages);
+        BlindDatesAdapter adapter = new BlindDatesAdapter(blindDateMembersNames, blindDateImages);
         blindDatesRecycler.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         blindDatesRecycler.setLayoutManager(layoutManager);
-        adapter.setListener(new ImagesAdapterCardView.Listener() {
+        adapter.setListener(new BlindDatesAdapter.Listener() {
             public void onClick(int position) {
                 Intent intent = new Intent(getActivity(), BlindDateActivity.class);
                 //intent.putExtra(BlindDateActivity.EXTRA_BLINDDATE_INFO, position); --> info passed to blind date chat history activity

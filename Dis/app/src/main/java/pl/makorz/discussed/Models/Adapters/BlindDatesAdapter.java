@@ -12,11 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import pl.makorz.discussed.R;
 
-public class ImagesAdapterCardView extends RecyclerView.Adapter<ImagesAdapterCardView.ViewHolder> {
+public class BlindDatesAdapter extends RecyclerView.Adapter<BlindDatesAdapter.ViewHolder> {
 
     private String[] captions;
     private int[] imageIds;
-    private ImagesAdapterCardView.Listener listener;
+    private BlindDatesAdapter.Listener listener;
 
     public static interface Listener {
         public void onClick(int position);
@@ -30,24 +30,24 @@ public class ImagesAdapterCardView extends RecyclerView.Adapter<ImagesAdapterCar
         }
     }
 
-    public ImagesAdapterCardView(String[] captions, int[] imageIds){
+    public BlindDatesAdapter(String[] captions, int[] imageIds){
         this.captions = captions;
         this.imageIds = imageIds;
     }
 
-    public void setListener(ImagesAdapterCardView.Listener listener) {
+    public void setListener(BlindDatesAdapter.Listener listener) {
         this.listener = listener;
     }
 
     @Override
-    public ImagesAdapterCardView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public BlindDatesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         CardView cv = (CardView) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_conversation_view, parent, false);
-        return new ImagesAdapterCardView.ViewHolder(cv);
+        return new BlindDatesAdapter.ViewHolder(cv);
     }
 
     @Override
-    public void onBindViewHolder(ImagesAdapterCardView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(BlindDatesAdapter.ViewHolder holder, final int position) {
         CardView cardView = holder.cardView;
         ImageView imageView = (ImageView)cardView.findViewById(R.id.info_image);
         Drawable drawable = cardView.getResources().getDrawable(imageIds[position], null);

@@ -58,14 +58,14 @@
 
     <!--SettingsFragment strings-->
     <string name="logout_text">Logout</string>
-    <string name="donate_text">Donate Me</string>
-    <string name="appreciate_me_text">GOOD JOB</string>
-    <string name="title_settings">What would You like to do in settings?</string>
+    <string name="donate_text">Donate Me!</string>
+    <string name="appreciate_me_text">GOOD JOB!!!</string>
+    <string name="title_settings"><B>SETTINGS</B></string>
 
     <!--LoginFragment strings-->
     <string name="agreeTermsCheckBox">I Agree to <b><u>Terms and Conditions</u></b> of using app "Discussed"</string>
     <string name="terms_and_conditions">Terms and Conditions</string>
-    <string name="delete_account">DELETE ACCOUNT</string>
+    <string name="delete_account">DELETE my ACCOUNT</string>
     <string name="change_name_button"><b>Change name</b></string>
     <string name="agreeAgeCheckBox">I\'m over 18 years old.</string>
     <string name="name_text_view_profile">Your name</string>
@@ -147,77 +147,133 @@ You agree not to use or launch any automated system, including without limitatio
         test, health check or otherwise monitor any network equipment, servers or assets hosted on our domain. You agree not to collect or harvest any personally identifiable information, including account names, from the Service, nor
         to use the communication systems provided by the Service for any commercial solicitation or spam purposes. You agree not to solicit, for commercial purposes, any users of the Service with respect to their public posts. \n\n
 
-Content Submissions
+Content Submissions \n\n
 
-Our Service allows you and other users to post and take Content to and from the App. You are responsible for the Content, whether publicly posted or privately transmitted, that you post to the Service, including its legality, reliability, and appropriateness. We monitor all Public Content posted via the Service and allow you and other users to flag inappropriate content. We will remove any inappropriate content, regardless of how it is discovered and in addition will delete accounts of those users that continue to post inappropriate content. However, despite the aforementioned efforts, you understand that by using the Service you may be exposed to Content that might be offensive, harmful, inaccurate, deceptive or inappropriate. Under no circumstances will Discussed be liable in any way for any Content, including, but not limited to, any errors or omissions in any Content, or any loss or damage of any kind incurred as a result of the use of any Content posted, transmitted or otherwise made available via the Service or broadcast elsewhere. You acknowledge sole responsibility for and assume all risk arising from your use or reliance of any Content.
+Our Service allows you and other users to post and take Content to and from the App. You are responsible for the Content, whether publicly posted or privately transmitted, that you post to the Service, including its legality, reliability,
+        and appropriateness. We monitor all Public Content posted via the Service and allow you and other users to flag inappropriate content. We will remove any inappropriate content, regardless of how it is discovered and in addition will
+        delete accounts of those users that continue to post inappropriate content. However, despite the aforementioned efforts, you understand that by using the Service you may be exposed to Content that might be offensive, harmful, inaccurate,
+        deceptive or inappropriate. Under no circumstances will Discussed be liable in any way for any Content, including, but not limited to, any errors or omissions in any Content, or any loss or damage of any kind incurred as a result of the
+        use of any Content posted, transmitted or otherwise made available via the Service or broadcast elsewhere. You acknowledge sole responsibility for and assume all risk arising from your use or reliance of any Content. \n\n
 
-Our Service enables you to create messages. Your Private messages are hosted by Discussed for your use exclusively.
+Our Service enables you to create messages. Your Private messages are hosted by Discussed for your use exclusively. \n\n
 
-In the initial release of Discussed there is no ability for users to delete content. You can remove Content that you posted in the initial release by specifically emailing support@chatcenter.me with your Discussed handle and the title and date of the message you wish to delete. In certain instances, however, some Content (such as public posts or comments you make) may not be completely removed and copies of your Content may continue to exist on parts of the Service and/or elsewhere. We are not responsible or liable for the removal or deletion of (or the failure to remove or delete) any Public Content on the Service unless it has been reported to us and is deemed inappropriate. Our intent is to provide users with the ability to delete, and even recall, messages in subsequent releases of the Discussed.
+In the initial release of Discussed there is no ability for users to delete content. You can remove Content that you posted in the initial release by specifically emailing support@chatcenter.me with your Discussed handle and the title and date
+        of the message you wish to delete. In certain instances, however, some Content (such as public posts or comments you make) may not be completely removed and copies of your Content may continue to exist on parts of the Service and/or elsewhere.
+        We are not responsible or liable for the removal or deletion of (or the failure to remove or delete) any Public Content on the Service unless it has been reported to us and is deemed inappropriate. Our intent is to provide users with the
+        ability to delete, and even recall, messages in subsequent releases of the Discussed. \n\n
 
-You represent and warrant that: (i) the Content is yours (you own it), or you have the right to use it and grant us the rights and license as provided in these Terms, and (ii) the posting of your Content on or through the Service does not violate the privacy rights, publicity rights, copyrights, contract rights or any other rights of any person.
+You represent and warrant that: (i) the Content is yours (you own it), or you have the right to use it and grant us the rights and license as provided in these Terms, and (ii) the posting of your Content on or through the Service does not violate
+        the privacy rights, publicity rights, copyrights, contract rights or any other rights of any person. \n\n
 
-We ask that you respect our on-line community and other users when posting Content and using the Service. When submitting Content to or otherwise using the Service, you agree not to:
+We ask that you respect our on-line community and other users when posting Content and using the Service. When submitting Content to or otherwise using the Service, you agree not to: \n\n
 
     submit material that violates a third party\'s proprietary rights, including privacy and publicity rights, or that otherwise violates any applicable law;
     publish falsehoods or misrepresentations that could damage us, our users or any third party;
     publish any private information of someone, like their address, phone number, email address, financial information or similar information without their permission;
-    submit material that is unlawful, obscene, defamatory, libelous, threatening, pornographic, harassing, hateful, racially or ethnically offensive, or encourages conduct that would be considered a criminal offense, give rise to civil liability, violate any law, or is otherwise inappropriate;
+    submit material that is unlawful, obscene, defamatory, libelous, threatening, pornographic, harassing, hateful, racially or ethnically offensive, or encourages conduct that would be considered a criminal offense, give rise to civil liability,
+        violate any law, or is otherwise inappropriate;
     as an individual account holder, post advertisements;
     impersonate another person or represent yourself as affiliated with us, our staff or other industry professionals;
     solicit a user\'s password or other account information; or
-    harvest user names, addresses, or email addresses for any purpose.
+    harvest user names, addresses, or email addresses for any purpose. \n\n
 
-This list is an example and is not intended to be complete or exclusive. We have the right to enable/ disable your access to or use of the Service for the purpose of operating the Service, to ensure your compliance with these Terms, or to comply with applicable law or the order or requirement of a court, administrative agency or other governmental body. We reserve the right, at any time and without prior notice, to remove or disable access to any Content, that we consider, in our sole discretion, to be in violation of these Terms or otherwise harmful to the Service.
-Copyright Policy
+This list is an example and is not intended to be complete or exclusive. We have the right to enable/ disable your access to or use of the Service for the purpose of operating the Service, to ensure your compliance with these Terms, or to comply
+        with applicable law or the order or requirement of a court, administrative agency or other governmental body. We reserve the right, at any time and without prior notice, to remove or disable access to any Content, that we consider, in our
+        sole discretion, to be in violation of these Terms or otherwise harmful to the Service. \n\n
 
-We do not permit copyright infringing activities and infringement of intellectual property rights on the Service and will remove any such Content if properly notified that such Content infringes on another\'s intellectual property rights. If you are a copyright owner or an agent thereof and believe that any Content infringes upon your copyrights, you may submit a notification pursuant to the Digital Millennium Copyright Act (DMCA) by providing us with the following information to our copyright agent at copyright@chatcenter.me in writing (see 17 U.S.C 512©(3) for further detail):
+Copyright Policy \n\n
+
+We do not permit copyright infringing activities and infringement of intellectual property rights on the Service and will remove any such Content if properly notified that such Content infringes on another\'s intellectual property rights.
+        If you are a copyright owner or an agent thereof and believe that any Content infringes upon your copyrights, you may submit a notification pursuant to the Digital Millennium Copyright Act (DMCA) by providing us with the following
+        information to our copyright agent at copyright@chatcenter.me in writing (see 17 U.S.C 512©(3) for further detail): \n\n
 
     an electronic or physical signature of the person authorized to act on behalf of the owner of the copyright\'s interest;
     a description of the copyrighted work that you claim has been infringed, including the URL (i.e., web page address) of the location where the copyrighted work exists or a copy of the copyrighted work;
     identification of the URL or other specific location on the Service where the material that you claim is infringing is located;
     your address, telephone number, and email address;
     a statement by you that you have a good faith belief that the disputed use is not authorized by the copyright owner, its agent, or the law;
-    a statement by you, made under penalty of perjury, that the above information in your notice is accurate and that you are the copyright owner or authorized to act on the copyright owner\'s behalf.
+    a statement by you, made under penalty of perjury, that the above information in your notice is accurate and that you are the copyright owner or authorized to act on the copyright owner\'s behalf. \n\n
 
-You can contact our copyright agent via email at makorzdev@gmail.com
+You can contact our copyright agent via email at makorzdev@gmail.com \n\n
 
-Our Service may be used and accessed for lawful purposes only. You agree that you will not do any of the following while using or accessing the Service: (i) attempt to access or search the Service or download Content from the Service through the use of any engine, software, tool, agent, device or mechanism (including spiders, robots, crawlers, data mining tools or the like) other than the software and/or search agents provided by us or other generally available third party web browsers; (ii) access, tamper with, or use non-public areas of the Service, our computer systems, or the technical delivery systems of our providers; (iii) gather and use information, such as other users\' names, real names, email addresses, available through the Service to transmit any unsolicited advertising, junk mail, spam or other form of solicitation; (iv) use the Service for any commercial purpose or for the benefit of any third party or in any manner not by these Terms; (v) violate any applicable law or regulation; or (vi) encourage or enable any other individual to do any of the foregoing. We reserve the right to investigate and prosecute violations of any of the above and/or involve and cooperate with law enforcement authorities in prosecuting users who violate these Terms.
-Indemnity
+Our Service may be used and accessed for lawful purposes only. You agree that you will not do any of the following while using or accessing the Service: (i) attempt to access or search the Service or download Content from the Service
+        through the use of any engine, software, tool, agent, device or mechanism (including spiders, robots, crawlers, data mining tools or the like) other than the software and/or search agents provided by us or other generally available
+        third party web browsers; (ii) access, tamper with, or use non-public areas of the Service, our computer systems, or the technical delivery systems of our providers; (iii) gather and use information, such as other users\' names, real names,
+        email addresses, available through the Service to transmit any unsolicited advertising, junk mail, spam or other form of solicitation; (iv) use the Service for any commercial purpose or for the benefit of any third party or in any manner not
+        by these Terms; (v) violate any applicable law or regulation; or (vi) encourage or enable any other individual to do any of the foregoing. We reserve the right to investigate and prosecute violations of any of the above and/or involve and
+        cooperate with law enforcement authorities in prosecuting users who violate these Terms. \n\n
 
-You agree to indemnify and hold us harmless from and against any and all costs, damages, liabilities, and expenses (including attorneys\' fees) we incur in relation to, arising from, or for the purpose of avoiding, any claim or demand from a third party that your use of the Service or the use of the Service by any person using your Account violates any applicable law or regulation, or the rights of any third party.
-Links to Third Party Sites
+Indemnity \n\n
 
-The Service may include links to other sites and services that are not operated by us. We are providing these links to you only as a convenience and are not responsible for the content or links displayed on such sites. You are responsible for and assume all risk arising from your use or reliance of any third party sites.
-Ownership
+You agree to indemnify and hold us harmless from and against any and all costs, damages, liabilities, and expenses (including attorneys\' fees) we incur in relation to, arising from, or for the purpose of avoiding, any claim or demand from a
+        third party that your use of the Service or the use of the Service by any person using your Account violates any applicable law or regulation, or the rights of any third party. \n\n
 
-Our App and Service are protected by copyright, trademark, and other laws of the United States and foreign countries. Except as expressly provided in these Terms, we (or our licensors) exclusively own all right, title and interest in and to the App and the Service, including all associated intellectual property rights. You may not remove, alter or obscure any copyright, trademark, service mark or other proprietary rights notices incorporated in or accompanying the App or the Service, including in any Content. You acknowledge and agree that any feedback, comments or suggestions you may provide regarding the App or the Service ("Feedback") will be the sole and exclusive property of Discussed and you hereby irrevocably assign to us all of your right, title and interest in and to all Feedback.
-Termination
+Links to Third Party Sites \n\n
 
-If you breach any of the terms of these Terms, we have the right to suspend or disable your access to or use of the App and/or Service.
-Disclaimer
+The Service may include links to other sites and services that are not operated by us. We are providing these links to you only as a convenience and are not responsible for the content or links displayed on such sites. You are responsible
+        for and assume all risk arising from your use or reliance of any third party sites. \n\n
 
-You understand and agree that the App and the Service are provided to you "AS IS" and on an "AS AVAILABLE" basis. Without limiting the foregoing, Discussed EXPLICITLY DISCLAIMS ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, OR NON- INFRINGEMENT, AND ANY WARRANTIES ARISING OUT OF CO URSE OF DEALING OR USAGE OF TRADE. We make no warranty that the App or the Service will meet your requirements or be available on an uninterrupted, secure, or error-free basis.
-Limitation of Liability
+Ownership \n\n
 
-OUR TOTAL LIABILITY TO YOU FROM ALL CAUSES OF ACTION AND UNDER ALL THEORIES OF LIABILITY WILL BE LIMITED TO THE AMOUNT YOU PAID FOR THE APP, AND IN NO EVENT WILL IT EXCEED $10. WE WILL NOT BE LIABLE TO YOU FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL OR PUNITIVE DAMAGES, INCLUDING WITHOUT LIMITATION, LOSS OF PROFITS, DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES, RESULTING FROM (i) YOUR ACCESS TO OR USE OF OR INABILITY TO ACCESS OR USE THE APP AND/OR SERVICE; (ii) ANY CONDUCT OR CONTENT OF ANY THIRD PARTY ON THE SERVICE; (iii) ANY CONTENT OBTAINED FROM THE SERVICE; AND (iv) UNAUTHORIZED ACCESS, USE OR ALTERATION OF YOUR TRANSMISSIONS OR CONTENT, WHETHER BASED ON WARRANTY, CONTRACT, TORT (INCLUDING NEGLIGENCE) OR ANY OTHER LEGAL THEORY, WHETHER OR NOT WE HAVE BEEN INFORMED OF THE POSSIBILITY OF SUCH DAMAGE, AND EVEN IF A REMEDY SET FORTH HEREIN IS FOUND TO HAVE FAILED OF ITS ESSENTIAL PURPOSE.
-Exclusions
+Our App and Service are protected by copyright, trademark, and other laws of the United States and foreign countries. Except as expressly provided in these Terms, we (or our licensors) exclusively own all right, title and interest in and to
+        the App and the Service, including all associated intellectual property rights. You may not remove, alter or obscure any copyright, trademark, service mark or other proprietary rights notices incorporated in or accompanying the App or
+        the Service, including in any Content. You acknowledge and agree that any feedback, comments or suggestions you may provide regarding the App or the Service ("Feedback") will be the sole and exclusive property of Discussed and you
+        hereby irrevocably assign to us all of your right, title and interest in and to all Feedback. \n\n
 
-Some jurisdictions do not allow the exclusion of certain warranties or the exclusion or limitation of liability for consequential or incidental damages, so the limitations above may not apply to you.
-General
+Termination \n\n
 
-These Terms are governed by the laws of the State of California, without regard to any conflict of laws rules or principles. You agree to submit to the jurisdiction of the California courts. Our failure to enforce any right or provision of these Terms will not be considered a waiver of those rights. If any provision of these Terms is held to be invalid or unenforceable by a court, the remaining provisions of these Terms will remain in effect. These Terms constitute the entire agreement between us regarding our Service, and supersede and replace any prior agreements we might have between us regarding the Service. We may revise these Terms from time to time, and we will try to provide at least 10 days notice prior to any new terms taking effect. By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms.
+If you breach any of the terms of these Terms, we have the right to suspend or disable your access to or use of the App and/or Service. \n\n
+
+Disclaimer \n\n
+
+You understand and agree that the App and the Service are provided to you "AS IS" and on an "AS AVAILABLE" basis. Without limiting the foregoing, Discussed EXPLICITLY DISCLAIMS ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE,
+        OR NON- INFRINGEMENT, AND ANY WARRANTIES ARISING OUT OF CO URSE OF DEALING OR USAGE OF TRADE. We make no warranty that the App or the Service will meet your requirements or be available on an uninterrupted, secure, or error-free basis. \n\n
+
+Limitation of Liability \n\n
+
+OUR TOTAL LIABILITY TO YOU FROM ALL CAUSES OF ACTION AND UNDER ALL THEORIES OF LIABILITY WILL BE LIMITED TO THE AMOUNT YOU PAID FOR THE APP, AND IN NO EVENT WILL IT EXCEED $10. WE WILL NOT BE LIABLE TO YOU FOR ANY INDIRECT, INCIDENTAL, SPECIAL,
+        CONSEQUENTIAL OR PUNITIVE DAMAGES, INCLUDING WITHOUT LIMITATION, LOSS OF PROFITS, DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES, RESULTING FROM (i) YOUR ACCESS TO OR USE OF OR INABILITY TO ACCESS OR USE THE APP AND/OR SERVICE; (ii) ANY
+        CONDUCT OR CONTENT OF ANY THIRD PARTY ON THE SERVICE; (iii) ANY CONTENT OBTAINED FROM THE SERVICE; AND (iv) UNAUTHORIZED ACCESS, USE OR ALTERATION OF YOUR TRANSMISSIONS OR CONTENT, WHETHER BASED ON WARRANTY, CONTRACT, TORT (INCLUDING NEGLIGENCE)
+        OR ANY OTHER LEGAL THEORY, WHETHER OR NOT WE HAVE BEEN INFORMED OF THE POSSIBILITY OF SUCH DAMAGE, AND EVEN IF A REMEDY SET FORTH HEREIN IS FOUND TO HAVE FAILED OF ITS ESSENTIAL PURPOSE. \n\n
+
+Exclusions \n\n
+
+Some jurisdictions do not allow the exclusion of certain warranties or the exclusion or limitation of liability for consequential or incidental damages, so the limitations above may not apply to you. \n\n
+
+General \n\n
+
+These Terms are governed by the laws of the State of California, without regard to any conflict of laws rules or principles. You agree to submit to the jurisdiction of the California courts. Our failure to enforce any right
+        or provision of these Terms will not be considered a waiver of those rights. If any provision of these Terms is held to be invalid or unenforceable by a court, the remaining provisions of these Terms will remain in effect.
+        These Terms constitute the entire agreement between us regarding our Service, and supersede and replace any prior agreements we might have between us regarding the Service. We may revise these Terms from time to time, and we
+        will try to provide at least 10 days notice prior to any new terms taking effect. By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms. \n\n
+
 Questions &amp; Contact Information \n\n
 
         Please contact us if you have any questions about our Terms at <b>makorzdev@gmail.com </b></string>
+
+
     <string name="date_alert_text">You can\'t change this, right now! \n Nr of days left: </string>
     <string name="text_search_availbility_box">You have not fully filled the profile card. You still need to add: \n\n </string>
 
     <!--AboutFragment strings-->
     <string-array name="about_options">
-        <item>Logo</item>
-        <item>Version number</item>
-        <item>Quick guide</item>
+        <item>Entry information\'s.</item>
+        <item>How often can I change profile items?</item>
+        <item>How to award stranger for message?</item>
+        <item>How we count points for messages?</item>
+     </string-array>
+
+    <string-array name="about_options_answers">
+        <item>While using this magic, well looking piece of software, You can find someone who wants to talk on similar topic with You.\n But before You start searching You need to complete Your
+            profile (top-right corner of screen) with following information\'s: \n\n1. Location. \n2. Name. \n3. Age. \n4. Personal description. \n5. Gender. \n6. 3 photos. \n7. Favorite topics.\n\nAfter that
+            You can start searching another soul to connect to! \nTo access Your profile tap icon in top right corner. \n\nThen You can edit all information mentioned before, Remember that those information\'s
+        can be edited once every 7 days (except topics - those You can edit how often You want). This restriction is made to exclude people who are not serious about themselves. \n\n
+        So BE CAREFUL while You enter them! \n\nGood luck and I hope You find what You need!</item>
+        <item>1. Location - Every day. \n2. Name - Once every 7 days. \n3. Age - Once every 30 days. \n4. Personal description - Once every 7 days. \n5. Gender - Once every 30 days.
+            \n6. Photos - Once every 7 days \n7. Favorite topics - Whenever You like.</item>
+        <item>Just long click on message You want to award, after that golden star will appear in top corner of that chat bubble and pop up message with nr of points stranger received.</item>
+        <item>It depends on the length of message. \n\n Simple \"OK, I agree with You!\" will not grant any points to sender of that message. To receive at least 1 point, message
+            must have minimum 100 characters.\n\n User can receive max 5 points for single message. </item>
     </string-array>
 
     <string name="title_activity_location">Map</string>
@@ -226,5 +282,12 @@ Questions &amp; Contact Information \n\n
         localisation, mark it on map and then click button on bottom of the screen.</string>
     <string name="localisation_not_turned_on_title">Localisation not turned on!</string>
     <string name="not_filled">NOT FILLED</string>
+    <string name="copyright_by_text_view_about_tab">Copyright &#169; by <i>MatKorzDev</i></string>
+    <string name="nr_of_goodjob_clicks_text_about_tab">Nr of GoodJob button clicks worldwide: </string>
+    <string name="good_job_text_view_settings_tab">If You want to say \"Thank You!\" just click the button on the right and I will be happy just for that! ;)</string>
+    <string name="deleteAccount_textview_settings_tab">Do You want to delete Your account (all photos, description, name, location, etc.)?</string>
+    <string name="logout_textview_settings_tab">Do you want to logout from current account?</string>
+    <string name="donate_textview_settings_tab">If simple \"Thank You!\" is not enough, You can send my some money buddy! ;D</string>
+    <string name="version_textView_about_tab">Discussed: </string>
 
 </resources>

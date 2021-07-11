@@ -186,6 +186,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         topicsUploadMade = document.getBoolean(TOPICS_UPLOAD_MADE);
                         descriptionUploadMade = document.getBoolean(DESCRIPTION_UPLOAD_MADE);
                         genderUploadMade = document.getBoolean(GENDER_UPLOAD_MADE);
+                        canUserSearch = document.getBoolean(CAN_USER_SEARCH);
 
                         firstPhotoUri = document.getString(FIRST_PHOTO_URI);
                         secondPhotoUri = document.getString(SECOND_PHOTO_URI);
@@ -203,12 +204,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                             profileDescriptionText.setText(document.getString(DESCRIPTION_FIELD));
                         }
 
-
-
-
-
-
-
                         ageText.setText(R.string.not_filled);
                         if (ageUploadMade) {
                             String age = Integer.toString(document.getDouble(AGE_FIELD).intValue());
@@ -223,11 +218,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         }
 
                         if (firstPhotoUploadMade && secondPhotoUploadMade && thirdPhotoUploadMade && locationUploadMade && nameUploadMade && ageUploadMade && topicsUploadMade
-                                && descriptionUploadMade && genderUploadMade ) {
+                                && descriptionUploadMade && genderUploadMade && !canUserSearch ) {
 
                                 db.collection("users").document(currentUser.getUid())
                                         .update(CAN_USER_SEARCH, true);
                                 canUserSearch = true;
+                                updateUserSpotInSearchCollection();
                         }
 
                         firstPhotoUploadDate = document.getDate(FIRST_PHOTO_UPLOAD_DATE);
@@ -392,7 +388,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
-    // this function initialises buttons, text views, etc.
+    // This function initialises buttons, text views, etc.
     public void initView() {
 
         profileDescriptionText = findViewById(R.id.own_description_my_profile);
@@ -601,7 +597,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     // This function starts functions correlated with certain button
     @Override
     public void onClick(View view) {
-        int daysToChange = 0;
+        int daysToChangeName = 7;
+        int daysToChangeAge = 30;
+        int daysToChangePhoto = 7;
+        int daysToChangeDescription = 7;
+        int daysToChangeGender = 30;
+        int daysToChangeLocation = 1;
         long nrOfDaysSinceChange;
         long dateDiff;
 
@@ -609,70 +610,72 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.description_own_change:
                 dateDiff = currentDate.getTime() - descriptionUploadDate.getTime();
                 nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
-                if ( nrOfDaysSinceChange >= daysToChange) {
+                if ( nrOfDaysSinceChange >= daysToChangeDescription) {
                     descriptionAgeNameChangeDialog(DESCRIPTION_FIELD, "Your Description");
                 } else {
-                    timeOfChangeAlertDialog(nrOfDaysSinceChange);
+                    timeOfChangeAlertDialog(nrOfDaysSinceChange, daysToChangeDescription);
                 }
                 whatButtonPressed = 1;
                 break;
             case R.id.age_own_change:
                 dateDiff = currentDate.getTime() - ageUploadDate.getTime();
                 nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
-                if (nrOfDaysSinceChange > daysToChange) {
+                Log.d("DAYYYY", String.valueOf(nrOfDaysSinceChange));
+                if (nrOfDaysSinceChange > daysToChangeAge) {
                     descriptionAgeNameChangeDialog(AGE_FIELD, "Your Age");
                 } else {
-                    timeOfChangeAlertDialog(nrOfDaysSinceChange);
+                    timeOfChangeAlertDialog(nrOfDaysSinceChange, daysToChangeAge);
                 }
                 whatButtonPressed = 2;
                 break;
             case R.id.location_own_change:
                 dateDiff = currentDate.getTime() - locationUploadDate.getTime();
                 nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
-                if (nrOfDaysSinceChange >= daysToChange) {
+                Log.d("DAYYYY", String.valueOf(nrOfDaysSinceChange));
+                if (nrOfDaysSinceChange >= daysToChangeLocation) {
                     locationChange();
                 } else {
-                    timeOfChangeAlertDialog(nrOfDaysSinceChange);
+                    timeOfChangeAlertDialog(nrOfDaysSinceChange, daysToChangeLocation);
                 }
                 whatButtonPressed = 3;
                 break;
             case R.id.name_own_change:
                 dateDiff = currentDate.getTime() - nameUploadDate.getTime();
                 nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
-                if (nrOfDaysSinceChange > daysToChange) {
+                if (nrOfDaysSinceChange > daysToChangeName) {
                     descriptionAgeNameChangeDialog(NAME_FIELD, "Your Name");
                 } else {
-                    timeOfChangeAlertDialog(nrOfDaysSinceChange);
+                    timeOfChangeAlertDialog(nrOfDaysSinceChange, daysToChangeName);
                 }
                 whatButtonPressed = 4;
                 break;
             case R.id.first_image_change:
                 dateDiff = currentDate.getTime() - firstPhotoUploadDate.getTime();
                 nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
-                if (nrOfDaysSinceChange > daysToChange) {
+                if (nrOfDaysSinceChange > daysToChangePhoto) {
                     chooseImage(1);
                 } else {
-                    timeOfChangeAlertDialog(nrOfDaysSinceChange);
+                    timeOfChangeAlertDialog(nrOfDaysSinceChange, daysToChangePhoto);
                 }
                 whatButtonPressed = 5;
                 break;
             case R.id.second_image_change:
                 dateDiff = currentDate.getTime() - secondPhotoUploadDate.getTime();
                 nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
-                if (nrOfDaysSinceChange > daysToChange) {
+                if (nrOfDaysSinceChange > daysToChangePhoto) {
                     chooseImage(2);
                 } else {
-                    timeOfChangeAlertDialog(nrOfDaysSinceChange);
+                    timeOfChangeAlertDialog(nrOfDaysSinceChange, daysToChangeName);
                 }
                 whatButtonPressed = 6;
                 break;
             case R.id.third_image_change:
                 dateDiff = currentDate.getTime() - thirdPhotoUploadDate.getTime();
                 nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
-                if (nrOfDaysSinceChange > daysToChange) {
+                if (nrOfDaysSinceChange > daysToChangePhoto) {
                     chooseImage(3);
                 } else {
-                    timeOfChangeAlertDialog(nrOfDaysSinceChange);
+                    timeOfChangeAlertDialog(nrOfDaysSinceChange, daysToChangeName);
                 }
                 whatButtonPressed = 7;
                 break;
@@ -695,10 +698,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.gender_own_change:
                 dateDiff = currentDate.getTime() - genderUploadDate.getTime();
                 nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
-                if (nrOfDaysSinceChange > daysToChange) {
+                if (nrOfDaysSinceChange > daysToChangeGender) {
                     genderChangeDialog();
                 } else {
-                    timeOfChangeAlertDialog(nrOfDaysSinceChange);
+                    timeOfChangeAlertDialog(nrOfDaysSinceChange, daysToChangeGender);
                 }
                 whatButtonPressed = 12;
                 break;
@@ -925,13 +928,13 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     // This function tells user that time for change hasn't been reached yet.
-    public void timeOfChangeAlertDialog(long nrOfDaysSinceChange) {
+    public void timeOfChangeAlertDialog(long nrOfDaysSinceChange, long daysLimit) {
         LayoutInflater inflaterDialog = LayoutInflater.from(this);
         View alertDateDialogView = inflaterDialog.inflate(R.layout.dialog_date_alert, null);
         TextView dateAlertTitle = alertDateDialogView.findViewById(R.id.title_of_date_alert_box);
         TextView dateAlertText = alertDateDialogView.findViewById(R.id.text_of_date_alert_box);
         dateAlertTitle.setText(getString(R.string.date_alert_text));
-        dateAlertText.setText(String.valueOf(3 - nrOfDaysSinceChange));
+        dateAlertText.setText(String.valueOf(daysLimit - nrOfDaysSinceChange));
 
         AlertDialog alertDateDialog = new AlertDialog.Builder(this)
                 .setView(alertDateDialogView)  // What to use in dialog box

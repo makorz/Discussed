@@ -63,6 +63,9 @@ public class MessageInChatAdapter extends FirestoreRecyclerAdapter<MessageInChat
         holder.dateOfMessage.setText(p.format(model.getDateOfMessage()));
         holder.wasGraded.setChecked(model.wasGraded());
         holder.messageID.setText(model.getMessageID());
+        if (model.wasGraded()) {
+            holder.gradedSymbol.setVisibility(View.VISIBLE);
+        }
     }
 
 
@@ -88,6 +91,7 @@ public class MessageInChatAdapter extends FirestoreRecyclerAdapter<MessageInChat
 
         TextView textOfMessage, messageID, userNameID, dateOfMessage;
         CheckBox wasGraded;
+        ImageView gradedSymbol;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -96,26 +100,35 @@ public class MessageInChatAdapter extends FirestoreRecyclerAdapter<MessageInChat
             dateOfMessage = itemView.findViewById(R.id.dateOfMessage);
             wasGraded = itemView.findViewById(R.id.wasGraded);
             messageID = itemView.findViewById(R.id.messageID);
+            gradedSymbol = itemView.findViewById(R.id.is_message_grade_image);
 
 
             itemView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    if (getItemViewType() == MSG_TYPE_LEFT && !wasGraded.isChecked()){
-                        int position = getAdapterPosition();
+                    int position = getAdapterPosition();
+                    String idMessage = messageID.getText().toString();
+                    int points = 0;
+                     if (getItemViewType() == MSG_TYPE_LEFT && !wasGraded.isChecked()){
                         if (position != RecyclerView.NO_POSITION && listener != null) {
                             int size = textOfMessage.getText().length();
-                            String idMessage = messageID.getText().toString();
-                            int points = (int) (size * 0.05);
-                            if (points >= 10) {
-                                points = 10;
+                            if (size >= 750) {
+                                points = 5;
+                            } else if (size >= 500) {
+                                points = 4;
+                            } else if (size >= 350) {
+                                points = 3;
+                            } else if (size >= 200) {
+                                points = 2;
+                            } else if (size >= 100) {
+                                points = 1;
                             }
-                            Log.d("MESSAGEADPATELONG", String.valueOf(points));
-                            listener.onLongItemClick(points, position, idMessage);
+                            listener.onLongItemClick(points, position, idMessage, false);
                         }
                         return true;
 
                     }
+                    listener.onLongItemClick(points, position, idMessage, true);
                     return false;
                 }
             });
@@ -125,12 +138,11 @@ public class MessageInChatAdapter extends FirestoreRecyclerAdapter<MessageInChat
 
     // This methods below allow to send data from adapter to activity
     public interface onLongItemClickListener {
-        void onLongItemClick(int points, int position, String messageID);
+        void onLongItemClick(int points, int position, String messageID, boolean wasGraded);
     }
 
     public void setOnLongItemCLickListener(onLongItemClickListener listener) {
         MessageInChatAdapter.listener = listener;
     }
-
 
 }

@@ -40,7 +40,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import pl.makorz.discussed.Controllers.ChatActivity;
-import pl.makorz.discussed.Controllers.MainActivity;
 import pl.makorz.discussed.R;
 
 public class MainFragment extends Fragment {
@@ -63,15 +62,12 @@ public class MainFragment extends Fragment {
     ProgressBar waitUntilChatAppears;
     LinearLayout layoutToDimWhenSearching;
     private Boolean firstPhotoUploadMade, secondPhotoUploadMade, thirdPhotoUploadMade, locationUploadMade, descriptionUploadMade, ageUploadMade, topicsUploadMade,
-            genderUploadMade, nameUploadMade, whatGender, canUserSearch;
+            genderUploadMade, nameUploadMade,canUserSearch;
     Map<String, Boolean> userSearchAvailability = new HashMap<>();
 
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private int introPage = 0;
-    private int USER_NEW_ACCOUNT = -1;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -108,8 +104,7 @@ public class MainFragment extends Fragment {
     private void searchForUser() {
 
         Random r = new Random();
-        int randomNrOfUser = 4;
-                //r.nextInt(4 - 1) + 1;
+        int randomNrOfUser = r.nextInt(4 - 1) + 1;
 
 
         Query queryUser = FirebaseFirestore.getInstance().collection("search/searchAll/searchNE").whereEqualTo("randomNr",randomNrOfUser).limit(1);
@@ -187,6 +182,7 @@ public class MainFragment extends Fragment {
                                         intent.putExtra("otherUserName", nameOfOtherUser);
                                         intent.putExtra("idOfOtherUser",idOfOtherUser);
                                         waitUntilChatAppears.setVisibility(View.INVISIBLE);
+                                        layoutToDimWhenSearching.setAlpha(1f);
                                         Objects.requireNonNull(getActivity()).startActivity(intent);
                                     }
                                 })

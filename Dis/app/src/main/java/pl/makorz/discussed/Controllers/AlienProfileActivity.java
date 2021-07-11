@@ -1,28 +1,23 @@
 package pl.makorz.discussed.Controllers;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -32,15 +27,10 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
 import pl.makorz.discussed.R;
-
-import static com.google.firebase.firestore.FieldValue.arrayUnion;
 
 
 public class AlienProfileActivity extends AppCompatActivity implements View.OnClickListener {
@@ -271,8 +261,8 @@ public class AlienProfileActivity extends AppCompatActivity implements View.OnCl
 
     @Override
     public void onClick(View view) {
-        int photoCost = 10;
-        int descriptionCost = 8;
+        int photoCost = 15;
+        int descriptionCost = 10;
         int locationCost = 5;
         int ageCost = 5;
 
