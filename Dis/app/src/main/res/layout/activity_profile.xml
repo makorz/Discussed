@@ -127,7 +127,6 @@
                 android:background="#B240241A"
                 android:layout_marginEnd="10dp"
                 android:layout_marginStart="10dp"
-
                 app:layout_constraintTop_toBottomOf="@+id/linear_alien_photos_buttons"/>
 
             <LinearLayout

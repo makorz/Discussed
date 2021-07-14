@@ -10,8 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_weight="0"
-        android:layout_marginTop="25dp">
+        android:layout_marginTop="20dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/logo_view_about_tab"
@@ -73,23 +72,6 @@
 
     </LinearLayout>
 
-
-
-
-<!--    <ListView-->
-<!--        android:id="@+id/tutorial_list_view"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_centerHorizontal="false"-->
-<!--        android:layout_gravity="center"-->
-<!--        android:layout_marginTop="50dp"-->
-<!--        android:layout_marginEnd="15dp"-->
-<!--        android:layout_marginStart="15dp"-->
-<!--        android:scrollbars="none"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/versionNr_text_view" />-->
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -102,7 +84,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
-            android:hint="@string/nr_of_goodjob_clicks_text_about_tab"
+            android:hint="@string/nr_of_goodJob_clicks_text_about_tab"
             android:gravity="bottom"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"

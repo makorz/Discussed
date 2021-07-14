@@ -15,7 +15,7 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:text="Loading .."
+        android:text="@string/loading_text_dialog_box"
         android:textAlignment="center"
         android:textAppearance="?android:textAppearanceSmall"
         android:layout_gravity="center_vertical"

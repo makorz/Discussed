@@ -13,5 +13,4 @@
         android:textAlignment="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
 
-
 </LinearLayout>

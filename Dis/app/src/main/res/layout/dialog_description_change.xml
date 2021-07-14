@@ -9,7 +9,8 @@
         android:layout_height="wrap_content"
         android:hint="@string/description_dialog_enter"
         android:id="@+id/dialog_description_edit_text"
-        android:layout_margin="10dp">
+        android:layout_margin="10dp"
+        android:importantForAutofill="no">
 
     </EditText>
 

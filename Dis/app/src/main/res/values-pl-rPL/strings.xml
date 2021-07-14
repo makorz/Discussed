@@ -1,119 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Discussed</string>
 
     <!--Titles of fragments, activities, menu-->
-    <string name="action_settings">Settings</string>
-    <string name="action_show_my_profile">My Profile</string>
-    <string name="action_show_alien_profile">Stranger Profile</string>
-    <string name="title_activity_profile">Profile</string>
-    <string name="title_activity_alien_profile">Profile of Stranger</string>
-    <string name="title_activity_chat">Chat</string>
-    <string name="title_activity_blindDate">Blind Date</string>
-    <string name="title_top">Main fragment</string>
-    <string name="title_activity_location">Map</string>
+    <string name="action_settings">Ustawienia</string>
+    <string name="action_show_my_profile">Mój profil</string>
+    <string name="action_show_alien_profile">Profil nieznajomego</string>
+    <string name="title_activity_profile">Profil</string>
+    <string name="title_activity_alien_profile">Profil nieznajomego</string>
+    <string name="title_activity_chat">Czat</string>
+    <string name="title_activity_blindDate">Randka w ciemno</string>
+    <string name="title_top">Głóny fragment</string>
+    <string name="title_activity_location">Mapa</string>
     <string-array name="titles">
-        <item>Home Page</item>
-        <item>Blind Dates</item>
-        <item>Conversations</item>
-        <item>Settings</item>
-        <item>About</item>
-        <item>Log out</item>
+        <item>Strona domowa</item>
+        <item>Randki w ciemno</item>
+        <item>Konwersacje</item>
+        <item>Ustawienia</item>
+        <item>O apliakcji</item>
+        <item>Wyloguj się</item>
     </string-array>
 
     <!--Drawer strings-->
-    <string name="open_drawer">Open drawer</string>
-    <string name="close_drawer">Close drawer</string>
+    <string name="open_drawer">Otwórz szufladę</string>
+    <string name="close_drawer">Zamknij szufladę</string>
 
     <!--Own Profile strings-->
-    <string name="change_image_button"><b>Change image</b></string>
-    <string name="profile_title"><b>WELCOME TO YOUR PROFILE!</b></string>
-    <string name="change_your_description_button"><b>Change description</b></string>
-    <string name="change_your_location_button"><b>Change Location</b></string>
-    <string name="description_dialog_hint">Describe Yourself (Between 50 and 500 letters)</string>
-    <string name="change_your_age_button"><b>Change Age</b></string>
-    <string name="dialog_box_upload_photo">Uploading photo…</string>
-    <string name="change_your_gender_button"><b>Change Gender</b></string>
-    <string name="change_name_button"><b>Change name</b></string>
-    <string name="date_alert_text">You can\'t change this, right now! \n Nr of days left: </string>
-    <string name="not_filled">UNFILLED</string>
-    <string name="gender_male_profile_activity">Male</string>
-    <string name="gender_female_profile_activity">Female</string>
-    <string name="change_your_topics_button"><b>Pick up topics</b></string>
-    <string name="alert_dialog_loading_profile">Loading profile…</string>
-    <string name="upload_finished_photo_profile_activity">Upload finished!</string>
-    <string name="upload_failed_profile_activity">Upload failed.</string>
-    <string name="upload_progress_1_profile_activity">Uploaded&#160;</string>
+    <string name="change_image_button"><b>Zmień fotografię</b></string>
+    <string name="profile_title"><b>Witaj w swoim profilu!</b></string>
+    <string name="change_your_description_button"><b>Zmień swój opis</b></string>
+    <string name="change_your_location_button"><b>Zmień lokalizację</b></string>
+    <string name="description_dialog_hint">Opisz siebie (od 50 do 500 znaków)</string>
+    <string name="change_your_age_button"><b>Zmień wiek</b></string>
+    <string name="dialog_box_upload_photo">Trwa przetwarzanie fotografii…</string>
+    <string name="change_your_gender_button"><b>Zmień płeć</b></string>
+    <string name="change_name_button"><b>Zmień imię</b></string>
+    <string name="date_alert_text">Nie możesz tego zmienić. Do odblokowania edycji pozostała następująca liczba dni:</string>
+    <string name="not_filled">NIEWYPEŁNIONE POLE</string>
+    <string name="gender_male_profile_activity">Mężczyzna</string>
+    <string name="gender_female_profile_activity">Kobieta</string>
+    <string name="change_your_topics_button"><b>Wybierz tematy</b></string>
+    <string name="alert_dialog_loading_profile">Wczytywanie profilu…</string>
+    <string name="upload_finished_photo_profile_activity">Przesyłanie zakończone!</string>
+    <string name="upload_failed_profile_activity">Pzzesyłanie nie powiodło się.</string>
+    <string name="upload_progress_1_profile_activity">Przesłano&#160;</string>
     <string name="upload_progress_2_profile_activity">%</string>
-    <string name="choose_gender_box_profile_activity">Chose Your gender</string>
-    <string name="pickup_topics_title_profile_activity">Pick Your Topics (from 2 to 5)</string>
-    <string name="topics_warning_max_profile_activity">Maximum 5 topics!!!</string>
-    <string name="more_topics_info_1_profile_activity">\"Please choose \"</string>
-    <string name="more_topics_info_2_profile_activity">\" more topic!\"</string>
-    <string name="your_name_text_profile_activity">Your Name</string>
-    <string name="your_age_text_profile_activity">Your Age</string>
-    <string name="your_description_text_profile_activity">Your Description</string>
-    <string name="your_topics_text_profile_activity">Your topics: \n\n</string>
-    <string name="welcome_text_1_profile_activity">\"Welcome \"</string>
-    <string name="welcome_text_2_profile_activity">\" to Your profile!\"</string>
-    <string name="chose_age_title_profile_activity">Enter Your age (Between 18 and 115)</string>
-    <string name="chose_name_title_profile_activity">Enter Your name (Between 3 and 35 letters)</string>
-    <string name="wrong_age_info_profile_activity">Set age from 18 to 115 years old!</string>
-    <string name="wrong_input_info_profile_activity">You need to type more!!!</string>
+    <string name="choose_gender_box_profile_activity">Wybierz płeć</string>
+    <string name="pickup_topics_title_profile_activity">Wybierz ulubione tematy (2 do 5)</string>
+    <string name="topics_warning_max_profile_activity">Możesz wybrać maksymalnie 5 tematów!</string>
+    <string name="more_topics_info_1_profile_activity">Wybierz jeszcze&#160;</string>
+    <string name="more_topics_info_2_profile_activity">&#160;tematów!</string>
+    <string name="your_name_text_profile_activity">Twoje imię</string>
+    <string name="your_age_text_profile_activity">Twój wiek</string>
+    <string name="your_description_text_profile_activity">Twój opis</string>
+    <string name="your_topics_text_profile_activity">Twoje ulubione tematy: \n\n</string>
+    <string name="welcome_text_1_profile_activity">Witaj&#160;</string>
+    <string name="welcome_text_2_profile_activity">&#160;w swoim profilu!</string>
+    <string name="chose_age_title_profile_activity">Wprowadź wiek (18 do 115)</string>
+    <string name="chose_name_title_profile_activity">Wprowadź imię (od 3 d0 35 znaków)</string>
+    <string name="wrong_age_info_profile_activity">Wiek należy wprowadzić w zakresie od 18 do 115 lat!</string>
+    <string name="wrong_input_info_profile_activity">Musisz wprowadzić więcej znaków!!!</string>
 
     <!--Alien Profile strings-->
-    <string name="alien_profile_title">PROFILE OF STRANGER</string>
-    <string name="uncover_alien_description"><b>Uncover description</b></string>
-    <string name="uncover_image_button"><b>Uncover photo</b></string>
-    <string name="uncover_alien_location"><b>Uncover location</b></string>
-    <string name="uncover_alien_age"><b>Uncover\n age</b></string>
-    <string name="points_left_to_use_alien">Nr of points left to use:</string>
+    <string name="alien_profile_title">Profil nieznajomego</string>
+    <string name="uncover_alien_description"><b>Odkryj opis</b></string>
+    <string name="uncover_image_button"><b>Odkryj fotografię</b></string>
+    <string name="uncover_alien_location"><b>Odkryj lokalizację</b></string>
+    <string name="uncover_alien_age"><b>Odkryj\n wiek</b></string>
+    <string name="points_left_to_use_alien">Ilość punktów do wykorzystania:</string>
     <string name="alien_hint_before_uncover">\???????</string>
-    <string name="title_text_1_alien_profile_activity">Welcome to&#160;</string>
-    <string name="title_text_2_alien_profile_activity">\'s profile!</string>
-    <string name="favorite_topics_text_alien_profile_activity">\'s favorite topics: \n\n</string>
-    <string name="spend_points_text_1_dialog_alien_profile_activity">Do You want to spend&#160;</string>
-    <string name="spend_points_text_2_description_dialog_alien_profile_activity">&#160;points to uncover description?</string>
-    <string name="spend_points_text_2_age_dialog_alien_profile_activity">&#160;points to uncover age?</string>
-    <string name="spend_points_text_2_location_dialog_alien_profile_activity">&#160;points to uncover location?</string>
-    <string name="spend_points_text_2_photo_dialog_alien_profile_activity">&#160;points to uncover this photo?</string>
-    <string name="nr_of_points_text_alien_profile_activity">Nr of points left to use:&#160;&#160;</string>
-    <string name="info_not_enough_points_to_uncover_alien_profile_activity">You don\'t have enough points to uncover what You want. \n Try harder!</string>
+    <string name="title_text_1_alien_profile_activity">Witaj w profilu&#160;</string>
+    <string name="title_text_2_alien_profile_activity">!</string>
+    <string name="favorite_topics_text_alien_profile_activity">&#160;ulubione tematy: \n\n</string>
+    <string name="spend_points_text_1_dialog_alien_profile_activity">Czy chcesz wykorzystać&#160;</string>
+    <string name="spend_points_text_2_description_dialog_alien_profile_activity">&#160;punktów by odkryć opis nieznajomego?</string>
+    <string name="spend_points_text_2_age_dialog_alien_profile_activity">&#160;punktów by odkryć wiek nieznajomego?</string>
+    <string name="spend_points_text_2_location_dialog_alien_profile_activity">&#160;punktów by odkryć lokalizację nieznajomego?</string>
+    <string name="spend_points_text_2_photo_dialog_alien_profile_activity">&#160;punktów by odkryć zdjęcie nieznajomego?</string>
+    <string name="nr_of_points_text_alien_profile_activity">Do wykorzystania pozostała następująca liczba punktów:&#160;&#160;</string>
+    <string name="info_not_enough_points_to_uncover_alien_profile_activity">Nie masz wystarczające liczby punktów by odkryć to co chcesz! Staraj się bardziej!</string>
 
     <!--MainFragment strings-->
-    <string name="search_chatMate_button">Search Chat Mate</string>
-    <string name="start_blind_date_button">Start Blind Date</string>
-    <string name="text_search_availability_box">You have not fully filled the profile card. You still need to add: \n\n </string>
-    <string name="location_radius_fragment_main">Location Radius:</string>
+    <string name="search_chatMate_button">Szukaj nieznajomego</string>
+    <string name="start_blind_date_button">Rozpocznij randkę w ciemno</string>
+    <string name="text_search_availability_box">Nie wypełniłeś swojego profilu potrzebnymi danymi, do uzupełnienia pozostały: \n\n </string>
+    <string name="location_radius_fragment_main">Promień okręgu lokalizacji:</string>
     <string name="radius_5km_fragment_main">5km</string>
     <string name="radius_10km_fragment_main">10km</string>
     <string name="radius_25km_fragment_main">25km</string>
     <string name="radius_50km_fragment_main">50km</string>
     <string name="radius_150km_fragment_main">150km</string>
     <string name="radius_250km_fragment_main">250km</string>
-    <string name="radius_country_fragment_main">Country</string>
-    <string name="radius_world_fragment_main">Entire World</string>
-    <string name="age_criteria_fragment_main">Age:</string>
-    <string name="gender_criteria_fragment_main">Gender:</string>
-    <string name="search_criteria_main_fragment">SEARCH CRITERIA</string>
-    <string name="next_dialog_boxes">NEXT</string>
-    <string name="title_not_filled_profile_to_search_alert_dialog">You have not fully filled the profile card. You still need to add: \n\n</string>
+    <string name="radius_country_fragment_main">Państwo</string>
+    <string name="radius_world_fragment_main">Świat</string>
+    <string name="age_criteria_fragment_main">Wiek:</string>
+    <string name="gender_criteria_fragment_main">Płeć:</string>
+    <string name="search_criteria_main_fragment">KRYTERIA WYSZUKIWANIA</string>
+    <string name="next_dialog_boxes">DALEJ</string>
+    <string name="title_not_filled_profile_to_search_alert_dialog">Nie wypełniłeś w pełni swojej karty profilowej. Musisz jeszcze dodać: \n\n</string>
 
     <!--SettingsFragment strings-->
-    <string name="logout_text">Logout</string>
-    <string name="donate_text">Donate Me!</string>
-    <string name="appreciate_me_text">Good Job!</string>
-    <string name="title_settings"><B>Settings</B></string>
-    <string name="delete_account">Delete My account</string>
-    <string name="good_job_text_view_settings_tab">If You want to say \"Thank You!\" just click the button on the right and I will be happy just for that! ;)</string>
-    <string name="deleteAccount_textview_settings_tab">Do You want to delete Your account (all photos, description, name, location, etc.)?</string>
-    <string name="logout_textview_settings_tab">Do you want to logout from current account?</string>
-    <string name="donate_textview_settings_tab">If simple \"Thank You!\" is not enough, You can send my some money buddy! ;D</string>
+    <string name="logout_text">Wyloguj się</string>
+    <string name="donate_text">Wesprzyj mnie!</string>
+    <string name="appreciate_me_text">Dobra robota!</string>
+    <string name="title_settings"><B>Ustawienia</B></string>
+    <string name="delete_account">Usuń moje konto</string>
+    <string name="good_job_text_view_settings_tab">Jeżeli chciałby pochwalić za dobrą robotę, kliknij przycisk z prawej strony! Dziękuję ;)</string>
+    <string name="deleteAccount_textview_settings_tab">CZy chcesz usunąć swoje konto (wszystkie zdjęcia, opis, lokalizacje, itd.)?</string>
+    <string name="logout_textview_settings_tab">Czy chcesz sie wylogować?</string>
+    <string name="donate_textview_settings_tab">Jeżeli chcesz podarować więcej niż proste, acz łądn "Dziękuję" możesz mi rzucić trochę grosza! ;D</string>
 
     <!--LoginFragment strings-->
-    <string name="agreeTermsCheckBox">I Agree to <b><u>Terms and Conditions</u></b> of using app "Discussed"</string>
-    <string name="agreeAgeCheckBox">I\'m over 18 years old.</string>
-    <string name="terms_and_conditions_text_title">\nTERMS AND CONDITIONS\n</string>
+    <string name="agreeTermsCheckBox">Zgadzam się na<b><u>Zasady i Warunki</u></b>użytkowania aplikacji "Discussed".</string>
+    <string name="agreeAgeCheckBox">Mam ukończony 18 rok życia.</string>
+    <string name="terms_and_conditions_text_title">\nZASADY I WARUNKI\n</string>
     <string name="terms_and_conditions_text"><b>Please read these terms of use carefully.</b> \n\n These Terms govern and apply to your access and use of Discussed services available via Discussed mobile app (collectively,
     the "Service" and each instance an "App") and any information, text, graphics, photos or other materials uploaded, downloaded or appearing on the Service (collectively referred to as "Content"). By accessing or using our Service,
     you agree comply with and to be bound all of the terms and conditions described in these Terms. If you do not agree to all of these terms and conditions, do not use our Service. \n\n <b>Use of the Service</b> \n\n
@@ -284,71 +284,73 @@ These Terms are governed by the laws of the State of California, without regard 
 Questions &amp; Contact Information \n\n
 
         Please contact us if you have any questions about our Terms at <b>makorzdev@gmail.com </b></string>
-    <string name="authentication_failed_login_activity">Authentication Failed</string>
-    <string name="understand_accept_terms_login_activity">I UNDERSTAND AND ACCEPT</string>
+    <string name="authentication_failed_login_activity">Poświadczenie nie powiodło się.</string>
+    <string name="understand_accept_terms_login_activity">Rozumiem i zgadzam się.</string>
 
     <!--MainActivity strings-->
-    <string name="info_dialog_box_text1"><b>\nWelcome to my application!</b></string>
-    <string name="info_dialog_box_text2">While using this magic, well looking piece of software, You can find someone who wants to talk on similar topic with You.\n</string>
-    <string name="info_dialog_box_text3">But before You start searching You need to complete Your profile (top-right corner of screen) with following information\'s: \n\n1. Location. \n2. Name. \n3. Age.
-        \n4. Personal description. \n5. Gender. \n6. 3 photos. \n7. Favorite topics. \n\nAfter that You can start searching another soul to connect to!</string>
-    <string name="info_dialog_box_text4">\nTo access Your profile tap icon in top right corner. \n\nThen You can edit all information mentioned before. Remember that those information\'s
-        can be edited in following way: \n\n 1. Location - Every day. \n2. Name - Once every 7 days. \n3. Age - Once every 30 days. \n4. Personal description - Once every 7 days. \n5. Gender - Once every 30 days.
-        \n6. Photos - Once every 7 days \n7. Favorite topics - Whenever You like. \n\n This restriction is made to exclude people who are not serious about themselves. \n\n<b>So BE CAREFUL while You enter them!</b> \n\nGood luck and I hope You find what You need!</string>
-    <string name="loading_text_dialog_box">Loading…</string>
-    <string name="yes_text_dialog_boxes">YES</string>
-    <string name="no_text_dialog_boxes">Abort!</string>
-    <string name="understand_text_dialog_boxes">OK, I GET IT!</string>
+    <string name="info_dialog_box_text1"><b>\nWitam w mojej aplikacji!</b></string>
+    <string name="info_dialog_box_text2">Podczas użytkowanie tej wspaniale wyglądającej apliakcji, możesz odnaleźć kogoś kto chciałby porozmawiać na temat, który Ty chciałbyś teraz poruszyć!\n</string>
+    <string name="info_dialog_box_text3">Ale zanim rozpoczniesz wyszukiwanie współtowarzysza rozmowy muszisz uzupełnić swój profil (ikona w prawym górnym rogu) o następujące informacje: \n\n1. Lokalizacja.
+        \n2. Imię. \n3. Wiek. \n4. Płeć. \n5. Opis swojej osoby. \n6. Trzy fotografie. \n7. Ulubione tematy do rozmowy. \n\nPo dostarczeniu wskazanych danych, możesz rozpocząć wyszukiwanie podobnej duszy do rozmowy!</string>
+    <string name="info_dialog_box_text4">\nW celu wejścia na swój profil, kliknij ikonę w prawym górnym rogu ekranu (ikona z zarysem osoby w okręgu). \n\nPo wejściu na swój profil, możesz edytować swoje dane zgodnie
+        z następującymi warunkami: \n\n1. Lokalizacja - codziennie. \n2. Imię - raz na 7 dni. \n3. Wiek - raz na 30 dni. \n4. Opis swojej osoby - raz na 7 dni. \n5. Płeć - raz na 30 dni. \n6. Fotografie - raz na 7 dni.
+        \n7. Ulubione tematy do rozmowy - kiedy chcesz. \n\n Takie ograniczenia zostały wprowadzone, aby wykluczyć osoby, które nie traktują aplikacji w sposób odowiedni dla innych użytkowników.\n\n
+        <b>Więc UWAŻAJ podczas ich wprowadzania, gdyż zmiany mogą zostać dokonane dopiero po upływie określonego czasu!</b> \n\nPowodzenia! Mam nadzieję, że znajdziesz to czego potrzebujesz!</string>
+    <string name="loading_text_dialog_box">Wczytywanie…</string>
+    <string name="yes_text_dialog_boxes">TAK</string>
+    <string name="no_text_dialog_boxes">NIE</string>
+    <string name="understand_text_dialog_boxes">OK, rozumiem!</string>
 
     <!--AboutFragment strings-->
     <string-array name="about_options">
-        <item>Entry information\'s.</item>
-        <item>How often can I change profile items?</item>
-        <item>How to award stranger for message?</item>
-        <item>How we count points for messages?</item>
-     </string-array>
+        <item>Podstawowe informacje</item>
+        <item>Jak często mogę zmieniać dane profilowe?</item>
+        <item>Jak nagrodzić nieznajomego za wiadomość?</item>
+        <item>Jak liczone są punkty za wiadomości?</item>
+    </string-array>
     <string-array name="about_options_answers">
-        <item>While using this magic, well looking piece of software, You can find someone who wants to talk on similar topic with You.\n But before You start searching You need to complete Your
-            profile (top-right corner of screen) with following information\'s: \n\n1. Location. \n2. Name. \n3. Age. \n4. Personal description. \n5. Gender. \n6. 3 photos. \n7. Favorite topics.\n\nAfter that
-            You can start searching another soul to connect to! \nTo access Your profile tap icon in top right corner. \n\nThen You can edit all information mentioned before, Remember that those information\'s
-            can be edited once every 7 days (except topics - those You can edit how often You want). This restriction is made to exclude people who are not serious about themselves. \n\n
-            So BE CAREFUL while You enter them! \n\nGood luck and I hope You find what You need!</item>
-        <item>1. Location - Every day. \n2. Name - Once every 7 days. \n3. Age - Once every 30 days. \n4. Personal description - Once every 7 days. \n5. Gender - Once every 30 days.
-            \n6. Photos - Once every 7 days \n7. Favorite topics - Whenever You like.</item>
-        <item>Just long click on message You want to award, after that golden star will appear in top corner of that chat bubble and pop up message with nr of points stranger received.</item>
-        <item>It depends on the length of message. \n\n Simple \"OK, I agree with You!\" will not grant any points to sender of that message. To receive at least 1 point, message
-            must have minimum 100 characters.\n\n User can receive max 5 points for single message. </item>
+        <item>Podczas użytkowanie tej wspaniale wyglądającej apliakcji, możesz odnaleźć kogoś kto chciałby porozmawiać na temat, który Ty chciałbyś teraz poruszyć!\n
+            While using this magic, well looking piece of software, You can find someone who wants to talk on similar topic with You.\nAle zanim rozpoczniesz wyszukiwanie
+            współtowarzysza rozmowy muszisz uzupełnić swój profil (ikona w prawym górnym rogu) o następujące informacje: \n\n1. Lokalizacja.\n2. Imię. \n3. Wiek. \n4. Płeć.
+            \n5. Opis swojej osoby. \n6. Trzy fotografie. \n7. Ulubione tematy do rozmowy. \n\nPo dostarczeniu wskazanych danych, możesz rozpocząć wyszukiwanie podobnej
+            duszy do rozmowy!</item>
+        <item>1. Lokalizacja - codziennie. \n2. Imię - raz na 7 dni. \n3. Wiek - raz na 30 dni. \n4. Opis swojej osoby - raz na 7 dni. \n5. Płeć - raz na 30 dni. \n6. Fotografie - raz na 7 dni.
+        \n7. Ulubione tematy do rozmowy - kiedy chcesz.</item>
+        <item>Kliknij i przytrzymaj dłużej wiadomość, którą chcesz nagordzić, po chwili pojawi się powiadomienie o ilości punktów jakie otrzymał współrozmówca oraz w dymku wiadomości pojawi się
+            złota gwiazda infromująca, że wiadomość została już oceniona.</item>
+        <item>Ilość punktów zależy od długości wiadomości. Proste "OK, zgadzam się!" nie zapewni autorowi żadnych punktów. By otrzymać przynajmniej jeden punkt, wiadomośc musi się składać z
+            minimum 100 znaków.\n\n Nieznajomy może otrzymać maksymalnie 5 punktów za pojedynczą wiadomość.</item>
     </string-array>
     <string name="copyright_by_text_view_about_tab">Copyright &#169; by <i>MatKorzDev</i></string>
-    <string name="nr_of_goodJob_clicks_text_about_tab">Nr of GoodJob button clicks worldwide: </string>
+    <string name="nr_of_goodJob_clicks_text_about_tab">Ilość klikniętych przyciskó "Dobra robota!" na całym świecie: </string>
     <string name="version_textView_about_tab">Discussed: </string>
 
     <!--LocationActivity strings-->
-    <string name="button_localisation_choose">I ACCEPT MARKED LOCALISATION</string>
-    <string name="localisation_text_view_title">Your current location has been marked on map, if this location is OK click button on bottom of the screen. If You want to choose different
-        localisation, mark it on map and then click button on bottom of the screen.</string>
-    <string name="localisation_not_turned_on_title">Localisation not turned on!</string>
-    <string name="map_icon_text_position_location_activity">Your position</string>
-    <string name="loading_your_localisation_info_dialog_box">Loading Your localisation…</string>
-    <string name="location_accept_location_activity_toast">Location is accepted!</string>
-    <string name="location_not_accept_location_activity_toast">This address is not certain, try again!</string>
+    <string name="button_localisation_choose">Akceptuję zaznaczona lokalizację</string>
+    <string name="localisation_text_view_title">Twoja obecna lokalizacja zostałą zaznaczona na mapie, jeżeli Ci ona odpowiada, zatwierdź ją przyciskiem u dołu oienka. Jeżeli chcesz wybrać inną lokalizację
+        zaznacz ją na mapie i wtedy kliknij przycisk u dołu ekranu.</string>
+    <string name="localisation_not_turned_on_title">Usługa lokalizacji nie została włączona</string>
+    <string name="map_icon_text_position_location_activity">Twoja lokalizacja</string>
+    <string name="loading_your_localisation_info_dialog_box">Wczytywanie Twojej lokalizacji…</string>
+    <string name="location_accept_location_activity_toast">Lokalizacja zaakceptowana!</string>
+    <string name="location_not_accept_location_activity_toast">Ten adres nie jest pewny, spróbuj ponownie!</string>
 
     <!--ChatActivity strings-->
-    <string name="edit_text_hint_chat_activity">Type a Message…</string>
+    <string name="edit_text_hint_chat_activity">Wprowadź wiadomość…</string>
     <string name="too_long_message_chat_activity_toast">Typed text is too long! Cut it to 1250 characters!</string>
-    <string name="graded_message_chat_activity_toast">Message was graded!</string>
-    <string name="award_info_text_1_chat_activity_toast">You awarded&#160;</string>
-    <string name="award_info_text_2_chat_activity_toast">&#160;with&#160;</string>
-    <string name="award_info_text_3_chat_activity_toast">&#160;points!</string>
+    <string name="graded_message_chat_activity_toast">Nagroda za wiadomość została już przyznana!</string>
+    <string name="award_info_text_1_chat_activity_toast">Nagrodzono&#160;</string>
+    <string name="award_info_text_2_chat_activity_toast">&#160;następującą liczbą punktów&#160;</string>
+    <string name="award_info_text_3_chat_activity_toast">&#160;!</string>
+
 
     <!--Content description-->
-    <string name="content_description_send_button_chat_activity">Send Button Chat Activity</string>
-    <string name="content_description_main_logo_login_activity">Main Logo</string>
-    <string name="content_description_icon_of_graded_message_chat_activity">Icon of Graded Message</string>
-    <string name="content_description_chat_logo_intro_dialog">Chat logo</string>
+    <string name="content_description_send_button_chat_activity">Przycisk wyślij wiadomość</string>
+    <string name="content_description_main_logo_login_activity">Główne logo</string>
+    <string name="content_description_icon_of_graded_message_chat_activity">Ikona nagrodzonej waidomości</string>
+    <string name="content_description_chat_logo_intro_dialog">Logo chatu</string>
 
     <!--Not used-->
     <string name="welcome_text">Welcome dear friendo! In our up You will find someone to talk about topic You would like to discuss right now!</string>
-
 
 </resources>

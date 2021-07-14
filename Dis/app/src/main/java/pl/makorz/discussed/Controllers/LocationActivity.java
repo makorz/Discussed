@@ -1,7 +1,6 @@
 package pl.makorz.discussed.Controllers;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -20,13 +19,11 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -34,8 +31,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Locale;
 import pl.makorz.discussed.R;
@@ -45,12 +40,12 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
     private GoogleMap mMap;
     private LocationManager locationManager;
     private LocationListener locationListener;
-    SupportMapFragment mapFragment;
-    String placeName, countryName, countryCode;
-    Double latitude, longitude;
+    public SupportMapFragment mapFragment;
+    private String placeName, countryName, countryCode;
+    private Double latitude, longitude;
     private AlertDialog dialog;
-    boolean mapClicked = false;
-    Button acceptButton;
+    public boolean mapClicked = false;
+    private Button acceptButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +109,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
                 mMap.clear();
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current, 12));
-                mMap.addMarker(new MarkerOptions().position(current).title("Your position").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                mMap.addMarker(new MarkerOptions().position(current).title(getString(R.string.map_icon_text_position_location_activity)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
 
             }
 
@@ -150,7 +145,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     findAddressInfo(latLng);
                     mMap.addMarker(new MarkerOptions()
                             .position(latLng)
-                            .title("Your position")
+                            .title(getString(R.string.map_icon_text_position_location_activity))
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 12));
 
@@ -171,7 +166,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         View dialogAlertView = inflater.inflate(R.layout.progress_bar, null);
         TextView messageAlertView = dialogAlertView.findViewById(R.id.loading_msg);
         builder.setView(dialogAlertView);
-        messageAlertView.setText("Loading Your localisation...");
+        messageAlertView.setText(R.string.loading_your_localisation_info_dialog_box);
         dialog = builder.create();
         dialog.show();
     }
@@ -182,7 +177,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         View topicsView = inflaterDialog.inflate(R.layout.dialog_localisation_not_turned_on, null);
         AlertDialog topicsChangeDialog = new AlertDialog.Builder(this)
                 .setView(topicsView)  // What to use in dialog box
-                .setNegativeButton("I refuse!", null)
+                .setNegativeButton(R.string.no_text_dialog_boxes, null)
                 .setPositiveButton("OK, take me to settings!", null)
                 .show();
 
@@ -220,19 +215,17 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
         try {
             List<Address> listAddresses = geocoder.getFromLocation(latitude,longitude,1);
-            Log.d("AAALALAL",listAddresses.get(0).toString());
-
             if (listAddresses.size() > 0) {
                 if (listAddresses.get(0).getCountryCode() != null && listAddresses.get(0).getLocality() != null && listAddresses.get(0).getCountryName() != null) {
                     countryCode = listAddresses.get(0).getCountryCode();
                     countryName = listAddresses.get(0).getCountryName();
                     placeName = listAddresses.get(0).getLocality();
-                    Toast.makeText(LocationActivity.this, "Location is accepted!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LocationActivity.this, getString(R.string.location_accept_location_activity_toast), Toast.LENGTH_SHORT).show();
                     acceptButton.setEnabled(true);
                     locationManager.removeUpdates(locationListener);
                     locationManager = null;
                 } else {
-                    Toast.makeText(LocationActivity.this, "This address is not certain, try again!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(LocationActivity.this, getString(R.string.location_not_accept_location_activity_toast), Toast.LENGTH_LONG).show();
                     acceptButton.setEnabled(false);
 
                 }

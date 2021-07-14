@@ -1,39 +1,21 @@
 package pl.makorz.discussed.Models.Adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.ArrayList;
-
 import pl.makorz.discussed.Models.Topic;
 import pl.makorz.discussed.R;
 
 public class TopicsAdapter extends FirestoreRecyclerAdapter<Topic,TopicsAdapter.ViewHolder> {
 
-
     private static OnItemClickListener listener;
-//    public static final String TOPICS_ARRAY = "chosenTopicsArray";
-//    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//    FirebaseFirestore db = FirebaseFirestore.getInstance();
-//    Boolean isFavorite = false;
 
     public TopicsAdapter(@NonNull FirestoreRecyclerOptions<Topic> options) {
         super(options);

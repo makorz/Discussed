@@ -45,29 +45,29 @@ import pl.makorz.discussed.R;
 public class MainFragment extends Fragment {
 
     private static final String TAG = "MainFragmentActivity";
-    public static final String CAN_USER_SEARCH = "canUserSearch";
-    public static final String FIRST_PHOTO_UPLOAD_MADE = "firstPhotoUploadMade";
-    public static final String SECOND_PHOTO_UPLOAD_MADE = "secondPhotoUploadMade";
-    public static final String THIRD_PHOTO_UPLOAD_MADE = "thirdPhotoUploadMade";
-    public static final String LOCATION_UPLOAD_MADE = "locationUploadMade";
-    public static final String TOPICS_UPLOAD_MADE = "topicsUploadMade";
-    public static final String AGE_UPLOAD_MADE = "ageUploadMade";
-    public static final String DESCRIPTION_UPLOAD_MADE = "descriptionUploadMade";
-    public static final String GENDER_UPLOAD_MADE = "genderUploadMade";
-    public static final String NAME_UPLOAD_MADE = "nameUploadMade";
-    private static String chatID;
-    private String nameOfUser, nameOfOtherUser, firstPhotoUriOfUser, firstPhotoUriOfOtherUser, idOfOtherUser;
-    private DocumentSnapshot userSnapshot, otherUserSnapshot;
-    Button buttonChat, buttonBlindDate;
-    ProgressBar waitUntilChatAppears;
-    LinearLayout layoutToDimWhenSearching;
+
+    private static final String CAN_USER_SEARCH = "canUserSearch";
+    private static final String FIRST_PHOTO_UPLOAD_MADE = "firstPhotoUploadMade";
+    private static final String SECOND_PHOTO_UPLOAD_MADE = "secondPhotoUploadMade";
+    private static final String THIRD_PHOTO_UPLOAD_MADE = "thirdPhotoUploadMade";
+    private static final String LOCATION_UPLOAD_MADE = "locationUploadMade";
+    private static final String TOPICS_UPLOAD_MADE = "topicsUploadMade";
+    private static final String AGE_UPLOAD_MADE = "ageUploadMade";
+    private static final String DESCRIPTION_UPLOAD_MADE = "descriptionUploadMade";
+    private static final String GENDER_UPLOAD_MADE = "genderUploadMade";
+    private static final String NAME_UPLOAD_MADE = "nameUploadMade";
+
+    private String chatID, nameOfUser, nameOfOtherUser, firstPhotoUriOfUser, firstPhotoUriOfOtherUser, idOfOtherUser;
+    private Button buttonChat, buttonBlindDate;
+    private ProgressBar waitUntilChatAppears;
+    private LinearLayout layoutToDimWhenSearching;
     private Boolean firstPhotoUploadMade, secondPhotoUploadMade, thirdPhotoUploadMade, locationUploadMade, descriptionUploadMade, ageUploadMade, topicsUploadMade,
             genderUploadMade, nameUploadMade,canUserSearch;
-    Map<String, Boolean> userSearchAvailability = new HashMap<>();
-
+    private final Map<String, Boolean> userSearchAvailability = new HashMap<>();
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private DocumentSnapshot userSnapshot, otherUserSnapshot;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -77,8 +77,8 @@ public class MainFragment extends Fragment {
         View mainView = inflater.inflate(R.layout.fragment_main, container, false);
         waitUntilChatAppears = mainView.findViewById(R.id.progressBarOfSearch);
         layoutToDimWhenSearching = mainView.findViewById(R.id.linearLayoutOfSearch);
-        buttonChat = (Button) mainView.findViewById(R.id.button_search_chatmate);
-        buttonBlindDate = (Button) mainView.findViewById(R.id.button_start_blinddate);
+        buttonChat = (Button) mainView.findViewById(R.id.button_search_chatMate);
+        buttonBlindDate = (Button) mainView.findViewById(R.id.button_start_blindDate);
 
         buttonChat.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -105,7 +105,6 @@ public class MainFragment extends Fragment {
 
         Random r = new Random();
         int randomNrOfUser = r.nextInt(4 - 1) + 1;
-
 
         Query queryUser = FirebaseFirestore.getInstance().collection("search/searchAll/searchNE").whereEqualTo("randomNr",randomNrOfUser).limit(1);
         queryUser.get()
@@ -183,7 +182,7 @@ public class MainFragment extends Fragment {
                                         intent.putExtra("idOfOtherUser",idOfOtherUser);
                                         waitUntilChatAppears.setVisibility(View.INVISIBLE);
                                         layoutToDimWhenSearching.setAlpha(1f);
-                                        Objects.requireNonNull(getActivity()).startActivity(intent);
+                                        requireActivity().startActivity(intent);
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {
@@ -246,7 +245,7 @@ public class MainFragment extends Fragment {
         View alertNotFiledProfileDialogView = inflaterDialog.inflate(R.layout.dialog_search_not_available, null);
         TextView notFiledProfileAlertTitle = alertNotFiledProfileDialogView.findViewById(R.id.title_of_search_availability_box);
         int i = 0;
-        StringBuilder whatWasNotFilled = new StringBuilder("You have not fully filled the profile card. You still need to add: \n\n");
+        StringBuilder whatWasNotFilled = new StringBuilder(getString(R.string.title_not_filled_profile_to_search_alert_dialog));
         for (Map.Entry<String,Boolean> entry : userSearchAvailability.entrySet()) {
             String addTopic = "";
             if (!entry.getValue()) {

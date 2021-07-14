@@ -15,6 +15,8 @@ import pl.makorz.discussed.R;
 
 public class BlindDateFragment extends Fragment {
 
+    private static final String TAG = "BlindDateFragment";
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

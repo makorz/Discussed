@@ -1,10 +1,7 @@
 package pl.makorz.discussed.Controllers;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -24,48 +20,32 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.SetOptions;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import pl.makorz.discussed.R;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final int RC_GOOGLE_SIGN_IN = 496;
     private static final String TAG = "LoginActivity";
+    private static final int RC_GOOGLE_SIGN_IN = 496;
+
+    private CheckBox checkTermsBox, checkAgeBox;
+    private int USER_NEW_ACCOUNT = -1;
+
     private SignInButton buttonSignInGoogle;
     private GoogleSignInClient client;
     private FirebaseAuth mAuth;
-    private CheckBox checkTermsBox, checkAgeBox;
-    private TextView termsTextView;
     FirebaseUser user;
-    private int USER_NEW_ACCOUNT = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
 
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -125,7 +105,7 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            Toast.makeText(LoginActivity.this, "Authentication Failed", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, getString(R.string.authentication_failed_login_activity), Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
 
@@ -171,7 +151,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void termsAgreementCheck () {
-        termsTextView = findViewById(R.id.textOfTerms);
+        TextView termsTextView = findViewById(R.id.textOfTerms);
         checkTermsBox = findViewById(R.id.checkAgreeTerms);
         checkAgeBox = findViewById(R.id.checkAgreeAge);
         checkTermsBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -201,7 +181,7 @@ public class LoginActivity extends AppCompatActivity {
 
         AlertDialog termsDialog = new AlertDialog.Builder(this)
                 .setView(termsDialogView)  // What to use in dialog box
-                .setPositiveButton("I UNDERSTAND AND ACCEPT", null)
+                .setPositiveButton(R.string.understand_accept_terms_login_activity, null)
                 .show();
 
         termsDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {

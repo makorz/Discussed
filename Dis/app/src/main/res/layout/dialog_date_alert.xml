@@ -24,5 +24,4 @@
         android:textColor="#FF3131"
         android:textAppearance="@style/TextAppearance.AppCompat.Display2"/>
 
-
 </LinearLayout>

@@ -2,7 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-
     tools:context=".Controllers.MainActivity">
 
     <item
@@ -11,6 +10,5 @@
         android:orderInCategory="1"
         android:title="@string/action_show_my_profile"
         app:showAsAction="ifRoom" />
-
 
 </menu>

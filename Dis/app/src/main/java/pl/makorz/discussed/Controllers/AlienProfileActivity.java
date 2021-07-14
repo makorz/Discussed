@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -25,7 +24,6 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -35,33 +33,31 @@ import pl.makorz.discussed.R;
 
 public class AlienProfileActivity extends AppCompatActivity implements View.OnClickListener {
 
-
     private static final String TAG = "AlienProfileActivity";
 
-    public static final String AGE_FIELD = "ageOfUser";
-    public static final String DESCRIPTION_FIELD = "description";
-    public static final String TOPICS_ARRAY = "chosenTopicsArray";
-    public static final String FIRST_PHOTO_URI = "firstPhotoUri";
-    public static final String SECOND_PHOTO_URI = "secondPhotoUri";
-    public static final String THIRD_PHOTO_URI = "thirdPhotoUri";
-    public static final String COUNTRY_NAME_FIELD = "locationCountryName";
-    public static final String PLACE_NAME_FIELD = "placeName";
-    public static final String NAME_FIELD = "displayName";
+    private static final String AGE_FIELD = "ageOfUser";
+    private static final String DESCRIPTION_FIELD = "description";
+    private static final String TOPICS_ARRAY = "chosenTopicsArray";
+    private static final String FIRST_PHOTO_URI = "firstPhotoUri";
+    private static final String SECOND_PHOTO_URI = "secondPhotoUri";
+    private static final String THIRD_PHOTO_URI = "thirdPhotoUri";
+    private static final String COUNTRY_NAME_FIELD = "locationCountryName";
+    private static final String PLACE_NAME_FIELD = "placeName";
+    private static final String NAME_FIELD = "displayName";
 
-    public static final String UNCOVER_DESCRIPTION_MADE = "uncoverStrangerDescription";
-    public static final String UNCOVER_LOCATION_MADE = "uncoverStrangerLocation";
-    public static final String UNCOVER_AGE_MADE = "uncoverStrangerAge";
-    public static final String UNCOVER_FIRST_PHOTO_MADE = "uncoverStrangerFirstPhoto";
-    public static final String UNCOVER_SECOND_PHOTO_MADE = "uncoverStrangerSecondPhoto";
-    public static final String UNCOVER_THIRD_PHOTO_MADE = "uncoverStrangerThirdPhoto";
-    public static final String POINTS_TO_USE = "pointsFromOtherUser";
+    private static final String UNCOVER_DESCRIPTION_MADE = "uncoverStrangerDescription";
+    private static final String UNCOVER_LOCATION_MADE = "uncoverStrangerLocation";
+    private static final String UNCOVER_AGE_MADE = "uncoverStrangerAge";
+    private static final String UNCOVER_FIRST_PHOTO_MADE = "uncoverStrangerFirstPhoto";
+    private static final String UNCOVER_SECOND_PHOTO_MADE = "uncoverStrangerSecondPhoto";
+    private static final String UNCOVER_THIRD_PHOTO_MADE = "uncoverStrangerThirdPhoto";
+    private static final String POINTS_TO_USE = "pointsFromOtherUser";
 
-    public static final String USERS_ID_ARRAY = "usersParticipatingID";
-    public static final String USERS_FIRST_PHOTO_UNCOVERED = "isFirstPhotoOfUserUncovered";
+    private static final String USERS_ID_ARRAY = "usersParticipatingID";
+    private static final String USERS_FIRST_PHOTO_UNCOVERED = "isFirstPhotoOfUserUncovered";
 
 
-    private String otherUserName, chatIdIntent, idOfOtherUser, currentUserID;
-    private String firstPhotoUri, secondPhotoUri, thirdPhotoUri;
+    private String otherUserName, chatIdIntent, idOfOtherUser, currentUserID, firstPhotoUri, secondPhotoUri, thirdPhotoUri;
     private TextView profileDescriptionText, ageText, locationText, titleText, topicsText, nrOfPointsText, messageAlertView;
     private ImageView firstImageView, secondImageView, thirdImageView;
     public Button buttonDescriptionUncover, buttonAgeUncover, buttonLocationUncover, buttonFirstImageUncover,
@@ -80,13 +76,14 @@ public class AlienProfileActivity extends AppCompatActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alien_profile);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().hide();
 
         Intent intent = getIntent();
         chatIdIntent = intent.getStringExtra("chatIdIntent");
         otherUserName = intent.getStringExtra("otherUserName");
         idOfOtherUser = intent.getStringExtra("idOfOtherUser");
         currentUserID = intent.getStringExtra("currentUserID");
-        getSupportActionBar().setTitle(otherUserName + " Profile");
+
 
         // Alert of loading data of profile from server
         loadingAlertDialog();
@@ -144,32 +141,43 @@ public class AlienProfileActivity extends AppCompatActivity implements View.OnCl
                                                 secondPhotoUri = documentOfOtherUser.getString(SECOND_PHOTO_URI);
                                                 thirdPhotoUri = documentOfOtherUser.getString(THIRD_PHOTO_URI);
 
-                                                String title = "Welcome to profile of " + documentOfOtherUser.getString(NAME_FIELD) + "!";
-                                                titleText.setText(title);
-                                                String pointBegin = "Nr of points left to use:  ";
+                                                String title1 = getString(R.string.title_text_1_alien_profile_activity);
+                                                String title2 = documentOfOtherUser.getString(NAME_FIELD);
+                                                String title3 = getString(R.string.title_text_2_alien_profile_activity);
+                                                SpannableString titleTextWords = new SpannableString(title1 + title2 + title3);
+                                                titleTextWords.setSpan(new StyleSpan(Typeface.ITALIC), title1.length(), title1.length() + title2.length() + 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                                titleText.setText(titleTextWords);
+
+                                                String pointBegin = getString(R.string.nr_of_points_text_alien_profile_activity);
                                                 String pointNr = String.valueOf(pointsToUse);
                                                 SpannableString pointsText = new SpannableString(pointBegin + pointNr);
                                                 pointsText.setSpan(new StyleSpan(Typeface.BOLD), pointBegin.length(), pointBegin.length() + pointNr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                                                 nrOfPointsText.setText(pointsText);
 
                                                 if (descriptionUncovered) {
+                                                    buttonDescriptionUncover.setEnabled(false);
                                                     profileDescriptionText.setText(documentOfOtherUser.getString(DESCRIPTION_FIELD));
+
                                                 }
 
                                                 if (ageUncovered) {
+                                                    buttonAgeUncover.setEnabled(false);
                                                     String age = Integer.toString(documentOfOtherUser.getDouble(AGE_FIELD).intValue());
                                                     ageText.setText(age);
+
                                                 }
 
                                                 if (locationUncovered) {
+                                                    buttonLocationUncover.setEnabled(false);
                                                     String placeName = documentOfOtherUser.getString(PLACE_NAME_FIELD);
                                                     String countryName = documentOfOtherUser.getString(COUNTRY_NAME_FIELD);
                                                     String localisation = placeName + ", " + countryName + ".";
                                                     locationText.setText(localisation);
+
                                                 }
 
                                                 topicList = (ArrayList<String>) documentOfOtherUser.get(TOPICS_ARRAY);
-                                                StringBuilder topicsListInTextView = new StringBuilder(otherUserName + "'s favorite topics: \n\n");
+                                                StringBuilder topicsListInTextView = new StringBuilder(otherUserName + getString(R.string.favorite_topics_text_alien_profile_activity));
                                                 for (int i = 0; i < topicList.size(); i++) {
                                                         String addTopic;
                                                         String nrOfTopic = String.valueOf(i + 1);
@@ -183,12 +191,15 @@ public class AlienProfileActivity extends AppCompatActivity implements View.OnCl
                                                 topicsText.setText(topicsListInTextView);
 
                                                 if (firstPhotoUncovered) {
+                                                    buttonFirstImageUncover.setEnabled(false);
                                                     Glide.with(getApplicationContext()).load(firstPhotoUri).into(firstImageView);
                                                 }
                                                 if (secondPhotoUncovered) {
+                                                    buttonSecondImageUncover.setEnabled(false);
                                                     Glide.with(getApplicationContext()).load(secondPhotoUri).into(secondImageView);
                                                 }
                                                 if (thirdPhotoUncovered) {
+                                                    buttonThirdImageUncover.setEnabled(false);
                                                     Glide.with(getApplicationContext()).load(thirdPhotoUri).into(thirdImageView);
                                                 }
 
@@ -240,6 +251,7 @@ public class AlienProfileActivity extends AppCompatActivity implements View.OnCl
         buttonFirstImageUncover.setOnClickListener(this);
         buttonLocationUncover.setOnClickListener(this);
         buttonDescriptionUncover.setOnClickListener(this);
+        buttonAgeUncover.setOnClickListener(this);
 
         firstImageView.setOnClickListener(this);
         secondImageView.setOnClickListener(this);
@@ -268,33 +280,33 @@ public class AlienProfileActivity extends AppCompatActivity implements View.OnCl
 
         switch (view.getId()) {
             case R.id.description_alien_uncover_button:
-                spendPointsAlertDialog("Do You want to spend " + descriptionCost + " points to uncover description?",
-                        descriptionCost, UNCOVER_DESCRIPTION_MADE);
+                spendPointsAlertDialog(getString(R.string.spend_points_text_1_dialog_alien_profile_activity) + descriptionCost
+                                + getString(R.string.spend_points_text_2_description_dialog_alien_profile_activity), descriptionCost, UNCOVER_DESCRIPTION_MADE);
                 whatButtonPressed = 1;
                 break;
             case R.id.age_alien_uncover_button:
-                spendPointsAlertDialog("Do You want to spend " + ageCost + " points to uncover age?",
-                        ageCost, UNCOVER_AGE_MADE);
+                spendPointsAlertDialog(getString(R.string.spend_points_text_1_dialog_alien_profile_activity) + ageCost
+                                + getString(R.string.spend_points_text_2_age_dialog_alien_profile_activity), ageCost, UNCOVER_AGE_MADE);
                 whatButtonPressed = 2;
                 break;
             case R.id.location_alien_uncover_button:
-                spendPointsAlertDialog("Do You want to spend " + locationCost + " points to uncover location?",
-                        locationCost, UNCOVER_LOCATION_MADE);
+                spendPointsAlertDialog(getString(R.string.spend_points_text_1_dialog_alien_profile_activity) + locationCost
+                                + getString(R.string.spend_points_text_2_location_dialog_alien_profile_activity), locationCost, UNCOVER_LOCATION_MADE);
                 whatButtonPressed = 3;
                 break;
             case R.id.first_image_uncover:
-                spendPointsAlertDialog("Do You want to spend " + photoCost + " points to uncover this photo?",
-                        photoCost, UNCOVER_FIRST_PHOTO_MADE);
+                spendPointsAlertDialog(getString(R.string.spend_points_text_1_dialog_alien_profile_activity) + photoCost
+                                + getString(R.string.spend_points_text_2_photo_dialog_alien_profile_activity), photoCost, UNCOVER_FIRST_PHOTO_MADE);
                 whatButtonPressed = 4;
                 break;
             case R.id.second_image_uncover:
-                spendPointsAlertDialog("Do You want to spend " + photoCost + " points to uncover this photo?",
-                        photoCost, UNCOVER_SECOND_PHOTO_MADE);
+                spendPointsAlertDialog(getString(R.string.spend_points_text_1_dialog_alien_profile_activity) + photoCost
+                                + getString(R.string.spend_points_text_2_photo_dialog_alien_profile_activity), photoCost, UNCOVER_SECOND_PHOTO_MADE);
                 whatButtonPressed = 5;
                 break;
             case R.id.third_image_uncover:
-                spendPointsAlertDialog("Do You want to spend " + photoCost + " points to uncover this photo?",
-                        photoCost, UNCOVER_THIRD_PHOTO_MADE);
+                spendPointsAlertDialog(getString(R.string.spend_points_text_1_dialog_alien_profile_activity) + photoCost
+                                + getString(R.string.spend_points_text_2_photo_dialog_alien_profile_activity), photoCost, UNCOVER_THIRD_PHOTO_MADE);
                 whatButtonPressed = 6;
                 break;
             case R.id.imageview_first_image_alien_profile:
@@ -338,8 +350,8 @@ public class AlienProfileActivity extends AppCompatActivity implements View.OnCl
 
         AlertDialog uncoverDialog = new AlertDialog.Builder(this)
                 .setView(uncoverAlertView)  // What to use in dialog box
-                .setNegativeButton("Abort!", null)
-                .setPositiveButton("YES", null)
+                .setNegativeButton(R.string.no_text_dialog_boxes, null)
+                .setPositiveButton(R.string.yes_text_dialog_boxes, null)
                 .show();
 
         uncoverDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
@@ -398,11 +410,11 @@ public class AlienProfileActivity extends AppCompatActivity implements View.OnCl
                 } else {
                     View uncoverDialogView2 = inflater.inflate(R.layout.dialog_uncover, null);
                     TextView uncoverText = uncoverDialogView2.findViewById(R.id.uncover_text);
-                    uncoverText.setText("You don't have enough points to uncover what You want. \n Try harder!");
+                    uncoverText.setText(R.string.info_not_enough_points_to_uncover_alien_profile_activity);
 
                     AlertDialog uncoverDialog2 = new AlertDialog.Builder(AlienProfileActivity.this)
                             .setView(uncoverDialogView2)
-                            .setPositiveButton("OK, I GET IT!", null)
+                            .setPositiveButton(R.string.understand_text_dialog_boxes, null)
                             .show();
 
                     uncoverDialog2.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
