@@ -8,38 +8,32 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
 import pl.makorz.discussed.Models.Adapters.CustomExpandableListAdapter;
 import pl.makorz.discussed.R;
 
 public class AboutFragment extends Fragment {
 
-    public static final String VERSION_NR = "versionNr";
-    public static final String GOOD_JOB_COUNTER = "nrOfGoodJobs";
+    private static final String TAG = "AboutFragment";
+    private static final String VERSION_NR = "versionNr";
+    private static final String GOOD_JOB_COUNTER = "nrOfGoodJobs";
 
-    ExpandableListView expandableListView;
-    ExpandableListAdapter expandableListAdapter;
-    List<String> expandableListTitle;
-    LinkedHashMap<String, List<String>> expandableListDetail;
-    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private LinkedHashMap<String, List<String>> expandableListDetail;
     private String versionNr;
     private TextView versionNrTextView, goodJobTextView;
 
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,10 +60,10 @@ public class AboutFragment extends Fragment {
         View aboutLayout = inflater.inflate(R.layout.fragment_about, container, false);
         versionNrTextView = aboutLayout.findViewById(R.id.versionNr_text_view);
         goodJobTextView = aboutLayout.findViewById(R.id.goodJobNr_text_view);
-        expandableListView = (ExpandableListView) aboutLayout.findViewById(R.id.tutorial_list_view);
+        ExpandableListView expandableListView = (ExpandableListView) aboutLayout.findViewById(R.id.tutorial_list_view);
         populateList();
-        expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
-        expandableListAdapter = new CustomExpandableListAdapter(getContext(), expandableListTitle, expandableListDetail);
+        List<String> expandableListTitle = new ArrayList<String>(expandableListDetail.keySet());
+        ExpandableListAdapter expandableListAdapter = new CustomExpandableListAdapter(getContext(), expandableListTitle, expandableListDetail);
         expandableListView.setAdapter(expandableListAdapter);
         return aboutLayout;
 
@@ -92,7 +86,7 @@ public class AboutFragment extends Fragment {
                         versionNrTextView.setText(version2);
 
                         String pointNr = Integer.toString(document.getDouble(GOOD_JOB_COUNTER).intValue());
-                        String points1 = getResources().getString(R.string.nr_of_goodjob_clicks_text_about_tab);
+                        String points1 = getResources().getString(R.string.nr_of_goodJob_clicks_text_about_tab);
                         String points2 = points1 + " " + pointNr;
                         goodJobTextView.setHint(points2);
 

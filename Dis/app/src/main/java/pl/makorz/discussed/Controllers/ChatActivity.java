@@ -49,7 +49,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private List<String> listOfUsers, listOfUserNames, listOfUserPhotoUri;
     private String chatIdIntent, idOfOtherUser, otherUserName, displayName;
-    int index;
+    private int index;
     private EditText messageText;
     private RecyclerView messagesRecycler;
     private MessageInChatAdapter messagesAdapter;
@@ -108,7 +108,7 @@ public class ChatActivity extends AppCompatActivity {
                     });
                     messageText.setText("");
                 } else {
-                    Toast.makeText(ChatActivity.this, "Typed text is too long! Cut it to 1250 characters!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChatActivity.this, R.string.too_long_message_chat_activity_toast, Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -152,7 +152,10 @@ public class ChatActivity extends AppCompatActivity {
                                 if (documentOfChat != null) {
 
                                     docRef.collection("chatUsers").document(idOfOtherUser).update(POINTS_FROM_OTHER_USER, FieldValue.increment(points));
-                                    Toast.makeText(ChatActivity.this, "You awarded " + otherUserName + " with " + points + " points!", Toast.LENGTH_SHORT).show();
+
+                                    Toast.makeText(ChatActivity.this, getString(R.string.award_info_text_1_chat_activity_toast) + otherUserName
+                                            + getString(R.string.award_info_text_2_chat_activity_toast) + points
+                                            + getString(R.string.award_info_text_3_chat_activity_toast), Toast.LENGTH_SHORT).show();
 
                                     DocumentReference docRef2 = db.collection("chats").document(chatIdIntent).
                                             collection("messages").document(idMessage);
@@ -183,7 +186,7 @@ public class ChatActivity extends AppCompatActivity {
                     });
 
                 } else {
-                    Toast.makeText(ChatActivity.this, "Message was graded!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChatActivity.this, R.string.graded_message_chat_activity_toast, Toast.LENGTH_SHORT).show();
                 }
             }
         });

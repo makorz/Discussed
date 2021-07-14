@@ -2,30 +2,24 @@ package pl.makorz.discussed.Controllers.Fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-
-
 import androidx.fragment.app.Fragment;
-
 import com.google.firebase.auth.FirebaseAuth;
-
-import java.util.concurrent.TimeUnit;
-
 import pl.makorz.discussed.Controllers.LoginActivity;
 import pl.makorz.discussed.R;
 
 public class SettingsFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "SettingsActivity";
-    private FirebaseAuth mAuth;
+
     public Button buttonGoodJob, buttonDonate, buttonLogout, buttonDeleteAccount;
     public int whatButtonPressed = -1;
+
+    private FirebaseAuth mAuth;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,7 +37,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
 
         buttonLogout = layout.findViewById(R.id.logout_button_settings_tab);
         buttonDonate = layout.findViewById(R.id.donate_button_settings_tab);
-        buttonGoodJob = layout.findViewById(R.id.goodjob_button_settings_tab);
+        buttonGoodJob = layout.findViewById(R.id.goodJob_button_settings_tab);
         buttonDeleteAccount = layout.findViewById (R.id.deleteAccount_button_settings_tab);
 
         buttonLogout.setOnClickListener(this);
@@ -58,7 +52,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
 
         switch (view.getId()) {
-            case R.id.goodjob_button_settings_tab:
+            case R.id.goodJob_button_settings_tab:
 
                 whatButtonPressed = 1;
                 break;

@@ -35,7 +35,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginStart="5dp"
-            android:hint="Type a Message..." />
+            android:hint="@string/edit_text_hint_chat_activity"
+            android:inputType="text"
+            android:importantForAutofill="no" />
 
         <ImageButton
             android:id="@+id/sendMessageButton"
@@ -45,38 +47,9 @@
             android:background="#0000"
             android:scaleType="fitCenter"
             android:layout_gravity="bottom"
-            android:src="@drawable/send_button_icon" />
+            android:src="@drawable/send_button_icon"
+            android:contentDescription="@string/content_description_send_button_chat_activity" />
 
     </LinearLayout>
-
-<!--    <RelativeLayout-->
-<!--        android:id="@+id/relativeLayout"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        android:layout_marginStart="8dp"-->
-<!--        android:padding="8dp"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent">-->
-
-<!--        <EditText-->
-<!--            android:id="@+id/messageEditText"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_centerVertical="true"-->
-<!--            android:layout_toStartOf="@+id/sendMessageButton"-->
-<!--            android:hint="Type a Message..." />-->
-
-<!--        <ImageButton-->
-<!--            android:id="@+id/sendMessageButton"-->
-<!--            android:layout_width="40dp"-->
-<!--            android:layout_height="50dp"-->
-<!--            android:layout_alignParentEnd="true"-->
-<!--            android:background="#0000"-->
-<!--            android:scaleType="fitCenter"-->
-<!--            android:src="@drawable/send_button_icon" />-->
-
-<!--    </RelativeLayout>-->
 
 </LinearLayout>

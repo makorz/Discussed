@@ -56,6 +56,7 @@ import pl.makorz.discussed.R;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
+
     private static int nrOfUsers = -1;
     private String[] titles;
     private ListView drawerList;
@@ -63,13 +64,13 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle drawerToggle;
     private int currentPosition = 0;
     String searchID = "";
-    private DocumentSnapshot searchSnapshot,userSnapshot;
     public int USER_NEW_ACCOUNT = -1;
     private int introPage = 0;
 
     private FirebaseAuth mAuth;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private DocumentSnapshot searchSnapshot,userSnapshot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -408,7 +409,7 @@ public class MainActivity extends AppCompatActivity {
 
         AlertDialog introDialog = new AlertDialog.Builder(this)
                 .setView(introDialogView)  // What to use in dialog box
-                .setPositiveButton("NEXT", null)
+                .setPositiveButton(R.string.next_dialog_boxes, null)
                 .show();
 
         introDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
@@ -419,7 +420,7 @@ public class MainActivity extends AppCompatActivity {
 
                     AlertDialog introDialog2 = new AlertDialog.Builder(MainActivity.this)
                             .setView(introDialogView2)  // What to use in dialog box
-                            .setPositiveButton("OK, I GET IT!", null)
+                            .setPositiveButton(R.string.understand_text_dialog_boxes, null)
                             .show();
                     introPage++;
                     introDialog2.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {

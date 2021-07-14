@@ -27,7 +27,8 @@
             android:layout_margin="5dp"
             android:layout_gravity="center"
             android:scaleType="centerInside"
-            android:src="@drawable/logo_discussed" />
+            android:src="@drawable/logo_discussed"
+            android:contentDescription="@string/content_description_chat_logo_intro_dialog" />
 
         <TextView
             android:layout_width="match_parent"

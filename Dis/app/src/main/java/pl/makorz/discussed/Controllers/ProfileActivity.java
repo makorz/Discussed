@@ -1,13 +1,13 @@
 package pl.makorz.discussed.Controllers;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -15,15 +15,16 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -55,7 +56,6 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -73,61 +73,60 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     private static final String TAG = "ProfileActivity";
 
-    public static final String AGE_FIELD = "ageOfUser";
-    public static final String DESCRIPTION_FIELD = "description";
-    public static final String NAME_FIELD = "displayName";
-    public static final String LOCATION_FIELD = "locationLatLng";
-    public static final String TOPICS_ARRAY = "chosenTopicsArray";
-    public static final String GENDER_FIELD = "genderFemale";
-    public static final String FIRST_PHOTO_URI = "firstPhotoUri";
-    public static final String SECOND_PHOTO_URI = "secondPhotoUri";
-    public static final String THIRD_PHOTO_URI = "thirdPhotoUri";
-    public static final String CAN_USER_SEARCH = "canUserSearch";
-    public static final String COUNTRY_NAME_FIELD = "locationCountryName";
-    public static final String COUNTRY_CODE_FIELD = "locationCountryCode";
-    public static final String PLACE_NAME_FIELD = "placeName";
+    private static final String AGE_FIELD = "ageOfUser";
+    private static final String DESCRIPTION_FIELD = "description";
+    private static final String NAME_FIELD = "displayName";
+    private static final String LOCATION_FIELD = "locationLatLng";
+    private static final String TOPICS_ARRAY = "chosenTopicsArray";
+    private static final String GENDER_FIELD = "genderFemale";
+    private static final String FIRST_PHOTO_URI = "firstPhotoUri";
+    private static final String SECOND_PHOTO_URI = "secondPhotoUri";
+    private static final String THIRD_PHOTO_URI = "thirdPhotoUri";
+    private static final String CAN_USER_SEARCH = "canUserSearch";
+    private static final String COUNTRY_NAME_FIELD = "locationCountryName";
+    private static final String COUNTRY_CODE_FIELD = "locationCountryCode";
+    private static final String PLACE_NAME_FIELD = "placeName";
 
-    public static final String FIRST_PHOTO_UPLOAD_MADE = "firstPhotoUploadMade";
-    public static final String SECOND_PHOTO_UPLOAD_MADE = "secondPhotoUploadMade";
-    public static final String THIRD_PHOTO_UPLOAD_MADE = "thirdPhotoUploadMade";
-    public static final String LOCATION_UPLOAD_MADE = "locationUploadMade";
-    public static final String TOPICS_UPLOAD_MADE = "topicsUploadMade";
-    public static final String AGE_UPLOAD_MADE = "ageUploadMade";
-    public static final String DESCRIPTION_UPLOAD_MADE = "descriptionUploadMade";
-    public static final String GENDER_UPLOAD_MADE = "genderUploadMade";
-    public static final String NAME_UPLOAD_MADE = "nameUploadMade";
+    private static final String FIRST_PHOTO_UPLOAD_MADE = "firstPhotoUploadMade";
+    private static final String SECOND_PHOTO_UPLOAD_MADE = "secondPhotoUploadMade";
+    private static final String THIRD_PHOTO_UPLOAD_MADE = "thirdPhotoUploadMade";
+    private static final String LOCATION_UPLOAD_MADE = "locationUploadMade";
+    private static final String TOPICS_UPLOAD_MADE = "topicsUploadMade";
+    private static final String AGE_UPLOAD_MADE = "ageUploadMade";
+    private static final String DESCRIPTION_UPLOAD_MADE = "descriptionUploadMade";
+    private static final String GENDER_UPLOAD_MADE = "genderUploadMade";
+    private static final String NAME_UPLOAD_MADE = "nameUploadMade";
 
-    public static final String FIRST_PHOTO_UPLOAD_DATE = "firstPhotoUploadDate";
-    public static final String SECOND_PHOTO_UPLOAD_DATE = "secondPhotoUploadDate";
-    public static final String THIRD_PHOTO_UPLOAD_DATE = "thirdPhotoUploadDate";
-    public static final String AGE_UPLOAD_DATE = "ageUploadDate";
-    public static final String GENDER_UPLOAD_DATE = "genderUploadDate";
-    public static final String LOCATION_UPLOAD_DATE = "locationUploadDate";
-    public static final String TOPICS_UPLOAD_DATE = "topicsUploadDate";
-    public static final String DESCRIPTION_UPLOAD_DATE = "descriptionUploadDate";
-    public static final String NAME_UPLOAD_DATE = "nameUploadDate";
+    private static final String FIRST_PHOTO_UPLOAD_DATE = "firstPhotoUploadDate";
+    private static final String SECOND_PHOTO_UPLOAD_DATE = "secondPhotoUploadDate";
+    private static final String THIRD_PHOTO_UPLOAD_DATE = "thirdPhotoUploadDate";
+    private static final String AGE_UPLOAD_DATE = "ageUploadDate";
+    private static final String GENDER_UPLOAD_DATE = "genderUploadDate";
+    private static final String LOCATION_UPLOAD_DATE = "locationUploadDate";
+    private static final String TOPICS_UPLOAD_DATE = "topicsUploadDate";
+    private static final String DESCRIPTION_UPLOAD_DATE = "descriptionUploadDate";
+    private static final String NAME_UPLOAD_DATE = "nameUploadDate";
 
     public static int whatButtonPressed = -1;
     private Uri imagePath;
 
-    private final StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
     public Button buttonDescriptionChange, buttonAgeChange, buttonLocationChange, buttonNameChange, buttonTopicsChange, buttonFirstImageChange,
             buttonSecondImageChange, buttonThirdImageChange, buttonGenderChange;
-    private TextView profileDescriptionText, ageText, locationText, nameText, titleText, topicsText, genderText;
+    private TextView profileDescriptionText, ageText, locationText, nameText, titleText, topicsText, genderText, messageAlertView;
     private ImageView firstImageView, secondImageView, thirdImageView;
     private Boolean firstPhotoUploadMade, secondPhotoUploadMade, thirdPhotoUploadMade, locationUploadMade, descriptionUploadMade, ageUploadMade, topicsUploadMade,
             genderUploadMade, nameUploadMade, whatGender, canUserSearch;
     private AlertDialog dialog;
-    private TextView messageAlertView;
     private String firstPhotoUri, secondPhotoUri, thirdPhotoUri;
     private ConstraintLayout layoutToDimWhenSearching;
     private ArrayList<String> topicList;
     private TopicsAdapter adapterTopics;
     private Date currentDate, firstPhotoUploadDate, secondPhotoUploadDate, thirdPhotoUploadDate, locationUploadDate, descriptionUploadDate, ageUploadDate,
             genderUploadDate, nameUploadDate;
+
+    private final StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+    private final FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
     // Main function of creating activity
     @Override
@@ -192,8 +191,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         secondPhotoUri = document.getString(SECOND_PHOTO_URI);
                         thirdPhotoUri = document.getString(THIRD_PHOTO_URI);
 
-                        String title = "Welcome " + document.getString(NAME_FIELD) + " to Your profile!";
-                        titleText.setText(title);
+                        String title1 = getString(R.string.welcome_text_1_profile_activity);
+                        String title2 = document.getString(NAME_FIELD);
+                        String title3 = getString(R.string.welcome_text_2_profile_activity);
+                        SpannableString titleTextWords = new SpannableString(title1 + title2 + title3);
+                        titleTextWords.setSpan(new StyleSpan(Typeface.ITALIC), title1.length(), title1.length() + title2.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        titleText.setText(titleTextWords);
 
                         nameText.setText(R.string.not_filled);
                         if (nameUploadMade) {
@@ -238,7 +241,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         topicsText.setText(R.string.not_filled);
                         if (topicsUploadMade) {
                             topicList = (ArrayList<String>) document.get(TOPICS_ARRAY);
-                            StringBuilder topicsListInTextView = new StringBuilder("Your topics: \n\n");
+                            StringBuilder topicsListInTextView = new StringBuilder(getString(R.string.your_topics_text_profile_activity));
                             for (int i = 0; i < topicList.size(); i++) {
                                 String addTopic;
                                 String nrOfTopic = String.valueOf(i + 1);
@@ -256,9 +259,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         if (genderUploadMade){
                             whatGender = document.getBoolean(GENDER_FIELD);
                             if (!whatGender) {
-                                genderText.setText("Male");
+                                genderText.setText(R.string.gender_male_profile_activity);
                             } else {
-                                genderText.setText("Female");
+                                genderText.setText(R.string.gender_female_profile_activity);
                             }
                         }
                         if (firstPhotoUploadMade) {
@@ -295,16 +298,16 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         EditText editDialogText = dialogView.findViewById(R.id.dialog_description_edit_text);
         // Filter input
         if (whatFieldUpdate.equals(AGE_FIELD)) {
-            editDialogText.setHint("Enter Your age (Between 18 and 115)");
+            editDialogText.setHint(R.string.chose_age_title_profile_activity);
             editDialogText.setInputType(InputType.TYPE_CLASS_NUMBER);
         } else if (whatFieldUpdate.equals(DESCRIPTION_FIELD)) {
-            editDialogText.setHint("Describe Yourself (max 500 letters)");
+            editDialogText.setHint(R.string.description_dialog_hint);
            // DescriptionFilter descriptionFilter = new DescriptionFilter(ProfileActivity.this);
             InputFilter lengthFilter = new InputFilter.LengthFilter(500);
             editDialogText.setFilters(new InputFilter[]{lengthFilter});
             //editDialogText.setFilters(new DescriptionFilter[]{descriptionFilter});
         } else if (whatFieldUpdate.equals(NAME_FIELD)) {
-            editDialogText.setHint("Enter Your name (max 35 letters)");
+            editDialogText.setHint(R.string.chose_name_title_profile_activity);
             InputFilter lengthFilter = new InputFilter.LengthFilter(35);
             editDialogText.setFilters(new InputFilter[]{lengthFilter});
         }
@@ -312,7 +315,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         AlertDialog fieldValueChangeDialog = new AlertDialog.Builder(this)
                 .setTitle(titleDialogBox)
                 .setView(dialogView)  // What to use in dialog box
-                .setNegativeButton("Abort!", null)
+                .setNegativeButton(R.string.no_text_dialog_boxes, null)
                 .setPositiveButton("OK", null)
                 .show();
 
@@ -323,7 +326,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 if (whatButtonPressed == 2) {
                     int valueEntered = Integer.parseInt(editDialogText.getText().toString());
                     if (valueEntered < 18 || valueEntered > 115) {
-                        Toast.makeText(ProfileActivity.this, "Set age from 18 to 115 years old!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProfileActivity.this, R.string.wrong_age_info_profile_activity, Toast.LENGTH_SHORT).show();
                     } else {
 
                         db.collection("users").document(currentUser.getUid())
@@ -344,8 +347,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 } else if (whatButtonPressed == 1) {
 
                     String valueEntered = editDialogText.getText().toString();
-                    if (valueEntered.isEmpty()) {
-                        Toast.makeText(ProfileActivity.this, "You need to type something!!!", Toast.LENGTH_SHORT).show();
+                    if (valueEntered.length() < 50) {
+                        Toast.makeText(ProfileActivity.this, getString(R.string.wrong_input_info_profile_activity), Toast.LENGTH_SHORT).show();
                     } else {
                         db.collection("users").document(currentUser.getUid())
                                 .update(whatFieldUpdate, valueEntered); //what you update
@@ -364,8 +367,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 } else if (whatButtonPressed == 4) {
                     String valueEntered = editDialogText.getText().toString();
-                    if (valueEntered.isEmpty()) {
-                        Toast.makeText(ProfileActivity.this, "You need to type something!!!", Toast.LENGTH_SHORT).show();
+                    if (valueEntered.length() < 3) {
+                        Toast.makeText(ProfileActivity.this, getString(R.string.wrong_input_info_profile_activity), Toast.LENGTH_SHORT).show();
                     } else {
                         db.collection("users").document(currentUser.getUid())
                                 .update(whatFieldUpdate, valueEntered); //what you update
@@ -555,7 +558,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     dialog.dismiss();
-                    Toast.makeText(ProfileActivity.this, "Upload failed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProfileActivity.this, getString(R.string.upload_failed_profile_activity), Toast.LENGTH_SHORT).show();
                 }
             }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -580,14 +583,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         }
                     });
                     dialog.dismiss();
-                    Toast.makeText(ProfileActivity.this, "Upload finished!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProfileActivity.this, getString(R.string.upload_finished_photo_profile_activity), Toast.LENGTH_SHORT).show();
                 }
             }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
                     double progress = (100.0 * snapshot.getBytesTransferred() / snapshot
                             .getTotalByteCount());
-                    messageAlertView.setText("Uploaded " + (int) progress + "%");
+                    String a = getString(R.string.upload_progress_1_profile_activity) + (int) progress +  getString(R.string.upload_progress_2_profile_activity);
+                    messageAlertView.setText(a);
                 }
             });
 
@@ -611,7 +615,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 dateDiff = currentDate.getTime() - descriptionUploadDate.getTime();
                 nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
                 if ( nrOfDaysSinceChange >= daysToChangeDescription) {
-                    descriptionAgeNameChangeDialog(DESCRIPTION_FIELD, "Your Description");
+                    descriptionAgeNameChangeDialog(DESCRIPTION_FIELD, getString(R.string.your_description_text_profile_activity));
                 } else {
                     timeOfChangeAlertDialog(nrOfDaysSinceChange, daysToChangeDescription);
                 }
@@ -622,7 +626,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
                 Log.d("DAYYYY", String.valueOf(nrOfDaysSinceChange));
                 if (nrOfDaysSinceChange > daysToChangeAge) {
-                    descriptionAgeNameChangeDialog(AGE_FIELD, "Your Age");
+                    descriptionAgeNameChangeDialog(AGE_FIELD, getString(R.string.your_age_text_profile_activity));
                 } else {
                     timeOfChangeAlertDialog(nrOfDaysSinceChange, daysToChangeAge);
                 }
@@ -643,7 +647,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 dateDiff = currentDate.getTime() - nameUploadDate.getTime();
                 nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
                 if (nrOfDaysSinceChange > daysToChangeName) {
-                    descriptionAgeNameChangeDialog(NAME_FIELD, "Your Name");
+                    descriptionAgeNameChangeDialog(NAME_FIELD, getString(R.string.your_name_text_profile_activity));
                 } else {
                     timeOfChangeAlertDialog(nrOfDaysSinceChange, daysToChangeName);
                 }
@@ -724,9 +728,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         femaleButton.setId(femaleID);
 
         AlertDialog genderChangeDialog = new AlertDialog.Builder(this)
-                .setTitle("Chose Your gender")
+                .setTitle(R.string.choose_gender_box_profile_activity)
                 .setView(dialogView)  // What to use in dialog box
-                .setNegativeButton("Abort!", null)
+                .setNegativeButton(R.string.no_text_dialog_boxes, null)
                 .setPositiveButton("OK", null)
                 .show();
 
@@ -803,9 +807,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         topicsRecycler.setAdapter(adapterTopics);
 
         AlertDialog topicsChangeDialog = new AlertDialog.Builder(this)
-                .setTitle("Pick Your Topics (from 2 to 5)")
+                .setTitle(R.string.pickup_topics_title_profile_activity)
                 .setView(topicsView)  // What to use in dialog box
-                .setNegativeButton("Abort!", null)
+                .setNegativeButton(R.string.no_text_dialog_boxes, null)
                 .setPositiveButton("OK", null)
                 .show();
 
@@ -825,7 +829,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 } else {
                     topics.remove(topicTitle);
                     cb.setChecked(false);
-                    Toast.makeText(ProfileActivity.this, "Maximum 5 topics!!!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProfileActivity.this, getString(R.string.topics_warning_max_profile_activity), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -835,7 +839,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             public void onClick(View view) {
                 if (topics.size() < 2) {
                     int howManyTopicsLeft = 2 - topics.size();
-                    Toast.makeText(ProfileActivity.this, "Please choose " + howManyTopicsLeft + " more topic!", Toast.LENGTH_SHORT).show();
+                    String a = getString(R.string.more_topics_info_1_profile_activity) + howManyTopicsLeft + getString(R.string.more_topics_info_2_profile_activity);
+                    Toast.makeText(ProfileActivity.this, a, Toast.LENGTH_SHORT).show();
                 } else {
                     Log.i(TAG, "Clicked positive!");
                     adapterTopics.stopListening();

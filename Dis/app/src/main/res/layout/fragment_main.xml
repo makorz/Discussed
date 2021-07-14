@@ -43,8 +43,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="SEARCH CRITERIA"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+                    android:text="@string/search_criteria_main_fragment"
+                    android:textStyle="bold"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Display1"
                     android:textAlignment="center"
                     android:id="@+id/search_console_title" />
 
@@ -74,7 +75,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                    android:text="Location Radius:" />
+                    android:text="@string/location_radius_fragment_main" />
 
             </LinearLayout>
 
@@ -109,7 +110,7 @@
                             android:scaleX="0.8"
                             android:scaleY="0.8"
                             android:minWidth="80dp"
-                            android:text="5km"
+                            android:text="@string/radius_5km_fragment_main"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
 
                         <RadioButton
@@ -119,7 +120,7 @@
                             android:scaleX="0.8"
                             android:scaleY="0.8"
                             android:minWidth="80dp"
-                            android:text="10km"
+                            android:text="@string/radius_10km_fragment_main"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
 
                         <RadioButton
@@ -129,7 +130,7 @@
                             android:scaleX="0.8"
                             android:scaleY="0.8"
                             android:minWidth="80dp"
-                            android:text="25km"
+                            android:text="@string/radius_25km_fragment_main"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
 
                         <RadioButton
@@ -139,7 +140,7 @@
                             android:scaleX="0.8"
                             android:scaleY="0.8"
                             android:minWidth="80dp"
-                            android:text="50km"
+                            android:text="@string/radius_50km_fragment_main"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
                     </RadioGroup>
 
@@ -158,7 +159,7 @@
                             android:scaleX="0.8"
                             android:scaleY="0.8"
                             android:minWidth="130dp"
-                            android:text="150km"
+                            android:text="@string/radius_150km_fragment_main"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
 
                         <RadioButton
@@ -168,7 +169,7 @@
                             android:scaleX="0.8"
                             android:scaleY="0.8"
                             android:minWidth="130dp"
-                            android:text="250km"
+                            android:text="@string/radius_250km_fragment_main"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
 
                         <RadioButton
@@ -178,7 +179,7 @@
                             android:scaleX="0.8"
                             android:scaleY="0.8"
                             android:minWidth="130dp"
-                            android:text="Country"
+                            android:text="@string/radius_country_fragment_main"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
 
                         <RadioButton
@@ -189,7 +190,7 @@
                             android:scaleY="0.8"
                             android:layout_gravity="start"
                             android:minWidth="130dp"
-                            android:text="Entire World"
+                            android:text="@string/radius_world_fragment_main"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
 
                     </RadioGroup>
@@ -210,7 +211,7 @@
                     android:id="@+id/textView_age"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Age:"
+                    android:text="@string/age_criteria_fragment_main"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
 
             </LinearLayout>
@@ -248,7 +249,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                    android:text="Gender:"/>
+                    android:text="@string/gender_criteria_fragment_main"/>
 
             </LinearLayout>
 
@@ -275,7 +276,7 @@
                         android:scaleX="0.8"
                         android:scaleY="0.8"
                         android:minWidth="80dp"
-                        android:text="Male"/>
+                        android:text="@string/gender_male_profile_activity"/>
 
 
                     <RadioButton android:id="@+id/radioButton_female"
@@ -286,7 +287,7 @@
                         android:scaleY="0.8"
                         android:minWidth="130dp"
                         android:layout_marginStart="35dp"
-                        android:text="Female"/>
+                        android:text="@string/gender_female_profile_activity"/>
 
                 </RadioGroup>
 
@@ -313,14 +314,14 @@
                 android:layout_marginTop="15dp">
 
                 <Button
-                    android:id="@+id/button_search_chatmate"
+                    android:id="@+id/button_search_chatMate"
                     android:layout_width="190dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="@string/search_chatmate_button" />
+                    android:text="@string/search_chatMate_button" />
 
                 <Button
-                    android:id="@+id/button_start_blinddate"
+                    android:id="@+id/button_start_blindDate"
                     android:layout_width="190dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"

@@ -37,13 +37,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:id="@+id/linear_goodjob_settings"
+        android:id="@+id/linear_goodJob_settings"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp">
 
         <TextView
-            android:id="@+id/goodjob_textview_settings_tab"
+            android:id="@+id/goodJob_textview_settings_tab"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="10"
@@ -56,7 +56,7 @@
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2" />
 
         <Button
-            android:id="@+id/goodjob_button_settings_tab"
+            android:id="@+id/goodJob_button_settings_tab"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:layout_marginEnd="5dp"

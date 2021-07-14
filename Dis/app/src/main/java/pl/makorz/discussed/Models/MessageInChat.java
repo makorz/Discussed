@@ -8,7 +8,6 @@ public class MessageInChat {
     Date dateOfMessage;
     public boolean wasGraded;
 
-
     public MessageInChat() {
     }
 
