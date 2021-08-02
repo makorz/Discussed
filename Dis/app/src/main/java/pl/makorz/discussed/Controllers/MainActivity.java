@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -27,6 +28,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -40,6 +42,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.SetOptions;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -62,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView drawerList;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
+    private AlertDialog dialog;
     private int currentPosition = 0;
     String searchID = "";
     public int USER_NEW_ACCOUNT = -1;
@@ -78,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         USER_NEW_ACCOUNT = getIntent().getIntExtra("USER_NEW_ACCOUNT",-1);
         setContentView(R.layout.activity_main);
         initView(savedInstanceState);
+        loadingAlertDialog();
 
         if (USER_NEW_ACCOUNT == 0) {
             introAlertDialog();
@@ -203,6 +208,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "Logout");
                 // Logout user
                 mAuth.signOut();
+                FirebaseAuth.getInstance().signOut();
+                LoginManager.getInstance().logOut();
                 Intent logoutIntent = new Intent(this, LoginActivity.class);
                 logoutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(logoutIntent);
@@ -272,7 +279,8 @@ public class MainActivity extends AppCompatActivity {
         }
         switch (item.getItemId()) {
             case R.id.action_show_my_profile:
-                //Code to run when the Create Order item is clicked
+                loadingAlertDialog();
+                //Code to run when the Profile Icon is clicked
                 Intent intent = new Intent(this, ProfileActivity.class);
                 startActivity(intent);
                 return true;
@@ -294,6 +302,14 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        if (dialog.isShowing()) {
+            dialog.dismiss();
+        }
+        super.onResume();
+    }
+
     // Function updates collections when user is first time in app.
     private void fillUserDocument() throws ExecutionException, InterruptedException {
 
@@ -305,97 +321,97 @@ public class MainActivity extends AppCompatActivity {
         DocumentReference docRef = db.collection("users").document(user.getUid());
         Task<DocumentSnapshot> taskUsers = docRef.get();
 
-        DocumentReference docRefSearch = db.collection("search").document("searchAll");
-        Task<DocumentSnapshot> taskSearch = docRefSearch.get();
+//        DocumentReference docRefSearch = db.collection("search").document("searchAll");
+//        Task<DocumentSnapshot> taskSearch = docRefSearch.get();
 
         // Tasks are managed
         taskUsers.addOnCompleteListener(executor, new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 userSnapshot = task.getResult();
-                taskSearch.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
-                        searchSnapshot = task2.getResult();
+//                taskSearch.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
+//                        searchSnapshot = task2.getResult();
                         if (USER_NEW_ACCOUNT == 0) {
-                            nrOfUsers = searchSnapshot.getLong("nrOfUsers").intValue();
+//                            nrOfUsers = searchSnapshot.getLong("nrOfUsers").intValue();
+//
+//                            Map<String, Object> addToSearchCollection = new HashMap<>();
+//                            addToSearchCollection.put("locationOfUser", new GeoPoint(0, 0));
+//                            addToSearchCollection.put("idOfUser", user.getUid());
+//                            addToSearchCollection.put("ageOfUser", 1);
+//                            addToSearchCollection.put("genderOfUserFemale", false);
+//                            addToSearchCollection.put("randomNr", nrOfUsers + 1);
+//
+//                            db.collection("search").document("searchAll").collection("searchNE").add(addToSearchCollection)
+//                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+//                                        @Override
+//                                        public void onSuccess(DocumentReference documentReference) {
+//                                            searchID = documentReference.getId();
+//
+//                                        }
+//                                    })
+//                                    .addOnFailureListener(new OnFailureListener() {
+//                                        @Override
+//                                        public void onFailure(@NonNull Exception e) {
+//                                            Log.d(TAG, e.toString());
+//                                        }
+//                                    });
 
-                            Map<String, Object> addToSearchCollection = new HashMap<>();
-                            addToSearchCollection.put("locationOfUser", new GeoPoint(0, 0));
-                            addToSearchCollection.put("idOfUser", user.getUid());
-                            addToSearchCollection.put("ageOfUser", 1);
-                            addToSearchCollection.put("genderOfUserFemale", false);
-                            addToSearchCollection.put("randomNr", nrOfUsers + 1);
-
-                            db.collection("search").document("searchAll").collection("searchNE").add(addToSearchCollection)
-                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                        @Override
-                                        public void onSuccess(DocumentReference documentReference) {
-                                            searchID = documentReference.getId();
-                                            Date dateIntro = new Date(new Date().getTime() - 10 * 86400000); // Previous date for first time
-                                            Map<String, Object> userCompletion = new HashMap<>();
-                                            userCompletion.put("isActive", true);
-                                            userCompletion.put("searchID", searchID);
-                                            userCompletion.put("canUserSearch", false);
-                                            userCompletion.put("blindDateParticipationWill", true);
-                                            userCompletion.put("filledNecessaryInfo", false);
-                                            userCompletion.put("premium", false);
-                                            userCompletion.put("displayName", "");
-                                            userCompletion.put("genderFemale", false);
-                                            userCompletion.put("ageOfUser", 0);
-                                            userCompletion.put("firstPhotoUri", "null");
-                                            userCompletion.put("firstPhotoUploadMade",false);
-                                            userCompletion.put("firstPhotoUploadDate",dateIntro);
-                                            userCompletion.put("secondPhotoUri", "null");
-                                            userCompletion.put("secondPhotoUploadMade",false);
-                                            userCompletion.put("secondPhotoUploadDate",dateIntro);
-                                            userCompletion.put("thirdPhotoUri", "null");
-                                            userCompletion.put("thirdPhotoUploadMade",false);
-                                            userCompletion.put("thirdPhotoUploadDate",dateIntro);
-                                            userCompletion.put("locationUploadMade",false);
-                                            userCompletion.put("locationUploadDate",dateIntro);
-                                            userCompletion.put("locationCountryName","");
-                                            userCompletion.put("locationCountryCode","");
-                                            userCompletion.put("placeName","");
-                                            userCompletion.put("locationLatLng",new LatLng(0,0));
-                                            userCompletion.put("descriptionUploadMade",false);
-                                            userCompletion.put("descriptionUploadDate",dateIntro);
-                                            userCompletion.put("ageUploadMade",false);
-                                            userCompletion.put("ageUploadDate",dateIntro);
-                                            userCompletion.put("nameUploadMade",false);
-                                            userCompletion.put("nameUploadDate",dateIntro);
-                                            userCompletion.put("genderUploadMade",false);
-                                            userCompletion.put("genderUploadDate",dateIntro);
-                                            userCompletion.put("topicsUploadMade",false);
-                                            userCompletion.put("topicsUploadDate",dateIntro);
-                                            userCompletion.put("chosenTopicsArray", Arrays.asList("","",""));
-                                            docRef.set(userCompletion, SetOptions.merge());
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.d(TAG, e.toString());
-                                        }
-                                    });
+                            Date date = new Date(new Date().getTime());
+                            Log.d(TAG, date.toString());
+                            Date dateIntro = new Date(new Date().getTime() - 35 * 86400000l); // Previous date for first time
+                            Log.d(TAG,dateIntro.toString());
+                            Map<String, Object> userCompletion = new HashMap<>();
+                            userCompletion.put("isActive", true);
+                            userCompletion.put("searchID", searchID);
+                            userCompletion.put("canUserSearch", false);
+                            userCompletion.put("blindDateParticipationWill", true);
+                            userCompletion.put("filledNecessaryInfo", false);
+                            userCompletion.put("premium", false);
+                            userCompletion.put("displayName", "");
+                            userCompletion.put("genderFemale", false);
+                            userCompletion.put("ageOfUser", 0);
+                            userCompletion.put("firstPhotoUri", "null");
+                            userCompletion.put("firstPhotoUploadMade",false);
+                            userCompletion.put("firstPhotoUploadDate",dateIntro);
+                            userCompletion.put("secondPhotoUri", "null");
+                            userCompletion.put("secondPhotoUploadMade",false);
+                            userCompletion.put("secondPhotoUploadDate",dateIntro);
+                            userCompletion.put("thirdPhotoUri", "null");
+                            userCompletion.put("thirdPhotoUploadMade",false);
+                            userCompletion.put("thirdPhotoUploadDate",dateIntro);
+                            userCompletion.put("locationUploadMade",false);
+                            userCompletion.put("locationUploadDate",dateIntro);
+                            userCompletion.put("locationCountryName","");
+                            userCompletion.put("locationCountryCode","");
+                            userCompletion.put("placeName","");
+                            userCompletion.put("locationLatLng",new LatLng(0,0));
+                            userCompletion.put("descriptionUploadMade",false);
+                            userCompletion.put("descriptionUploadDate",dateIntro);
+                            userCompletion.put("ageUploadMade",false);
+                            userCompletion.put("ageUploadDate",dateIntro);
+                            userCompletion.put("nameUploadMade",false);
+                            userCompletion.put("nameUploadDate",dateIntro);
+                            userCompletion.put("genderUploadMade",false);
+                            userCompletion.put("genderUploadDate",dateIntro);
+                            userCompletion.put("topicsUploadMade",false);
+                            userCompletion.put("topicsUploadDate",dateIntro);
+                            userCompletion.put("chosenTopicsArray", Arrays.asList("","",""));
+                            docRef.set(userCompletion, SetOptions.merge());
 
                             Map<String, Object> userUpdateValues = new HashMap<>();
                             userUpdateValues.put("location", new GeoPoint(0, 0));
                             userUpdateValues.put("age", 1);
                             docRef.update(userUpdateValues);
 
-                            Map<String, Object> searchAllUpdate = new HashMap<>();
-                            Log.d(TAG, "onCompleteUSERSSSSS: " + nrOfUsers);
-                            searchAllUpdate.put("nrOfUsers", nrOfUsers + 1);
-                            docRefSearch.update(searchAllUpdate);
-
-
+//                            Map<String, Object> searchAllUpdate = new HashMap<>();
+//                            Log.d(TAG, "onCompleteUSERSSSSS: " + nrOfUsers);
+//                            searchAllUpdate.put("nrOfUsers", nrOfUsers + 1);
+//                            docRefSearch.update(searchAllUpdate);
                         }
-
-                    }
-
-                });
-
+//                    }
+//                });
             }
         });
 
@@ -437,6 +453,18 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             });
+    }
+
+    public void loadingAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false); // if you want user to wait for some process to finish
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogAlertView = inflater.inflate(R.layout.progress_bar, null);
+        TextView messageAlertView = dialogAlertView.findViewById(R.id.loading_msg);
+        builder.setView(dialogAlertView);
+        messageAlertView.setText(R.string.alert_dialog_loading_profile);
+        dialog = builder.create();
+        dialog.show();
     }
 
 }

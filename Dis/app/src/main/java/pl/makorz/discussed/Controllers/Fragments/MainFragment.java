@@ -103,8 +103,9 @@ public class MainFragment extends Fragment {
     // Searching user with some parameters
     private void searchForUser() {
 
-        Random r = new Random();
-        int randomNrOfUser = r.nextInt(4 - 1) + 1;
+//        Random r = new Random();
+//        int randomNrOfUser = r.nextInt(4 - 1) + 1;
+        int randomNrOfUser = 1;
 
         Query queryUser = FirebaseFirestore.getInstance().collection("search/searchAll/searchNE").whereEqualTo("randomNr",randomNrOfUser).limit(1);
         queryUser.get()

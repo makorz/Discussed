@@ -145,7 +145,12 @@ public class AlienProfileActivity extends AppCompatActivity implements View.OnCl
                                                 String title2 = documentOfOtherUser.getString(NAME_FIELD);
                                                 String title3 = getString(R.string.title_text_2_alien_profile_activity);
                                                 SpannableString titleTextWords = new SpannableString(title1 + title2 + title3);
-                                                titleTextWords.setSpan(new StyleSpan(Typeface.ITALIC), title1.length(), title1.length() + title2.length() + 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                                //Length of italic text if language set on device is polish (different style of title)
+                                                int endPoint = title1.length() + title2.length();
+                                                if (title3.length() > 1) {
+                                                    endPoint = title1.length() + title2.length() + 2;
+                                                }
+                                                titleTextWords.setSpan(new StyleSpan(Typeface.ITALIC), title1.length(), endPoint, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                                                 titleText.setText(titleTextWords);
 
                                                 String pointBegin = getString(R.string.nr_of_points_text_alien_profile_activity);
@@ -177,7 +182,7 @@ public class AlienProfileActivity extends AppCompatActivity implements View.OnCl
                                                 }
 
                                                 topicList = (ArrayList<String>) documentOfOtherUser.get(TOPICS_ARRAY);
-                                                StringBuilder topicsListInTextView = new StringBuilder(otherUserName + getString(R.string.favorite_topics_text_alien_profile_activity));
+                                                StringBuilder topicsListInTextView = new StringBuilder(getString(R.string.favorite_topics_text_alien_profile_activity));
                                                 for (int i = 0; i < topicList.size(); i++) {
                                                         String addTopic;
                                                         String nrOfTopic = String.valueOf(i + 1);

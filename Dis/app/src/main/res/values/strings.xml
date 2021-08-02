@@ -1,6 +1,9 @@
 <resources>
 
     <string name="app_name">Discussed</string>
+    <string name="facebook_app_id">4053114731391451</string>
+    <string name="fb_login_protocol_scheme">fb4053114731391451</string>
+
 
     <!--Titles of fragments, activities, menu-->
     <string name="action_settings">Settings</string>
@@ -48,14 +51,14 @@
     <string name="choose_gender_box_profile_activity">Chose Your gender</string>
     <string name="pickup_topics_title_profile_activity">Pick Your Topics (from 2 to 5)</string>
     <string name="topics_warning_max_profile_activity">Maximum 5 topics!!!</string>
-    <string name="more_topics_info_1_profile_activity">\"Please choose \"</string>
-    <string name="more_topics_info_2_profile_activity">\" more topic!\"</string>
+    <string name="more_topics_info_1_profile_activity">Please choose&#160;</string>
+    <string name="more_topics_info_2_profile_activity">&#160;more topic!</string>
     <string name="your_name_text_profile_activity">Your Name</string>
     <string name="your_age_text_profile_activity">Your Age</string>
     <string name="your_description_text_profile_activity">Your Description</string>
     <string name="your_topics_text_profile_activity">Your topics: \n\n</string>
-    <string name="welcome_text_1_profile_activity">\"Welcome \"</string>
-    <string name="welcome_text_2_profile_activity">\" to Your profile!\"</string>
+    <string name="welcome_text_1_profile_activity">Welcome&#160;</string>
+    <string name="welcome_text_2_profile_activity">to Your profile!</string>
     <string name="chose_age_title_profile_activity">Enter Your age (Between 18 and 115)</string>
     <string name="chose_name_title_profile_activity">Enter Your name (Between 3 and 35 letters)</string>
     <string name="wrong_age_info_profile_activity">Set age from 18 to 115 years old!</string>
@@ -71,7 +74,7 @@
     <string name="alien_hint_before_uncover">\???????</string>
     <string name="title_text_1_alien_profile_activity">Welcome to&#160;</string>
     <string name="title_text_2_alien_profile_activity">\'s profile!</string>
-    <string name="favorite_topics_text_alien_profile_activity">\'s favorite topics: \n\n</string>
+    <string name="favorite_topics_text_alien_profile_activity">Favorite topics: \n\n</string>
     <string name="spend_points_text_1_dialog_alien_profile_activity">Do You want to spend&#160;</string>
     <string name="spend_points_text_2_description_dialog_alien_profile_activity">&#160;points to uncover description?</string>
     <string name="spend_points_text_2_age_dialog_alien_profile_activity">&#160;points to uncover age?</string>
@@ -286,6 +289,8 @@ Questions &amp; Contact Information \n\n
         Please contact us if you have any questions about our Terms at <b>makorzdev@gmail.com </b></string>
     <string name="authentication_failed_login_activity">Authentication Failed</string>
     <string name="understand_accept_terms_login_activity">I UNDERSTAND AND ACCEPT</string>
+    <string name="facebook_button_text"><![CDATA[\t\t\t\t\tSign in]]></string>
+    <string name="login_text_dialog_box">Login in progress…</string>
 
     <!--MainActivity strings-->
     <string name="info_dialog_box_text1"><b>\nWelcome to my application!</b></string>
@@ -349,6 +354,7 @@ Questions &amp; Contact Information \n\n
 
     <!--Not used-->
     <string name="welcome_text">Welcome dear friendo! In our up You will find someone to talk about topic You would like to discuss right now!</string>
+
 
 
 </resources>

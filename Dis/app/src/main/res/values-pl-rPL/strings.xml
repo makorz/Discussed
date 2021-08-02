@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Discussed</string>
+    <string name="facebook_app_id">4053114731391451</string>
+    <string name="fb_login_protocol_scheme">fb4053114731391451</string>
 
     <!--Titles of fragments, activities, menu-->
     <string name="action_settings">Ustawienia</string>
@@ -14,7 +16,7 @@
     <string name="title_activity_location">Mapa</string>
     <string-array name="titles">
         <item>Strona domowa</item>
-        <item>Randki w ciemno</item>
+        <item>Randki</item>
         <item>Konwersacje</item>
         <item>Ustawienia</item>
         <item>O apliakcji</item>
@@ -55,9 +57,9 @@
     <string name="your_description_text_profile_activity">Twój opis</string>
     <string name="your_topics_text_profile_activity">Twoje ulubione tematy: \n\n</string>
     <string name="welcome_text_1_profile_activity">Witaj&#160;</string>
-    <string name="welcome_text_2_profile_activity">&#160;w swoim profilu!</string>
+    <string name="welcome_text_2_profile_activity">w swoim profilu!</string>
     <string name="chose_age_title_profile_activity">Wprowadź wiek (18 do 115)</string>
-    <string name="chose_name_title_profile_activity">Wprowadź imię (od 3 d0 35 znaków)</string>
+    <string name="chose_name_title_profile_activity">Wprowadź imię (od 3 do 35 znaków)</string>
     <string name="wrong_age_info_profile_activity">Wiek należy wprowadzić w zakresie od 18 do 115 lat!</string>
     <string name="wrong_input_info_profile_activity">Musisz wprowadzić więcej znaków!!!</string>
 
@@ -71,7 +73,7 @@
     <string name="alien_hint_before_uncover">\???????</string>
     <string name="title_text_1_alien_profile_activity">Witaj w profilu&#160;</string>
     <string name="title_text_2_alien_profile_activity">!</string>
-    <string name="favorite_topics_text_alien_profile_activity">&#160;ulubione tematy: \n\n</string>
+    <string name="favorite_topics_text_alien_profile_activity">Ulubione tematy: \n\n</string>
     <string name="spend_points_text_1_dialog_alien_profile_activity">Czy chcesz wykorzystać&#160;</string>
     <string name="spend_points_text_2_description_dialog_alien_profile_activity">&#160;punktów by odkryć opis nieznajomego?</string>
     <string name="spend_points_text_2_age_dialog_alien_profile_activity">&#160;punktów by odkryć wiek nieznajomego?</string>
@@ -111,7 +113,7 @@
     <string name="donate_textview_settings_tab">Jeżeli chcesz podarować więcej niż proste, acz łądn "Dziękuję" możesz mi rzucić trochę grosza! ;D</string>
 
     <!--LoginFragment strings-->
-    <string name="agreeTermsCheckBox">Zgadzam się na<b><u>Zasady i Warunki</u></b>użytkowania aplikacji "Discussed".</string>
+    <string name="agreeTermsCheckBox">Zgadzam się na <b><u>Zasady i Warunki</u></b> użytkowania aplikacji "Discussed".</string>
     <string name="agreeAgeCheckBox">Mam ukończony 18 rok życia.</string>
     <string name="terms_and_conditions_text_title">\nZASADY I WARUNKI\n</string>
     <string name="terms_and_conditions_text"><b>Please read these terms of use carefully.</b> \n\n These Terms govern and apply to your access and use of Discussed services available via Discussed mobile app (collectively,
@@ -286,6 +288,8 @@ Questions &amp; Contact Information \n\n
         Please contact us if you have any questions about our Terms at <b>makorzdev@gmail.com </b></string>
     <string name="authentication_failed_login_activity">Poświadczenie nie powiodło się.</string>
     <string name="understand_accept_terms_login_activity">Rozumiem i zgadzam się.</string>
+    <string name="facebook_button_text"><![CDATA[\t\t\t\t\tZaloguj się]]></string>
+    <string name="login_text_dialog_box">Logowanie w trakcie…</string>
 
     <!--MainActivity strings-->
     <string name="info_dialog_box_text1"><b>\nWitam w mojej aplikacji!</b></string>
@@ -310,7 +314,7 @@ Questions &amp; Contact Information \n\n
     </string-array>
     <string-array name="about_options_answers">
         <item>Podczas użytkowanie tej wspaniale wyglądającej apliakcji, możesz odnaleźć kogoś kto chciałby porozmawiać na temat, który Ty chciałbyś teraz poruszyć!\n
-            While using this magic, well looking piece of software, You can find someone who wants to talk on similar topic with You.\nAle zanim rozpoczniesz wyszukiwanie
+           \nAle zanim rozpoczniesz wyszukiwanie
             współtowarzysza rozmowy muszisz uzupełnić swój profil (ikona w prawym górnym rogu) o następujące informacje: \n\n1. Lokalizacja.\n2. Imię. \n3. Wiek. \n4. Płeć.
             \n5. Opis swojej osoby. \n6. Trzy fotografie. \n7. Ulubione tematy do rozmowy. \n\nPo dostarczeniu wskazanych danych, możesz rozpocząć wyszukiwanie podobnej
             duszy do rozmowy!</item>
@@ -352,5 +356,6 @@ Questions &amp; Contact Information \n\n
 
     <!--Not used-->
     <string name="welcome_text">Welcome dear friendo! In our up You will find someone to talk about topic You would like to discuss right now!</string>
+
 
 </resources>

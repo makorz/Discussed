@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import androidx.fragment.app.Fragment;
+
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import pl.makorz.discussed.Controllers.LoginActivity;
 import pl.makorz.discussed.R;
@@ -61,6 +63,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.logout_button_settings_tab:
                 mAuth.signOut();
+                FirebaseAuth.getInstance().signOut();
+                LoginManager.getInstance().logOut();
                 Intent logoutIntent = new Intent(getActivity(), LoginActivity.class);
                 logoutIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(logoutIntent);
