@@ -13,7 +13,7 @@
         android:id="@+id/title_of_date_alert_box"
         android:layout_height="wrap_content"
         android:textAlignment="center"
-        android:textColor="@color/teal_brown_700"
+        android:textColor="@color/teal_green_700"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"/>
 
     <TextView

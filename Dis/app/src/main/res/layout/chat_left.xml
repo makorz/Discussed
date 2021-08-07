@@ -33,7 +33,7 @@
                 android:minWidth="75dp"
                 android:textStyle="bold"
                 android:maxWidth="300dp"
-                android:textColor="@color/teal_brown_700" />
+                android:textColor="@color/teal_green_700" />
 
             <ImageView
                 android:layout_width="18dp"
@@ -68,7 +68,7 @@
             android:minWidth="75dp"
             android:textStyle="italic"
             android:textSize="12sp"
-            android:textColor="@color/teal_brown_700" />
+            android:textColor="@color/teal_green_700" />
 
     </LinearLayout>
 

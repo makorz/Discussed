@@ -16,7 +16,7 @@
     </style>
 
     <style name= "MainCheckBox">
-        <item name="colorAccent">@color/teal_brown_700</item>
+        <item name="colorAccent">@color/teal_green_700</item>
         <item name="android:textColorSecondary">@color/brown_700</item>
     </style>
 

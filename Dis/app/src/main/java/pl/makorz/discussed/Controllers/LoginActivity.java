@@ -41,6 +41,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Objects;
 import pl.makorz.discussed.R;
 
@@ -51,7 +52,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private CheckBox checkTermsBox, checkAgeBox;
     private int USER_NEW_ACCOUNT = -1;
-    private AlertDialog dialog;
 
     private SignInButton buttonSignInGoogle;
     private LoginButton buttonSignInFacebook;
@@ -118,8 +118,6 @@ public class LoginActivity extends AppCompatActivity {
 
         buttonSignInFacebook.setEnabled(false);
         buttonSignInGoogle.setEnabled(false);
-        loadingAlertDialog();
-
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -152,8 +150,6 @@ public class LoginActivity extends AppCompatActivity {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
         buttonSignInFacebook.setEnabled(false);
         buttonSignInGoogle.setEnabled(false);
-        loadingAlertDialog();
-
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -192,16 +188,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void updateUI(FirebaseUser currentUser) {
-        loadingAlertDialog();
         //Navigate to Main Activity
         if (currentUser == null) {
-            dialog.dismiss();
             Log.w(TAG, "User is null, not going to navigate2");
             return;
         }
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("USER_NEW_ACCOUNT",USER_NEW_ACCOUNT);
-        dialog.dismiss();
+        intent.putExtra("USER_LOGIN_DATE", new Date(new Date().getTime()));
+
         startActivity(intent);
         // Don't want to show login in back stag
         finish();
@@ -295,19 +290,5 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-
-    public void loadingAlertDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(false); // if you want user to wait for some process to finish
-        LayoutInflater inflater = getLayoutInflater();
-        View dialogAlertView = inflater.inflate(R.layout.progress_bar, null);
-        TextView messageAlertView = dialogAlertView.findViewById(R.id.loading_msg);
-        builder.setView(dialogAlertView);
-        messageAlertView.setText(R.string.loading_text_dialog_box);
-        dialog = builder.create();
-        dialog.show();
-    }
-
-
 
 }

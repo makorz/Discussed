@@ -90,7 +90,7 @@
     <string name="radius_5km_fragment_main">5km</string>
     <string name="radius_10km_fragment_main">10km</string>
     <string name="radius_25km_fragment_main">25km</string>
-    <string name="radius_50km_fragment_main">50km</string>
+    <string name="radius_100km_fragment_main">100km</string>
     <string name="radius_150km_fragment_main">150km</string>
     <string name="radius_250km_fragment_main">250km</string>
     <string name="radius_country_fragment_main">Państwo</string>
@@ -100,6 +100,8 @@
     <string name="search_criteria_main_fragment">KRYTERIA WYSZUKIWANIA</string>
     <string name="next_dialog_boxes">DALEJ</string>
     <string name="title_not_filled_profile_to_search_alert_dialog">Nie wypełniłeś w pełni swojej karty profilowej. Musisz jeszcze dodać: \n\n</string>
+    <string name="title_not_enough_sapce_for_chats_alert_dialog">Osiągnąłeś maksimum możliwych do prowadzenia czatów, usuń przynajmniej jeden z nich (długo przytrzymaj
+        czat w zakładce "Konwersacje"), aby odblokować możliwość wyszukiwania współtowarzysza do rozmowy.</string>
 
     <!--SettingsFragment strings-->
     <string name="logout_text">Wyloguj się</string>
@@ -111,6 +113,7 @@
     <string name="deleteAccount_textview_settings_tab">CZy chcesz usunąć swoje konto (wszystkie zdjęcia, opis, lokalizacje, itd.)?</string>
     <string name="logout_textview_settings_tab">Czy chcesz sie wylogować?</string>
     <string name="donate_textview_settings_tab">Jeżeli chcesz podarować więcej niż proste, acz łądn "Dziękuję" możesz mi rzucić trochę grosza! ;D</string>
+    <string name="participation_in_blind_date_switch">Czy chcesz brać udział w randkach w ciemno?</string>
 
     <!--LoginFragment strings-->
     <string name="agreeTermsCheckBox">Zgadzam się na <b><u>Zasady i Warunki</u></b> użytkowania aplikacji "Discussed".</string>
@@ -356,6 +359,7 @@ Questions &amp; Contact Information \n\n
 
     <!--Not used-->
     <string name="welcome_text">Welcome dear friendo! In our up You will find someone to talk about topic You would like to discuss right now!</string>
+
 
 
 </resources>

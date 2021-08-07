@@ -26,6 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
+            android:background="@color/drawer_menu"
             android:padding="2dp"
             tools:context=".Controllers.MainActivity">
 
@@ -56,7 +57,7 @@
                 android:layout_height="5dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:background="#B240241A"
+                android:background="@color/brown_500"
                 android:orientation="horizontal"
                 app:layout_constraintTop_toBottomOf="@+id/linear_header_main_frag" />
 
@@ -104,17 +105,6 @@
                         android:saveEnabled="false">
 
                         <RadioButton
-                            android:id="@+id/radioButton_5"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:maxWidth="150dp"
-                            android:minWidth="150dp"
-                            android:scaleX="0.8"
-                            android:scaleY="0.8"
-                            android:text="@string/radius_5km_fragment_main"
-                            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
-
-                        <RadioButton
                             android:id="@+id/radioButton_10"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -137,15 +127,16 @@
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
 
                         <RadioButton
-                            android:id="@+id/radioButton_50"
+                            android:id="@+id/radioButton_100"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:maxWidth="150dp"
                             android:minWidth="150dp"
                             android:scaleX="0.8"
                             android:scaleY="0.8"
-                            android:text="@string/radius_50km_fragment_main"
+                            android:text="@string/radius_100km_fragment_main"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
+
                     </RadioGroup>
 
                     <RadioGroup
@@ -155,16 +146,6 @@
                         android:layout_weight="1"
                         android:orientation="vertical"
                         android:saveEnabled="false">
-
-                        <RadioButton
-                            android:id="@+id/radioButton_150"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:minWidth="130dp"
-                            android:scaleX="0.8"
-                            android:scaleY="0.8"
-                            android:text="@string/radius_150km_fragment_main"
-                            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
 
                         <RadioButton
                             android:id="@+id/radioButton_250"
@@ -229,13 +210,19 @@
                 android:layout_marginEnd="15dp"
                 android:orientation="horizontal">
 
-                <SeekBar
-                    android:id="@+id/seekBar_age"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginEnd="30dp"
-                    android:max="115" />
+            <com.google.android.material.slider.RangeSlider
+                android:id="@+id/seekBar_age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:valueFrom="18"
+                android:valueTo="115"
+                android:stepSize="1"
+                app:values="@array/initial_slider_values"
+                app:trackColorActive='@color/teal_green_200'
+                app:thumbRadius='8dp'
+                app:thumbColor='@color/teal_green_200'/>
 
             </LinearLayout>
 
@@ -273,35 +260,17 @@
                     android:layout_marginEnd="50dp"
                     android:orientation="horizontal">
 
-                    <RadioGroup
-                        android:id="@+id/radioButtonGroup_gender_column1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:saveEnabled="false">
-
                         <RadioButton
                             android:id="@+id/radioButton_male"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:scaleX="0.8"
-                            android:maxWidth="150dp"
-                            android:minWidth="150dp"
+                            android:maxWidth="155dp"
+                            android:minWidth="155dp"
                             android:scaleY="0.8"
                             android:text="@string/gender_male_profile_activity"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
-
-                    </RadioGroup>
-
-                    <RadioGroup
-                        android:id="@+id/radioButtonGroup_gender_column2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:saveEnabled="false">
 
                         <RadioButton
                             android:id="@+id/radioButton_female"
@@ -311,7 +280,7 @@
                             android:scaleY="0.8"
                             android:text="@string/gender_female_profile_activity"
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
-                    </RadioGroup>
+
                 </RadioGroup>
 
             </LinearLayout>
@@ -323,7 +292,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="10dp"
-                android:background="#B240241A"
+                android:background="@color/brown_500"
                 android:orientation="horizontal"
                 app:layout_constraintTop_toBottomOf="@+id/linear_header_main_frag" />
 

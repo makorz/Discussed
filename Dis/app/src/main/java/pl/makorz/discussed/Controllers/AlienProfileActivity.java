@@ -14,9 +14,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -24,10 +26,12 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+
 import pl.makorz.discussed.R;
 
 
@@ -83,7 +87,6 @@ public class AlienProfileActivity extends AppCompatActivity implements View.OnCl
         otherUserName = intent.getStringExtra("otherUserName");
         idOfOtherUser = intent.getStringExtra("idOfOtherUser");
         currentUserID = intent.getStringExtra("currentUserID");
-
 
         // Alert of loading data of profile from server
         loadingAlertDialog();
@@ -224,6 +227,8 @@ public class AlienProfileActivity extends AppCompatActivity implements View.OnCl
                         Log.d("LOGGER", "No such document");
                     }
                 } else {
+                    dialog.dismiss();
+                    notExistingUserAlertDialog();
                     Log.d("LOGGER", "get failed with ", task.getException());
                 }
             }
@@ -275,6 +280,29 @@ public class AlienProfileActivity extends AppCompatActivity implements View.OnCl
         dialog = builder.create();
         dialog.show();
     }
+
+    // PopUp with info about not existing user.
+    private void notExistingUserAlertDialog() {
+
+        LayoutInflater inflaterDialog = LayoutInflater.from(this);
+        View noUserAlertView = inflaterDialog.inflate(R.layout.dialog_uncover, null);
+        TextView uncoverText = noUserAlertView.findViewById(R.id.uncover_text);
+        uncoverText.setText(R.string.user_not_exist_dialog_box);
+
+        AlertDialog infoDialog = new AlertDialog.Builder(this)
+                .setView(noUserAlertView)  // What to use in dialog box
+                .setPositiveButton("OK", null)
+                .show();
+
+        infoDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                    infoDialog.dismiss();
+                    finish();
+                }
+        });
+    }
+
 
     @Override
     public void onClick(View view) {

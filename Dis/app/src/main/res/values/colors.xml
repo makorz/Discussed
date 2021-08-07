@@ -14,11 +14,12 @@
     <color name="brown_200">#9c786c</color>
     <color name="brown_600">#68473C</color>
     <color name="brown_700">#40241a</color>
-    <color name="teal_brown_200">#cddc39</color>
-    <color name="teal_brown_700">#99aa00</color>
+    <color name="teal_green_200">#cddc39</color>
+    <color name="teal_green_700">#99aa00</color>
     <color name="login_background">#efdcd5</color>
     <color name="drawer_menu">#efebe9</color>
     <color name="transparent">#00EFEBE9</color>
+    <color name="red_500">#d50000</color>
 
 
 </resources>

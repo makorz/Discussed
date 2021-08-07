@@ -106,7 +106,7 @@
             android:layout_marginEnd="10dp"
             android:text="@string/agreeTermsCheckBox"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            android:textColor="@color/teal_brown_700"
+            android:textColor="@color/teal_green_700"
             android:textSize="11sp"
             android:textStyle="bold" />
 
@@ -141,7 +141,7 @@
             android:gravity="center"
             android:text="@string/agreeAgeCheckBox"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            android:textColor="@color/teal_brown_700"
+            android:textColor="@color/teal_green_700"
             android:textSize="11sp"
             android:textStyle="bold"/>
 

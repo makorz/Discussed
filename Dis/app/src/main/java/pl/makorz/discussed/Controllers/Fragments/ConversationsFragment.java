@@ -1,36 +1,50 @@
 package pl.makorz.discussed.Controllers.Fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import java.util.List;
+
 import pl.makorz.discussed.Models.Adapters.ConversationsAdapter;
 import pl.makorz.discussed.Controllers.ChatActivity;
 import pl.makorz.discussed.Models.Conversation;
 import pl.makorz.discussed.R;
 
-public class ConversationsFragment extends Fragment  {
+public class ConversationsFragment extends Fragment {
 
     private static final String TAG = "ConversationsFragment";
     public static final String USERS_ID_ARRAY = "usersParticipatingID";
     public static final String NAME_FIELD = "displayName";
+    private static final String NR_OF_USER_CHATS = "nrOfOngoingChats";
 
     private ConversationsAdapter adapter;
     private RecyclerView conversationRecycler;
@@ -78,11 +92,11 @@ public class ConversationsFragment extends Fragment  {
                                                 Intent intent = new Intent(getActivity(), ChatActivity.class);
                                                 adapter.stopListening();
                                                 intent.putExtra("chatIdIntent", chatID);
-                                                intent.putExtra("otherUserName",otherUserName);
-                                                intent.putExtra("idOfOtherUser",otherUserID);
-                                                intent.putExtra("currentUserID",user.getUid());
+                                                intent.putExtra("otherUserName", otherUserName);
+                                                intent.putExtra("idOfOtherUser", otherUserID);
+                                                intent.putExtra("currentUserID", user.getUid());
                                                 startActivity(intent);
-                                                Toast.makeText(getContext(), "Position: " + position + " ChatID: " + chatID , Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(getContext(), "Position: " + position + " ChatID: " + chatID, Toast.LENGTH_SHORT).show();
 
 
                                             } else {
@@ -103,18 +117,140 @@ public class ConversationsFragment extends Fragment  {
                 });
             }
         });
+
+        adapter.setOnLongItemClickListener(new ConversationsAdapter.OnLongItemClickListener() {
+            @Override
+            public void onLongItemClick(String chatID, String userName) {
+
+                LayoutInflater inflaterDialog = LayoutInflater.from(getContext());
+                View deleteChatAlertView = inflaterDialog.inflate(R.layout.dialog_uncover, null);
+                TextView deleteChatText = deleteChatAlertView.findViewById(R.id.uncover_text);
+                deleteChatText.setText("Are You sure You want to delete chat with " + userName);
+
+                AlertDialog deleteDialog = new AlertDialog.Builder(getContext())
+                        .setView(deleteChatAlertView)  // What to use in dialog box
+                        .setPositiveButton(R.string.yes_text_dialog_boxes, null)
+                        .setNegativeButton(R.string.no_text_dialog_boxes, null)
+                        .show();
+
+                deleteDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Query checkQueryIfSomeoneDeletedChat = FirebaseFirestore.getInstance().collection("chats").document(chatID).collection("chatUsers").limit(5);
+
+                        checkQueryIfSomeoneDeletedChat.get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            if (task.getResult().isEmpty()) {
+
+                                                Log.d(TAG, "NO ONE HERE");
+
+                                                db.collection("chats").document(chatID).delete()
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                Log.d(TAG, "AllChat successfully deleted!");
+                                                            }
+                                                        })
+                                                        .addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                Log.w(TAG, "Error deleting document", e);
+                                                            }
+                                                        });
+
+                                                db.collection("users").document(user.getUid()).update(NR_OF_USER_CHATS, FieldValue.increment(-1));
+
+                                            } else {
+
+                                                int nrOfChatMembers = 0;
+                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                   nrOfChatMembers ++;
+                                                }
+
+                                                if (nrOfChatMembers == 1) {
+
+                                                    db.collection("chats").document(chatID).delete()
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    Log.d(TAG, "AllChat successfully deleted!");
+                                                                }
+                                                            })
+                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    Log.w(TAG, "Error deleting document", e);
+                                                                }
+                                                            });
+
+                                                    db.collection("users").document(user.getUid()).update(NR_OF_USER_CHATS, FieldValue.increment(-1));
+
+                                                } else {
+                                                    db.collection("chats").document(chatID).collection("chatUsers").document(user.getUid()).delete()
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void aVoid) {
+                                                                    Log.d(TAG, "Single ChatMemberDocument successfully deleted!");
+                                                                }
+                                                            })
+                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    Log.w(TAG, "Error deleting document", e);
+                                                                }
+                                                            });
+
+                                                    db.collection("chats").document(chatID).update("usersThatHaveNotDeletedConversation", FieldValue.arrayRemove(user.getUid()));
+
+                                                    db.collection("users").document(user.getUid()).update(NR_OF_USER_CHATS, FieldValue.increment(-1));
+                                                }
+                                            }
+                                        }
+                                    }
+                                });
+
+                        Fragment fragment = new ConversationsFragment();
+                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        ft.detach(ConversationsFragment.this);
+                        ft.replace(R.id.content_frame, fragment, "visible_fragment");
+                        ft.commit();
+                        deleteDialog.dismiss();
+
+                    }
+                });
+
+                deleteDialog.getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Fragment fragment = new ConversationsFragment();
+                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                        ft.detach(ConversationsFragment.this);
+                        ft.replace(R.id.content_frame, fragment, "visible_fragment");
+                        ft.commit();
+                        deleteDialog.dismiss();
+                    }
+                });
+
+            }
+        });
+
+
         return conversationView;
 
     }
 
-    public void setUpRecyclerView () {
+    public void setUpRecyclerView() {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         // Initialize Cloud Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         // Ask the Cloud Firestore
         assert user != null;
-        Query queryListOfConversations2 = db.collection("chats").whereArrayContains("usersParticipatingID", user.getUid());
+        Query queryListOfConversations2 = db.collection("chats").whereArrayContains("usersThatHaveNotDeletedConversation", user.getUid());
         //Configuring adapter to populate recyclerview
         FirestoreRecyclerOptions<Conversation> options = new FirestoreRecyclerOptions.Builder<Conversation>()
                 .setQuery(queryListOfConversations2, Conversation.class)
@@ -126,11 +262,13 @@ public class ConversationsFragment extends Fragment  {
 
     }
 
+
     @Override
     public void onStart() {
         super.onStart();
         adapter.startListening();
     }
+
     @Override
     public void onResume() {
         super.onResume();

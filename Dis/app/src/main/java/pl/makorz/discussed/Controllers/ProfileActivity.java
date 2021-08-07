@@ -29,11 +29,14 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -54,11 +57,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,6 +72,7 @@ import java.util.concurrent.TimeUnit;
 import pl.makorz.discussed.Models.Adapters.TopicsAdapter;
 import pl.makorz.discussed.Models.Topic;
 import pl.makorz.discussed.R;
+
 import static com.google.firebase.firestore.FieldValue.arrayUnion;
 
 public class ProfileActivity extends AppCompatActivity implements View.OnClickListener {
@@ -118,17 +122,20 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     public Button buttonDescriptionChange, buttonAgeChange, buttonLocationChange, buttonNameChange, buttonTopicsChange, buttonFirstImageChange,
             buttonSecondImageChange, buttonThirdImageChange, buttonGenderChange;
+    public SwitchCompat blindDateParticipationSwitch;
     private TextView profileDescriptionText, ageText, locationText, nameText, titleText, topicsText, genderText, messageAlertView;
     private ImageView firstImageView, secondImageView, thirdImageView;
     private Boolean firstPhotoUploadMade, secondPhotoUploadMade, thirdPhotoUploadMade, locationUploadMade, descriptionUploadMade, ageUploadMade, topicsUploadMade,
-            genderUploadMade, nameUploadMade, whatGender, canUserSearch;
+            genderUploadMade, nameUploadMade, isFemale, canUserSearch, blindDateParticipationWill;
     private AlertDialog dialog;
-    private String firstPhotoUri, secondPhotoUri, thirdPhotoUri, searchIDCountry, searchIDWorld;
+    private String firstPhotoUri, secondPhotoUri, thirdPhotoUri, searchIDCountry, searchIDWorld, countryCode;
     private ConstraintLayout layoutToDimWhenSearching;
     private ArrayList<String> topicList;
     private TopicsAdapter adapterTopics;
+    private GeoPoint locationUser;
     private Date currentDate, firstPhotoUploadDate, secondPhotoUploadDate, thirdPhotoUploadDate, locationUploadDate, descriptionUploadDate, ageUploadDate,
             genderUploadDate, nameUploadDate;
+    private int ageUser;
 
     private final StorageReference storageReference = FirebaseStorage.getInstance().getReference();
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -158,6 +165,16 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         currentDate = new Date(new Date().getTime());
 
+        // Switch for Blind Dates work
+        blindDateParticipationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                blindDateParticipationWill = b;
+                db.collection("users").document(currentUser.getUid())
+                        .update(BLIND_DATE_PARTICIPATION_WILL, b);
+            }
+        });
+
     }
 
     // This function updates profile information when activity is started
@@ -181,10 +198,15 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         descriptionUploadMade = document.getBoolean(DESCRIPTION_UPLOAD_MADE);
                         genderUploadMade = document.getBoolean(GENDER_UPLOAD_MADE);
                         canUserSearch = document.getBoolean(CAN_USER_SEARCH);
+                        blindDateParticipationWill = document.getBoolean(BLIND_DATE_PARTICIPATION_WILL);
 
                         firstPhotoUri = document.getString(FIRST_PHOTO_URI);
                         secondPhotoUri = document.getString(SECOND_PHOTO_URI);
                         thirdPhotoUri = document.getString(THIRD_PHOTO_URI);
+
+                        countryCode = document.getString(COUNTRY_CODE_FIELD);
+                        searchIDCountry = document.getString(SEARCH_ID_COUNTRY);
+                        searchIDWorld = document.getString(SEARCH_ID_WORLD);
 
                         String title1 = getString(R.string.welcome_text_1_profile_activity);
                         String title2 = document.getString(NAME_FIELD) + " ";
@@ -204,16 +226,21 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
                         ageText.setText(R.string.not_filled);
                         if (ageUploadMade) {
-                            String age = Integer.toString(document.getDouble(AGE_FIELD).intValue());
+                            ageUser = document.getDouble(AGE_FIELD).intValue();
+                            String age = Integer.toString(ageUser);
                             ageText.setText(age);
                         }
                         locationText.setText(R.string.not_filled);
                         if (locationUploadMade) {
+                            locationUser = document.getGeoPoint(LOCATION_FIELD);
                             String placeName = document.getString(PLACE_NAME_FIELD);
                             String countryName = document.getString(COUNTRY_NAME_FIELD);
                             String localisation = placeName + ", " + countryName + ".";
                             locationText.setText(localisation);
                         }
+
+                        blindDateParticipationWill = document.getBoolean(BLIND_DATE_PARTICIPATION_WILL);
+                        blindDateParticipationSwitch.setChecked(blindDateParticipationWill);
 
                         firstPhotoUploadDate = document.getDate(FIRST_PHOTO_UPLOAD_DATE);
                         secondPhotoUploadDate = document.getDate(SECOND_PHOTO_UPLOAD_DATE);
@@ -242,9 +269,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         }
 
                         genderText.setText(R.string.not_filled);
-                        if (genderUploadMade){
-                            whatGender = document.getBoolean(GENDER_FIELD);
-                            if (!whatGender) {
+                        if (genderUploadMade) {
+                            isFemale = document.getBoolean(GENDER_FIELD);
+                            if (!isFemale) {
                                 genderText.setText(R.string.gender_male_profile_activity);
                             } else {
                                 genderText.setText(R.string.gender_female_profile_activity);
@@ -261,10 +288,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         }
 
                         if (firstPhotoUploadMade && secondPhotoUploadMade && thirdPhotoUploadMade && locationUploadMade && nameUploadMade && ageUploadMade && topicsUploadMade
-                                && descriptionUploadMade && genderUploadMade && !canUserSearch ) {
+                                && descriptionUploadMade && genderUploadMade && !canUserSearch) {
 
-                            addUserInSearchCollection(currentUser.getUid(), document.getDouble(AGE_FIELD).intValue(), whatGender, document.getString(COUNTRY_CODE_FIELD),
-                                    document.getGeoPoint(LOCATION_FIELD), document.getBoolean(BLIND_DATE_PARTICIPATION_WILL),topicList);
+                            addUserInSearchCollection(currentUser.getUid(), document.getDouble(AGE_FIELD).intValue(), isFemale, document.getString(COUNTRY_CODE_FIELD),
+                                    document.getGeoPoint(LOCATION_FIELD), document.getBoolean(BLIND_DATE_PARTICIPATION_WILL), topicList);
 
                             db.collection("users").document(currentUser.getUid()).update(CAN_USER_SEARCH, true);
                             canUserSearch = true;
@@ -299,7 +326,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             editDialogText.setInputType(InputType.TYPE_CLASS_NUMBER);
         } else if (whatFieldUpdate.equals(DESCRIPTION_FIELD)) {
             editDialogText.setHint(R.string.description_dialog_hint);
-           // DescriptionFilter descriptionFilter = new DescriptionFilter(ProfileActivity.this);
+            // DescriptionFilter descriptionFilter = new DescriptionFilter(ProfileActivity.this);
             InputFilter lengthFilter = new InputFilter.LengthFilter(500);
             editDialogText.setFilters(new InputFilter[]{lengthFilter});
             //editDialogText.setFilters(new DescriptionFilter[]{descriptionFilter});
@@ -325,6 +352,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     if (valueEntered < 18 || valueEntered > 115) {
                         Toast.makeText(ProfileActivity.this, R.string.wrong_age_info_profile_activity, Toast.LENGTH_SHORT).show();
                     } else {
+                        if (canUserSearch && valueEntered != ageUser) {
+                            addUserInSearchCollection(currentUser.getUid(), valueEntered, isFemale, countryCode,
+                                    locationUser, blindDateParticipationWill, topicList);
+                            deleteUserInSearchCollection(searchIDCountry, searchIDWorld, ageUser, isFemale, countryCode);
+                        }
 
                         db.collection("users").document(currentUser.getUid())
                                 .update(whatFieldUpdate, valueEntered);//what you update
@@ -391,6 +423,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     // This function initialises buttons, text views, etc.
     public void initView() {
 
+        blindDateParticipationSwitch = findViewById(R.id.switch_blindDate_participation);
         profileDescriptionText = findViewById(R.id.own_description_my_profile);
         ageText = findViewById(R.id.own_age_my_profile);
         nameText = findViewById(R.id.name_my_profile);
@@ -422,6 +455,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         buttonSecondImageChange.setOnClickListener(this);
         buttonThirdImageChange.setOnClickListener(this);
         buttonGenderChange.setOnClickListener(this);
+
 
         firstImageView.setOnClickListener(this);
         secondImageView.setOnClickListener(this);
@@ -497,24 +531,34 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        } else if (requestCode == 5  ) {
+        } else if (requestCode == 5) {
 
             if (resultCode == RESULT_OK) {
                 // location activity for result
                 String placeName = data.getStringExtra("placeName");
                 String countryName = data.getStringExtra("countryName");
-                String countryCode = data.getStringExtra("countryCode");
+                String countryCodeNested = data.getStringExtra("countryCode");
                 LatLng latLngParameters = new LatLng(data.getDoubleExtra("latitude", 0), data.getDoubleExtra("longitude", 0));
 
+                if (canUserSearch) {
+                    if (countryCodeNested.equals(countryCode)) {
+                        updateUserInSearchCollection(searchIDCountry, searchIDWorld, ageUser, isFemale, countryCodeNested,
+                                locationUser, blindDateParticipationWill, topicList);
+                    } else {
+                        addUserInSearchCollection(currentUser.getUid(), ageUser, isFemale, countryCodeNested,
+                                locationUser, blindDateParticipationWill, topicList);
+                        deleteUserInSearchCollection(searchIDCountry, searchIDWorld, ageUser, isFemale, countryCode);
+                    }
+                }
 
                 db.collection("users").document(currentUser.getUid())
                         .update(PLACE_NAME_FIELD, placeName);
                 db.collection("users").document(currentUser.getUid())
                         .update(COUNTRY_NAME_FIELD, countryName);
                 db.collection("users").document(currentUser.getUid())
-                        .update(COUNTRY_CODE_FIELD, countryCode);
+                        .update(COUNTRY_CODE_FIELD, countryCodeNested);
                 db.collection("users").document(currentUser.getUid())
-                        .update(LOCATION_FIELD, new GeoPoint(latLngParameters.latitude,latLngParameters.longitude));
+                        .update(LOCATION_FIELD, new GeoPoint(latLngParameters.latitude, latLngParameters.longitude));
 
                 if (!locationUploadMade && placeName.length() > 1 && countryCode.length() > 1 && countryName.length() > 1) {
                     db.collection("users").document(currentUser.getUid())
@@ -587,7 +631,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
                     double progress = (100.0 * snapshot.getBytesTransferred() / snapshot
                             .getTotalByteCount());
-                    String a = getString(R.string.upload_progress_1_profile_activity) + (int) progress +  getString(R.string.upload_progress_2_profile_activity);
+                    String a = getString(R.string.upload_progress_1_profile_activity) + (int) progress + getString(R.string.upload_progress_2_profile_activity);
                     messageAlertView.setText(a);
                 }
             });
@@ -611,7 +655,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.description_own_change:
                 dateDiff = currentDate.getTime() - descriptionUploadDate.getTime();
                 nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
-                if ( nrOfDaysSinceChange >= daysToChangeDescription) {
+                if (nrOfDaysSinceChange >= daysToChangeDescription) {
                     descriptionAgeNameChangeDialog(DESCRIPTION_FIELD, getString(R.string.your_description_text_profile_activity));
                 } else {
                     timeOfChangeAlertDialog(nrOfDaysSinceChange, daysToChangeDescription);
@@ -621,7 +665,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.age_own_change:
                 dateDiff = currentDate.getTime() - ageUploadDate.getTime();
                 nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
-                Log.d("DAYYYY", String.valueOf(nrOfDaysSinceChange));
                 if (nrOfDaysSinceChange > daysToChangeAge) {
                     descriptionAgeNameChangeDialog(AGE_FIELD, getString(R.string.your_age_text_profile_activity));
                 } else {
@@ -632,7 +675,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.location_own_change:
                 dateDiff = currentDate.getTime() - locationUploadDate.getTime();
                 nrOfDaysSinceChange = TimeUnit.DAYS.convert(dateDiff, TimeUnit.MILLISECONDS);
-                Log.d("DAYYYY", String.valueOf(nrOfDaysSinceChange));
                 if (nrOfDaysSinceChange >= daysToChangeLocation) {
                     locationChange();
                 } else {
@@ -685,15 +727,21 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 whatButtonPressed = 8;
                 break;
             case R.id.imageview_first_image_alien_profile:
-                photoShowDialog(firstPhotoUri);
+                if (firstPhotoUploadMade){
+                    photoShowDialog(firstPhotoUri);
+                }
                 whatButtonPressed = 9;
                 break;
             case R.id.imageview_second_image_alien_profile:
-                photoShowDialog(secondPhotoUri);
+                if (secondPhotoUploadMade){
+                    photoShowDialog(secondPhotoUri);
+                }
                 whatButtonPressed = 10;
                 break;
             case R.id.imageview_third_image_alien_profile:
-                photoShowDialog(thirdPhotoUri);
+                if (thirdPhotoUploadMade) {
+                    photoShowDialog(thirdPhotoUri);
+                }
                 whatButtonPressed = 11;
                 break;
             case R.id.gender_own_change:
@@ -738,6 +786,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 int selectedID = genderGroup.getCheckedRadioButtonId();
                 switch (selectedID) {
                     case 20:
+                        if (canUserSearch && isFemale) {
+                            addUserInSearchCollection(currentUser.getUid(), ageUser, false, countryCode,
+                                    locationUser, blindDateParticipationWill, topicList);
+                            deleteUserInSearchCollection(searchIDCountry, searchIDWorld, ageUser, isFemale, countryCode);
+                        }
+
                         db.collection("users").document(currentUser.getUid())
                                 .update(GENDER_FIELD, false);
                         if (!genderUploadMade) {
@@ -748,6 +802,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                                 .update(GENDER_UPLOAD_DATE, new Date());
                         break;
                     case 21:
+                        if (canUserSearch && !isFemale) {
+                            addUserInSearchCollection(currentUser.getUid(), ageUser, true, countryCode,
+                                    locationUser, blindDateParticipationWill, topicList);
+                            deleteUserInSearchCollection(searchIDCountry, searchIDWorld, ageUser, isFemale, countryCode);
+                        }
                         db.collection("users").document(currentUser.getUid())
                                 .update(GENDER_FIELD, true);
                         if (!genderUploadMade) {
@@ -814,11 +873,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         // Create a list of chosen topics and prevent from choosing more than 10
         adapterTopics.startListening();
         ArrayList<String> topics = new ArrayList<>();
+
         adapterTopics.setOnItemCLickListener(new TopicsAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(boolean isFavorite, int position, String topicTitle, CompoundButton cb) {
                 if (topics.size() < 5) {
-                    if (!topics.contains(topicTitle)){
+                    if (!topics.contains(topicTitle)) {
                         topics.add(topicTitle);
                     } else {
                         topics.remove(topicTitle);
@@ -856,7 +916,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     }
                     db.collection("users").document(currentUser.getUid())
                             .update(TOPICS_UPLOAD_DATE, new Date());
-
+                    // Update User Topics in SearchDocuments
+                    if (canUserSearch) {
+                        updateUserInSearchCollection(searchIDCountry, searchIDWorld, ageUser, isFemale, countryCode,
+                                locationUser, blindDateParticipationWill, topics);
+                    }
                     try {
                         updateUserCollection();
                     } catch (ExecutionException | InterruptedException e) {
@@ -865,7 +929,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     topicsChangeDialog.dismiss();
                 }
             }
-       });
+        });
     }
 
     // this function scales down uploaded images sizes to save server space
@@ -878,11 +942,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         int height = Math.round(ratio * realImage.getHeight());
 
         if (ratio >= 1.0) {
-
             return realImage;
         } else {
-            return Bitmap.createScaledBitmap(realImage, width,
-                    height, filter);
+            return Bitmap.createScaledBitmap(realImage, width, height, filter);
         }
 
     }
@@ -962,8 +1024,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     // This function adds User in Search collection (UserID, User Gender, User Location, User Age, User Topics)
-    public void addUserInSearchCollection(String userID, int userAge, boolean isUserFemale, String countryCode, GeoPoint userLocation,
-                                                 boolean userWantBlindDates, ArrayList<String> userTopics) {
+    private void addUserInSearchCollection(String userID, int userAge, boolean isUserFemale, String countryCode, GeoPoint userLocation,
+                                           boolean userWantBlindDates, ArrayList<String> userTopics) {
 
         String gender;
         if (isUserFemale) {
@@ -973,14 +1035,19 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         }
         String age = Integer.toString(userAge);
 
+        float latitudeUser = (float) userLocation.getLatitude();
+        float longitudeUser = (float) userLocation.getLongitude();
+
         Map<String, Object> addToSearchCollection = new HashMap<>();
+        addToSearchCollection.put("latitude", latitudeUser);
+        addToSearchCollection.put("longitude", longitudeUser);
         addToSearchCollection.put("locationOfUser", userLocation);
         addToSearchCollection.put("idOfUser", userID);
         addToSearchCollection.put("userWantsBlindDates", userWantBlindDates);
         addToSearchCollection.put("topicsList", userTopics);
 
         Map<String, Object> addNrOfUsersField = new HashMap<>();
-        addNrOfUsersField.put(NR_OF_USERS_TO_SEARCH,1);
+        addNrOfUsersField.put(NR_OF_USERS_TO_SEARCH, 1);
 
         // SearchID to specific country
         db.collection("search").document(countryCode).collection("gender").document(gender)
@@ -1009,22 +1076,22 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     } else {
                         Log.d("LOGGER", "No such document");
                         db.collection("search").document(countryCode).collection("gender").document(gender)
-                                .collection("age").document(age).set(addNrOfUsersField,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                .collection("age").document(age).set(addNrOfUsersField, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
 
-                                    db.collection("search").document(countryCode).collection("gender").document(gender)
-                                            .collection("age").document(age).collection("users").add(addToSearchCollection).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                        @Override
-                                        public void onSuccess(DocumentReference documentReference) {
+                                db.collection("search").document(countryCode).collection("gender").document(gender)
+                                        .collection("age").document(age).collection("users").add(addToSearchCollection).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                    @Override
+                                    public void onSuccess(DocumentReference documentReference) {
 
-                                            searchIDCountry = documentReference.getId();
+                                        searchIDCountry = documentReference.getId();
 
-                                            db.collection("users").document(currentUser.getUid())
-                                                    .update(SEARCH_ID_COUNTRY, searchIDCountry);
+                                        db.collection("users").document(currentUser.getUid())
+                                                .update(SEARCH_ID_COUNTRY, searchIDCountry);
 
-                                        }
-                                    });
+                                    }
+                                });
                             }
                         });
                     }
@@ -1061,7 +1128,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     } else {
                         Log.d("LOGGER", "No such document");
                         db.collection("search").document("world").collection("gender").document(gender)
-                                .collection("age").document(age).set(addNrOfUsersField,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                .collection("age").document(age).set(addNrOfUsersField, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
 
@@ -1073,7 +1140,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                                         searchIDWorld = documentReference.getId();
 
                                         db.collection("users").document(currentUser.getUid())
-                                                .update(SEARCH_ID_COUNTRY, searchIDWorld);
+                                                .update(SEARCH_ID_WORLD, searchIDWorld);
 
                                     }
                                 });
@@ -1085,6 +1152,101 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 }
             }
         });
+
+    }
+
+    // This function removes User in Search collection (UserID, User Gender, User Location, User Age, User Topics) when country, age or gender is changed (correlates with addUserInSearchCollection)
+    private void deleteUserInSearchCollection(String searchCountry, String searchWorld, int userAge,
+                                              boolean isUserFemale, String countryCode) {
+
+        String gender;
+        if (isUserFemale) {
+            gender = "female";
+        } else {
+            gender = "male";
+        }
+        String age = Integer.toString(userAge);
+
+        db.collection("search").document(countryCode).collection("gender").document(gender).collection("age")
+                .document(age).collection("users").document(searchCountry)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                        db.collection("search").document(countryCode).collection("gender").document(gender)
+                                .collection("age").document(age).update(NR_OF_USERS_TO_SEARCH, FieldValue.increment(-1));
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error deleting document", e);
+                    }
+
+                });
+
+        db.collection("search").document("world").collection("gender").document(gender).collection("age")
+                .document(age).collection("users").document(searchWorld)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully deleted!");
+                        db.collection("search").document("world").collection("gender").document(gender)
+                                .collection("age").document(age).update(NR_OF_USERS_TO_SEARCH, FieldValue.increment(-1));
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error deleting document", e);
+                    }
+
+                });
+
+    }
+
+    // Only updates specific fields in User document in search collection (location - in same country, topic list, will to participate in blind date)
+    private void updateUserInSearchCollection(String searchCountry, String searchWorld, int userAge, boolean isUserFemale,
+                                              String countryCode, GeoPoint userLocation, boolean userWantBlindDates,
+                                              ArrayList<String> userTopics) {
+        String gender;
+        if (isUserFemale) {
+            gender = "female";
+        } else {
+            gender = "male";
+        }
+        String age = Integer.toString(userAge);
+
+        float latitudeUser = (float) userLocation.getLatitude();
+        float longitudeUser = (float) userLocation.getLongitude();
+
+        Map<String, Object> updateSearchCollection = new HashMap<>();
+        updateSearchCollection.put("latitude", latitudeUser);
+        updateSearchCollection.put("longitude", longitudeUser);
+        updateSearchCollection.put("locationOfUser", userLocation);
+        updateSearchCollection.put("userWantsBlindDates", userWantBlindDates);
+        updateSearchCollection.put("topicsList", userTopics);
+
+        db.collection("search").document("world").collection("gender").document(gender)
+                .collection("age").document(age).collection("users").document(searchWorld).set(updateSearchCollection, SetOptions.merge())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d(TAG, "DocumentWorldSearch successfully updated!");
+                    }
+                });
+
+        db.collection("search").document(countryCode).collection("gender").document(gender)
+                .collection("age").document(age).collection("users").document(searchCountry).set(updateSearchCollection, SetOptions.merge())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Log.d(TAG, "DocumentCountrySearch successfully updated!");
+                    }
+                });
 
     }
 

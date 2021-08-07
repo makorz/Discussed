@@ -60,15 +60,15 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
 
-    private static int nrOfUsers = -1;
     private String[] titles;
     private ListView drawerList;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle drawerToggle;
     private AlertDialog dialog;
     private int currentPosition = 0;
-    String searchID = "";
-    public int USER_NEW_ACCOUNT = -1;
+    public String searchID = "";
+    private int USER_NEW_ACCOUNT = -1;
+    private Date USER_LOGIN_DATE;
     private int introPage = 0;
 
     private FirebaseAuth mAuth;
@@ -79,7 +79,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); //no dark theme
         USER_NEW_ACCOUNT = getIntent().getIntExtra("USER_NEW_ACCOUNT",-1);
+        USER_LOGIN_DATE = (Date) getIntent().getSerializableExtra("USER_LOGIN_DATE");
+
         setContentView(R.layout.activity_main);
         initView(savedInstanceState);
         loadingAlertDialog();
@@ -91,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-
                             android.os.SystemClock.sleep(1500);
                             try {
                                 fillUserDocument();
@@ -102,12 +105,16 @@ public class MainActivity extends AppCompatActivity {
                     });
                 }
             }.start();
+        } else {
+            Log.d(TAG,"logindateaaaaa" + USER_LOGIN_DATE);
+            db.collection("users").document(user.getUid())
+                    .update("lastLoginDate", USER_LOGIN_DATE);
         }
     }
 
     public void initView(Bundle savedInstanceState) {
 
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); //no dark theme
+
         titles = getResources().getStringArray(R.array.titles);
         drawerList = findViewById(R.id.drawer);
         drawerLayout =  findViewById(R.id.drawer_layout);
@@ -190,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
         // Update the main content by replacing fragments
         currentPosition = position;
         Fragment fragment;
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         switch (position) {
             case 1:
                 fragment = new BlindDateFragment();
@@ -218,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
                 fragment = new MainFragment();
 
         }
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
         ft.replace(R.id.content_frame, fragment, "visible_fragment");
         ft.addToBackStack(null);
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
@@ -321,43 +329,12 @@ public class MainActivity extends AppCompatActivity {
         DocumentReference docRef = db.collection("users").document(user.getUid());
         Task<DocumentSnapshot> taskUsers = docRef.get();
 
-//        DocumentReference docRefSearch = db.collection("search").document("searchAll");
-//        Task<DocumentSnapshot> taskSearch = docRefSearch.get();
-
         // Tasks are managed
         taskUsers.addOnCompleteListener(executor, new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 userSnapshot = task.getResult();
-//                taskSearch.addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
-//                        searchSnapshot = task2.getResult();
                         if (USER_NEW_ACCOUNT == 0) {
-//                            nrOfUsers = searchSnapshot.getLong("nrOfUsers").intValue();
-//
-//                            Map<String, Object> addToSearchCollection = new HashMap<>();
-//                            addToSearchCollection.put("locationOfUser", new GeoPoint(0, 0));
-//                            addToSearchCollection.put("idOfUser", user.getUid());
-//                            addToSearchCollection.put("ageOfUser", 1);
-//                            addToSearchCollection.put("genderOfUserFemale", false);
-//                            addToSearchCollection.put("randomNr", nrOfUsers + 1);
-//
-//                            db.collection("search").document("searchAll").collection("searchNE").add(addToSearchCollection)
-//                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-//                                        @Override
-//                                        public void onSuccess(DocumentReference documentReference) {
-//                                            searchID = documentReference.getId();
-//
-//                                        }
-//                                    })
-//                                    .addOnFailureListener(new OnFailureListener() {
-//                                        @Override
-//                                        public void onFailure(@NonNull Exception e) {
-//                                            Log.d(TAG, e.toString());
-//                                        }
-//                                    });
-
                             Date date = new Date(new Date().getTime());
                             Log.d(TAG, date.toString());
                             Date dateIntro = new Date(new Date().getTime() - 35 * 86400000l); // Previous date for first time
@@ -365,6 +342,7 @@ public class MainActivity extends AppCompatActivity {
                             Map<String, Object> userCompletion = new HashMap<>();
                             userCompletion.put("isActive", true);
                             userCompletion.put("searchID", searchID);
+                            userCompletion.put("lastLoginDate", date);
                             userCompletion.put("canUserSearch", false);
                             userCompletion.put("blindDateParticipationWill", true);
                             userCompletion.put("filledNecessaryInfo", false);
@@ -398,6 +376,8 @@ public class MainActivity extends AppCompatActivity {
                             userCompletion.put("topicsUploadMade",false);
                             userCompletion.put("topicsUploadDate",dateIntro);
                             userCompletion.put("chosenTopicsArray", Arrays.asList("","",""));
+                            userCompletion.put("nrOfOngoingChats", 0);
+                            userCompletion.put("nrOfOngoingBlindDates", 0);
                             docRef.set(userCompletion, SetOptions.merge());
 
                             Map<String, Object> userUpdateValues = new HashMap<>();
@@ -405,13 +385,8 @@ public class MainActivity extends AppCompatActivity {
                             userUpdateValues.put("age", 1);
                             docRef.update(userUpdateValues);
 
-//                            Map<String, Object> searchAllUpdate = new HashMap<>();
-//                            Log.d(TAG, "onCompleteUSERSSSSS: " + nrOfUsers);
-//                            searchAllUpdate.put("nrOfUsers", nrOfUsers + 1);
-//                            docRefSearch.update(searchAllUpdate);
                         }
-//                    }
-//                });
+
             }
         });
 

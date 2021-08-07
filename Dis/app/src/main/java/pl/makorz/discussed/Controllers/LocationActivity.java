@@ -53,12 +53,12 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         setContentView(R.layout.activity_location);
         acceptButton = findViewById(R.id.button_accept_localisation);
         loadingAlertDialog();
+
         //Obtain the SupportMapFragment and get notified when the map is ready to be used.
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
-
-
+        
         acceptButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,15 +77,15 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
     // Save what was allowed by user
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == 1) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
+        if (requestCode == 6) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
+                    }
                 }
-            }
         }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
@@ -95,6 +95,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
         locationListener = new LocationListener() {
 
             @Override
@@ -105,8 +106,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                 longitude = location.getLongitude();
                 dialog.dismiss();
                 findAddressInfo(current);
-
-
+                
                 mMap.clear();
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(current, 12));
                 mMap.addMarker(new MarkerOptions().position(current).title(getString(R.string.map_icon_text_position_location_activity)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
@@ -132,8 +132,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},6);
         } else {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,  1000, 0, locationListener);
-
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
         }
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -175,46 +174,50 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
         LayoutInflater inflaterDialog = LayoutInflater.from(this);
         View topicsView = inflaterDialog.inflate(R.layout.dialog_localisation_not_turned_on, null);
-        AlertDialog topicsChangeDialog = new AlertDialog.Builder(this)
+        AlertDialog localisationNotTurnedOn = new AlertDialog.Builder(this)
                 .setView(topicsView)  // What to use in dialog box
                 .setNegativeButton(R.string.no_text_dialog_boxes, null)
                 .setPositiveButton("OK, take me to settings!", null)
                 .show();
 
-        topicsChangeDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+        localisationNotTurnedOn.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivityForResult(intent, 1);
-                topicsChangeDialog.dismiss();
+                localisationNotTurnedOn.dismiss();
             }
         });
 
-        topicsChangeDialog.getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+        localisationNotTurnedOn.getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                topicsChangeDialog.dismiss();
-                dialog.dismiss();
+                localisationNotTurnedOn.dismiss();
+
             }
         });
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == 1 && resultCode == RESULT_OK) {
-//            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,  1000, 0, locationListener);
-//        }
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},6);
+            } else {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,  1000, 0, locationListener);
+            }
+        }
+    }
 
     public void findAddressInfo(LatLng latLng) {
 
         latitude = latLng.latitude;
         longitude = latLng.longitude;
-        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+        Geocoder geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
 
         try {
-            List<Address> listAddresses = geocoder.getFromLocation(latitude,longitude,1);
+            List<Address> listAddresses = geocoder.getFromLocation(latitude,longitude,2);
             if (listAddresses.size() > 0) {
                 if (listAddresses.get(0).getCountryCode() != null && listAddresses.get(0).getLocality() != null && listAddresses.get(0).getCountryName() != null) {
                     countryCode = listAddresses.get(0).getCountryCode();
@@ -225,7 +228,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
                     locationManager.removeUpdates(locationListener);
                     locationManager = null;
                 } else {
-                    Toast.makeText(LocationActivity.this, getString(R.string.location_not_accept_location_activity_toast), Toast.LENGTH_LONG).show();
+                    Toast.makeText(LocationActivity.this, getString(R.string.location_not_accept_location_activity_toast), Toast.LENGTH_SHORT).show();
                     acceptButton.setEnabled(false);
 
                 }

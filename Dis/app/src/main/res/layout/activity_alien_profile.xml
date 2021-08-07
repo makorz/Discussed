@@ -51,7 +51,7 @@
             android:layout_height="5dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:background="#B240241A"
+            android:background="@color/brown_500"
             android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@+id/linear_alien_title" />
 
@@ -141,7 +141,7 @@
             android:layout_height="5dp"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
-            android:background="#B240241A"
+            android:background="@color/brown_500"
             android:orientation="horizontal"
 
             app:layout_constraintTop_toBottomOf="@+id/linear_alien_photos_buttons" />
