@@ -60,63 +60,93 @@ public class ConversationsFragment extends Fragment {
         View conversationView = inflater.inflate(R.layout.fragment_conversations, container, false);
         conversationRecycler = conversationView.findViewById(R.id.users_recycler);
         setUpRecyclerView();
+        setOnSingleClickAdapterListener(adapter);
+        setOnLongClickAdapterListener(adapter);
+        return conversationView;
+
+    }
+
+    public void setUpRecyclerView() {
+
+        assert user != null;
+        Query queryListOfConversations2 = db.collection("chats").whereArrayContains("usersThatHaveNotDeletedConversation", user.getUid());
+        //Configuring adapter to populate recyclerview
+        FirestoreRecyclerOptions<Conversation> options = new FirestoreRecyclerOptions.Builder<Conversation>()
+                .setQuery(queryListOfConversations2, Conversation.class)
+                .build();
+        adapter = new ConversationsAdapter(options);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        conversationRecycler.setLayoutManager(layoutManager);
+        conversationRecycler.setAdapter(adapter);
+
+    }
+
+    private void setOnSingleClickAdapterListener(ConversationsAdapter adapter) {
 
         adapter.setOnItemCLickListener(new ConversationsAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(String chatID, int position) {
-                DocumentReference docRef = db.collection("chats").document(chatID);
-                docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            if (document != null) {
+                if (adapter.isClickable) {
+                    adapter.isClickable = false;
+                    DocumentReference docRef = db.collection("chats").document(chatID);
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document != null) {
 
-                                List<String> listOfUsers = (List<String>) document.get(USERS_ID_ARRAY);
-                                int index = listOfUsers.indexOf(user.getUid());
-                                if (index == 0) {
-                                    index++;
-                                } else {
-                                    index--;
-                                }
-                                otherUserID = listOfUsers.get(index);
-
-                                DocumentReference docRef2 = db.collection("users").document(otherUserID);
-                                docRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        if (task.isSuccessful()) {
-                                            DocumentSnapshot document2 = task.getResult();
-                                            if (document2 != null) {
-                                                otherUserName = document2.getString(NAME_FIELD);
-                                                Intent intent = new Intent(getActivity(), ChatActivity.class);
-                                                adapter.stopListening();
-                                                intent.putExtra("chatIdIntent", chatID);
-                                                intent.putExtra("otherUserName", otherUserName);
-                                                intent.putExtra("idOfOtherUser", otherUserID);
-                                                intent.putExtra("currentUserID", user.getUid());
-                                                startActivity(intent);
-                                                Toast.makeText(getContext(), "Position: " + position + " ChatID: " + chatID, Toast.LENGTH_SHORT).show();
-
-
-                                            } else {
-                                                Log.d("LOGGER", "No such document");
-                                            }
-                                        } else {
-                                            Log.d("LOGGER", "get failed with ", task.getException());
-                                        }
+                                    List<String> listOfUsers = (List<String>) document.get(USERS_ID_ARRAY);
+                                    int index = listOfUsers.indexOf(user.getUid());
+                                    if (index == 0) {
+                                        index++;
+                                    } else {
+                                        index--;
                                     }
-                                });
+                                    otherUserID = listOfUsers.get(index);
+
+                                    DocumentReference docRef2 = db.collection("users").document(otherUserID);
+                                    docRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                DocumentSnapshot document2 = task.getResult();
+                                                if (document2 != null) {
+                                                    otherUserName = document2.getString(NAME_FIELD);
+                                                    Intent intent = new Intent(getActivity(), ChatActivity.class);
+                                                    adapter.stopListening();
+                                                    intent.putExtra("chatIdIntent", chatID);
+                                                    intent.putExtra("otherUserName", otherUserName);
+                                                    intent.putExtra("idOfOtherUser", otherUserID);
+                                                    intent.putExtra("currentUserID", user.getUid());
+                                                    startActivity(intent);
+                                                    adapter.isClickable = true;
+                                                    Toast.makeText(getContext(), "Position: " + position + " ChatID: " + chatID, Toast.LENGTH_SHORT).show();
+
+
+                                                } else {
+                                                    Log.d("LOGGER", "No such document");
+                                                }
+                                            } else {
+                                                Log.d("LOGGER", "get failed with ", task.getException());
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    Log.d("LOGGER", "No such document");
+                                }
                             } else {
-                                Log.d("LOGGER", "No such document");
+                                Log.d("LOGGER", "get failed with ", task.getException());
                             }
-                        } else {
-                            Log.d("LOGGER", "get failed with ", task.getException());
                         }
-                    }
-                });
+                    });
+                }
             }
         });
+
+    }
+
+    private void setOnLongClickAdapterListener(ConversationsAdapter adapter) {
 
         adapter.setOnLongItemClickListener(new ConversationsAdapter.OnLongItemClickListener() {
             @Override
@@ -162,13 +192,11 @@ public class ConversationsFragment extends Fragment {
                                                             }
                                                         });
 
-                                                db.collection("users").document(user.getUid()).update(NR_OF_USER_CHATS, FieldValue.increment(-1));
-
                                             } else {
 
                                                 int nrOfChatMembers = 0;
                                                 for (QueryDocumentSnapshot document : task.getResult()) {
-                                                   nrOfChatMembers ++;
+                                                    nrOfChatMembers ++;
                                                 }
 
                                                 if (nrOfChatMembers == 1) {
@@ -187,8 +215,6 @@ public class ConversationsFragment extends Fragment {
                                                                 }
                                                             });
 
-                                                    db.collection("users").document(user.getUid()).update(NR_OF_USER_CHATS, FieldValue.increment(-1));
-
                                                 } else {
                                                     db.collection("chats").document(chatID).collection("chatUsers").document(user.getUid()).delete()
                                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -206,9 +232,9 @@ public class ConversationsFragment extends Fragment {
 
                                                     db.collection("chats").document(chatID).update("usersThatHaveNotDeletedConversation", FieldValue.arrayRemove(user.getUid()));
 
-                                                    db.collection("users").document(user.getUid()).update(NR_OF_USER_CHATS, FieldValue.increment(-1));
                                                 }
                                             }
+                                            db.collection("users").document(user.getUid()).update(NR_OF_USER_CHATS, FieldValue.increment(-1));
                                         }
                                     }
                                 });
@@ -237,30 +263,8 @@ public class ConversationsFragment extends Fragment {
 
             }
         });
-
-
-        return conversationView;
-
     }
 
-    public void setUpRecyclerView() {
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        // Initialize Cloud Firestore
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        // Ask the Cloud Firestore
-        assert user != null;
-        Query queryListOfConversations2 = db.collection("chats").whereArrayContains("usersThatHaveNotDeletedConversation", user.getUid());
-        //Configuring adapter to populate recyclerview
-        FirestoreRecyclerOptions<Conversation> options = new FirestoreRecyclerOptions.Builder<Conversation>()
-                .setQuery(queryListOfConversations2, Conversation.class)
-                .build();
-        adapter = new ConversationsAdapter(options);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        conversationRecycler.setLayoutManager(layoutManager);
-        conversationRecycler.setAdapter(adapter);
-
-    }
 
 
     @Override
@@ -278,8 +282,6 @@ public class ConversationsFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        adapter.stopListening();
-
     }
 
 

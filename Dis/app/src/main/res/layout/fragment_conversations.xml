@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:padding="10dp"
     tools:context=".Controllers.MainActivity"
+    android:background="@color/drawer_menu"
     android:id="@+id/layout_fragment_conversations">
 
     <androidx.recyclerview.widget.RecyclerView

@@ -1,22 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/scrollViewProfile"
     android:layout_height="match_parent"
-    android:layout_marginBottom="10dp">
+    android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_Constraint_Profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         tools:context="pl.makorz.discussed.Controllers.ProfileActivity">
+
+        <LinearLayout
+            android:id="@+id/linear_space_top"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@color/brown_500"
+            android:orientation="horizontal" />
 
         <LinearLayout
             android:id="@+id/linear_alien_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/linear_space_top"
             tools:ignore="MissingConstraints">
 
             <TextView
@@ -346,6 +359,28 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/linear_space_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="15dp"
+            android:background="@color/brown_500"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/linear_alien_topics"/>
+
+        <LinearLayout
+            android:id="@+id/linear_space_for_scrollview"
+            android:layout_width="match_parent"
+            android:layout_marginTop="25dp"
+            android:layout_height="15dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/linear_space_bottom"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </ScrollView>

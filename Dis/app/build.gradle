@@ -12,7 +12,7 @@ android {
         minSdkVersion 26
         targetSdkVersion 30
         versionCode 1
-        versionName "1.0"
+        versionName "0.8"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -39,13 +39,21 @@ dependencies {
     // Declare the dependency for the Firebase Authentication library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation 'com.google.firebase:firebase-auth'
-    // Also declare the dependency for the Google Play services library and specify its version
-    implementation 'com.google.android.gms:play-services-auth:19.0.0'
     // FirebaseUI for Cloud Firestore
     implementation 'com.firebaseui:firebase-ui-firestore:7.1.1'
     // Declare the dependency for the Cloud Firestore library
     // When using the BoM, you don't specify versions in Firebase library dependencies
     implementation 'com.google.firebase:firebase-firestore'
+    // Firebase storage for photos of Users
+    implementation 'com.google.firebase:firebase-storage:20.0.0'
+    // Firestore Cloud Messaging for notifications
+    implementation 'com.google.firebase:firebase-messaging:22.0.0'
+
+    // Also declare the dependency for the Google Play services library and specify its version
+    implementation 'com.google.android.gms:play-services-auth:19.0.0'
+    // Google Services for Maps
+    implementation 'com.google.android.gms:play-services-maps:17.0.1'
+
     // ImageVIew Rounded help dependency
     implementation 'de.hdodenhof:circleimageview:2.1.0'
     // Multiple languages time info  --> https://github.com/ocpsoft/prettytime
@@ -58,8 +66,11 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.3.0'
     implementation 'com.google.android.material:material:1.4.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'com.google.firebase:firebase-storage:20.0.0'
-    implementation 'com.google.android.gms:play-services-maps:17.0.1'
+
+    // Retrofit for notifications and use of Cloud Functions in Firebase
+    implementation 'com.squareup.retrofit2:retrofit:2.6.2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
+
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'

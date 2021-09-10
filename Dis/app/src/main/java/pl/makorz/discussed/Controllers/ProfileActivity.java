@@ -6,11 +6,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.InputFilter;
@@ -21,6 +23,8 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowInsets;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -34,6 +38,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -96,6 +101,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private static final String SEARCH_ID_COUNTRY = "searchIDCountry";
     private static final String SEARCH_ID_WORLD = "searchIDWorld";
     private static final String NR_OF_USERS_TO_SEARCH = "nrOfUsers";
+    private static final String PREMIUM_ACCOUNT = "premium";
+    private static final String LAST_LOGIN_DATE = "lastLoginDate";
 
     private static final String FIRST_PHOTO_UPLOAD_MADE = "firstPhotoUploadMade";
     private static final String SECOND_PHOTO_UPLOAD_MADE = "secondPhotoUploadMade";
@@ -126,16 +133,17 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     private TextView profileDescriptionText, ageText, locationText, nameText, titleText, topicsText, genderText, messageAlertView;
     private ImageView firstImageView, secondImageView, thirdImageView;
     private Boolean firstPhotoUploadMade, secondPhotoUploadMade, thirdPhotoUploadMade, locationUploadMade, descriptionUploadMade, ageUploadMade, topicsUploadMade,
-            genderUploadMade, nameUploadMade, isFemale, canUserSearch, blindDateParticipationWill;
-    private AlertDialog dialog;
+            genderUploadMade, nameUploadMade, isFemale, canUserSearch, blindDateParticipationWill, premiumAccount;
+    private AlertDialog dialog, photoDialog;
     private String firstPhotoUri, secondPhotoUri, thirdPhotoUri, searchIDCountry, searchIDWorld, countryCode;
     private ConstraintLayout layoutToDimWhenSearching;
     private ArrayList<String> topicList;
     private TopicsAdapter adapterTopics;
     private GeoPoint locationUser;
     private Date currentDate, firstPhotoUploadDate, secondPhotoUploadDate, thirdPhotoUploadDate, locationUploadDate, descriptionUploadDate, ageUploadDate,
-            genderUploadDate, nameUploadDate;
+            genderUploadDate, nameUploadDate, lastLoginDate;
     private int ageUser;
+    private View backgroundView;
 
     private final StorageReference storageReference = FirebaseStorage.getInstance().getReference();
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -147,8 +155,29 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
-        getSupportActionBar().hide();
+
+        // Make totally fullscreen activity including Notch
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().hide();
+            getWindow().getDecorView()
+                    .setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+
+                    );
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        } else {
+            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().hide();
+            getWindow().getDecorView()
+                    .setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    );
+        }
 
         // Alert of loading data of profile from server
         loadingAlertDialog();
@@ -156,6 +185,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         layoutToDimWhenSearching = findViewById(R.id.layout_Constraint_Profile);
         layoutToDimWhenSearching.setAlpha(0.0f);
         initView();
+        backgroundView = findViewById(R.id.scrollViewProfile);
+
 
         try {
             updateUserCollection();
@@ -199,6 +230,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         genderUploadMade = document.getBoolean(GENDER_UPLOAD_MADE);
                         canUserSearch = document.getBoolean(CAN_USER_SEARCH);
                         blindDateParticipationWill = document.getBoolean(BLIND_DATE_PARTICIPATION_WILL);
+                        premiumAccount = document.getBoolean(PREMIUM_ACCOUNT);
+
+                        if (premiumAccount) {
+                            backgroundView.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.gold_background));
+                        }
 
                         firstPhotoUri = document.getString(FIRST_PHOTO_URI);
                         secondPhotoUri = document.getString(SECOND_PHOTO_URI);
@@ -250,6 +286,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                         ageUploadDate = document.getDate(AGE_UPLOAD_DATE);
                         descriptionUploadDate = document.getDate(DESCRIPTION_UPLOAD_DATE);
                         genderUploadDate = document.getDate(GENDER_UPLOAD_DATE);
+                        lastLoginDate = document.getDate(LAST_LOGIN_DATE);
 
                         topicsText.setText(R.string.not_filled);
                         if (topicsUploadMade) {
@@ -291,7 +328,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                                 && descriptionUploadMade && genderUploadMade && !canUserSearch) {
 
                             addUserInSearchCollection(currentUser.getUid(), document.getDouble(AGE_FIELD).intValue(), isFemale, document.getString(COUNTRY_CODE_FIELD),
-                                    document.getGeoPoint(LOCATION_FIELD), document.getBoolean(BLIND_DATE_PARTICIPATION_WILL), topicList);
+                                    document.getGeoPoint(LOCATION_FIELD), document.getBoolean(BLIND_DATE_PARTICIPATION_WILL), topicList, lastLoginDate);
 
                             db.collection("users").document(currentUser.getUid()).update(CAN_USER_SEARCH, true);
                             canUserSearch = true;
@@ -354,7 +391,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     } else {
                         if (canUserSearch && valueEntered != ageUser) {
                             addUserInSearchCollection(currentUser.getUid(), valueEntered, isFemale, countryCode,
-                                    locationUser, blindDateParticipationWill, topicList);
+                                    locationUser, blindDateParticipationWill, topicList, lastLoginDate);
                             deleteUserInSearchCollection(searchIDCountry, searchIDWorld, ageUser, isFemale, countryCode);
                         }
 
@@ -456,7 +493,6 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         buttonThirdImageChange.setOnClickListener(this);
         buttonGenderChange.setOnClickListener(this);
 
-
         firstImageView.setOnClickListener(this);
         secondImageView.setOnClickListener(this);
         thirdImageView.setOnClickListener(this);
@@ -543,10 +579,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                 if (canUserSearch) {
                     if (countryCodeNested.equals(countryCode)) {
                         updateUserInSearchCollection(searchIDCountry, searchIDWorld, ageUser, isFemale, countryCodeNested,
-                                locationUser, blindDateParticipationWill, topicList);
+                                locationUser, blindDateParticipationWill, topicList,lastLoginDate);
                     } else {
                         addUserInSearchCollection(currentUser.getUid(), ageUser, isFemale, countryCodeNested,
-                                locationUser, blindDateParticipationWill, topicList);
+                                locationUser, blindDateParticipationWill, topicList,lastLoginDate);
                         deleteUserInSearchCollection(searchIDCountry, searchIDWorld, ageUser, isFemale, countryCode);
                     }
                 }
@@ -642,14 +678,24 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     // This function starts functions correlated with certain button
     @Override
     public void onClick(View view) {
+
         int daysToChangeName = 7;
-        int daysToChangeAge = 30;
-        int daysToChangePhoto = 7;
-        int daysToChangeDescription = 7;
-        int daysToChangeGender = 30;
+        int daysToChangeAge = 10;
+        int daysToChangePhoto = 4;
+        int daysToChangeDescription = 4;
+        int daysToChangeGender = 10;
         int daysToChangeLocation = 0;
         long nrOfDaysSinceChange;
         long dateDiff;
+
+        if (premiumAccount) {
+            daysToChangeName = 1;
+            daysToChangeAge = 1;
+            daysToChangePhoto = 1;
+            daysToChangeDescription = 1;
+            daysToChangeGender = 1;
+            daysToChangeLocation = 0;
+        }
 
         switch (view.getId()) {
             case R.id.description_own_change:
@@ -788,7 +834,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     case 20:
                         if (canUserSearch && isFemale) {
                             addUserInSearchCollection(currentUser.getUid(), ageUser, false, countryCode,
-                                    locationUser, blindDateParticipationWill, topicList);
+                                    locationUser, blindDateParticipationWill, topicList, lastLoginDate);
                             deleteUserInSearchCollection(searchIDCountry, searchIDWorld, ageUser, isFemale, countryCode);
                         }
 
@@ -804,7 +850,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     case 21:
                         if (canUserSearch && !isFemale) {
                             addUserInSearchCollection(currentUser.getUid(), ageUser, true, countryCode,
-                                    locationUser, blindDateParticipationWill, topicList);
+                                    locationUser, blindDateParticipationWill, topicList,lastLoginDate);
                             deleteUserInSearchCollection(searchIDCountry, searchIDWorld, ageUser, isFemale, countryCode);
                         }
                         db.collection("users").document(currentUser.getUid())
@@ -919,7 +965,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
                     // Update User Topics in SearchDocuments
                     if (canUserSearch) {
                         updateUserInSearchCollection(searchIDCountry, searchIDWorld, ageUser, isFemale, countryCode,
-                                locationUser, blindDateParticipationWill, topics);
+                                locationUser, blindDateParticipationWill, topics, lastLoginDate);
                     }
                     try {
                         updateUserCollection();
@@ -986,10 +1032,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         View dialogAlertView = inflater.inflate(R.layout.photo_full_screen, null);
         ImageView imageFullView = dialogAlertView.findViewById(R.id.full_screen_photo_show);
         Glide.with(getApplicationContext()).load(imagePath).into(imageFullView);
-        builder.setView(dialogAlertView);
-        dialog = builder.create();
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-        dialog.show();
+        builder.setView(dialogAlertView).setCancelable(true);
+        photoDialog = builder.create();
+        photoDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        photoDialog.show();
     }
 
     // This function tells user that time for change hasn't been reached yet.
@@ -1025,7 +1071,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
     // This function adds User in Search collection (UserID, User Gender, User Location, User Age, User Topics)
     private void addUserInSearchCollection(String userID, int userAge, boolean isUserFemale, String countryCode, GeoPoint userLocation,
-                                           boolean userWantBlindDates, ArrayList<String> userTopics) {
+                                           boolean userWantBlindDates, ArrayList<String> userTopics, Date lastLogin) {
 
         String gender;
         if (isUserFemale) {
@@ -1045,6 +1091,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         addToSearchCollection.put("idOfUser", userID);
         addToSearchCollection.put("userWantsBlindDates", userWantBlindDates);
         addToSearchCollection.put("topicsList", userTopics);
+        addToSearchCollection.put("lastLoginDate", lastLogin);
 
         Map<String, Object> addNrOfUsersField = new HashMap<>();
         addNrOfUsersField.put(NR_OF_USERS_TO_SEARCH, 1);
@@ -1211,7 +1258,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     // Only updates specific fields in User document in search collection (location - in same country, topic list, will to participate in blind date)
     private void updateUserInSearchCollection(String searchCountry, String searchWorld, int userAge, boolean isUserFemale,
                                               String countryCode, GeoPoint userLocation, boolean userWantBlindDates,
-                                              ArrayList<String> userTopics) {
+                                              ArrayList<String> userTopics, Date lastLogin) {
         String gender;
         if (isUserFemale) {
             gender = "female";
@@ -1229,6 +1276,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         updateSearchCollection.put("locationOfUser", userLocation);
         updateSearchCollection.put("userWantsBlindDates", userWantBlindDates);
         updateSearchCollection.put("topicsList", userTopics);
+        updateSearchCollection.put("lastLoginDate",lastLogin);
 
         db.collection("search").document("world").collection("gender").document(gender)
                 .collection("age").document(age).collection("users").document(searchWorld).set(updateSearchCollection, SetOptions.merge())

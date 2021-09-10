@@ -11,11 +11,9 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.text.InputFilter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,7 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +28,6 @@ import android.widget.Toast;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,8 +37,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.messaging.FirebaseMessaging;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -52,6 +48,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
 import pl.makorz.discussed.Controllers.Fragments.*;
 
 import pl.makorz.discussed.R;
@@ -66,50 +63,76 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle drawerToggle;
     private AlertDialog dialog;
     private int currentPosition = 0;
-    public String searchID = "";
-    private int USER_NEW_ACCOUNT = -1;
-    private Date USER_LOGIN_DATE;
     private int introPage = 0;
+    private int userAge;
+    public String searchID = "";
+    private String countryCode, searchWorld, searchCountry;
+    private boolean profileCompleted = false;
+    private boolean isPremium, canUserSearch, isUserFemale;
 
     private FirebaseAuth mAuth;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private DocumentSnapshot searchSnapshot,userSnapshot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); //no dark theme
-        USER_NEW_ACCOUNT = getIntent().getIntExtra("USER_NEW_ACCOUNT",-1);
-        USER_LOGIN_DATE = (Date) getIntent().getSerializableExtra("USER_LOGIN_DATE");
-
+        int USER_NEW_ACCOUNT = getIntent().getIntExtra("USER_NEW_ACCOUNT", -10);
+        Date USER_LOGIN_DATE = (Date) getIntent().getSerializableExtra("USER_LOGIN_DATE");
+        Log.d(TAG, String.valueOf(USER_NEW_ACCOUNT));
         setContentView(R.layout.activity_main);
         initView(savedInstanceState);
-        loadingAlertDialog();
 
         if (USER_NEW_ACCOUNT == 0) {
             introAlertDialog();
-            new Thread() {
-                public void run() {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            android.os.SystemClock.sleep(1500);
-                            try {
-                                fillUserDocument();
-                            } catch (ExecutionException | InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                }
-            }.start();
         } else {
-            Log.d(TAG,"logindateaaaaa" + USER_LOGIN_DATE);
             db.collection("users").document(user.getUid())
                     .update("lastLoginDate", USER_LOGIN_DATE);
+            db.collection("users").document(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot document = task.getResult();
+                        if (document != null) {
+                            isPremium = document.getBoolean("premium");
+                            canUserSearch = document.getBoolean("canUserSearch");
+                            isUserFemale = document.getBoolean("genderFemale");
+                            countryCode = document.getString("locationCountryCode");
+                            searchCountry = document.getString("searchIDCountry");
+                            searchWorld = document.getString("searchIDWorld");
+                            userAge = document.getDouble("ageOfUser").intValue();
+                            if (canUserSearch) {
+
+                                String gender;
+                                if (isUserFemale) {
+                                    gender = "female";
+                                } else {
+                                    gender = "male";
+                                }
+                                String age = Integer.toString(userAge);
+
+                                db.collection("search").document("world").collection("gender").document(gender)
+                                        .collection("age").document(age).collection("users").document(searchWorld).update("lastLoginDate", USER_LOGIN_DATE);
+
+                                db.collection("search").document(countryCode).collection("gender").document(gender)
+                                        .collection("age").document(age).collection("users").document(searchCountry).update("lastLoginDate", USER_LOGIN_DATE);
+
+                            }
+
+                        } else {
+                            Log.d("LOGGER", "No such document");
+                        }
+
+                    } else {
+                        Log.d("LOGGER", "get failed with ", task.getException());
+                    }
+                }
+            });
         }
+
+
+
     }
 
     public void initView(Bundle savedInstanceState) {
@@ -117,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
 
         titles = getResources().getStringArray(R.array.titles);
         drawerList = findViewById(R.id.drawer);
-        drawerLayout =  findViewById(R.id.drawer_layout);
+        drawerLayout = findViewById(R.id.drawer_layout);
 
         //Populate the ListView
         drawerList.setAdapter(new ArrayAdapter<String>(this,
@@ -276,6 +299,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        if (isPremium) {
+            menu.getItem(0).setIcon(R.drawable.own_profile_icon_premium);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -287,7 +313,6 @@ public class MainActivity extends AppCompatActivity {
         }
         switch (item.getItemId()) {
             case R.id.action_show_my_profile:
-                loadingAlertDialog();
                 //Code to run when the Profile Icon is clicked
                 Intent intent = new Intent(this, ProfileActivity.class);
                 startActivity(intent);
@@ -310,83 +335,96 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onResume() {
-        if (dialog.isShowing()) {
-            dialog.dismiss();
-        }
-        super.onResume();
-    }
+//    @Override
+//    protected void onResume() {
+////        if (dialog.isShowing()) {
+////            dialog.dismiss();
+////        }
+//        super.onResume();
+//    }
 
     // Function updates collections when user is first time in app.
     private void fillUserDocument() throws ExecutionException, InterruptedException {
 
-        // tasks are going too run in background treads
-        int numCores = Runtime.getRuntime().availableProcessors();
-        ThreadPoolExecutor executor = new ThreadPoolExecutor(numCores * 2, numCores * 2,
-                60L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
-
         DocumentReference docRef = db.collection("users").document(user.getUid());
-        Task<DocumentSnapshot> taskUsers = docRef.get();
-
-        // Tasks are managed
-        taskUsers.addOnCompleteListener(executor, new OnCompleteListener<DocumentSnapshot>() {
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                userSnapshot = task.getResult();
-                        if (USER_NEW_ACCOUNT == 0) {
-                            Date date = new Date(new Date().getTime());
-                            Log.d(TAG, date.toString());
-                            Date dateIntro = new Date(new Date().getTime() - 35 * 86400000l); // Previous date for first time
-                            Log.d(TAG,dateIntro.toString());
-                            Map<String, Object> userCompletion = new HashMap<>();
-                            userCompletion.put("isActive", true);
-                            userCompletion.put("searchID", searchID);
-                            userCompletion.put("lastLoginDate", date);
-                            userCompletion.put("canUserSearch", false);
-                            userCompletion.put("blindDateParticipationWill", true);
-                            userCompletion.put("filledNecessaryInfo", false);
-                            userCompletion.put("premium", false);
-                            userCompletion.put("displayName", "");
-                            userCompletion.put("genderFemale", false);
-                            userCompletion.put("ageOfUser", 0);
-                            userCompletion.put("firstPhotoUri", "null");
-                            userCompletion.put("firstPhotoUploadMade",false);
-                            userCompletion.put("firstPhotoUploadDate",dateIntro);
-                            userCompletion.put("secondPhotoUri", "null");
-                            userCompletion.put("secondPhotoUploadMade",false);
-                            userCompletion.put("secondPhotoUploadDate",dateIntro);
-                            userCompletion.put("thirdPhotoUri", "null");
-                            userCompletion.put("thirdPhotoUploadMade",false);
-                            userCompletion.put("thirdPhotoUploadDate",dateIntro);
-                            userCompletion.put("locationUploadMade",false);
-                            userCompletion.put("locationUploadDate",dateIntro);
-                            userCompletion.put("locationCountryName","");
-                            userCompletion.put("locationCountryCode","");
-                            userCompletion.put("placeName","");
-                            userCompletion.put("locationLatLng",new LatLng(0,0));
-                            userCompletion.put("descriptionUploadMade",false);
-                            userCompletion.put("descriptionUploadDate",dateIntro);
-                            userCompletion.put("ageUploadMade",false);
-                            userCompletion.put("ageUploadDate",dateIntro);
-                            userCompletion.put("nameUploadMade",false);
-                            userCompletion.put("nameUploadDate",dateIntro);
-                            userCompletion.put("genderUploadMade",false);
-                            userCompletion.put("genderUploadDate",dateIntro);
-                            userCompletion.put("topicsUploadMade",false);
-                            userCompletion.put("topicsUploadDate",dateIntro);
-                            userCompletion.put("chosenTopicsArray", Arrays.asList("","",""));
-                            userCompletion.put("nrOfOngoingChats", 0);
-                            userCompletion.put("nrOfOngoingBlindDates", 0);
-                            docRef.set(userCompletion, SetOptions.merge());
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document != null) {
+                        Date date = new Date(new Date().getTime());
+                        Log.d(TAG, date.toString());
+                        Date dateIntro = new Date(new Date().getTime() - 35 * 86400000L); // Previous date for first time
+                        Log.d(TAG, dateIntro.toString());
+                        Map<String, Object> userCompletion = new HashMap<>();
+                        userCompletion.put("isActive", true);
+                        userCompletion.put("searchID", searchID);
+                        userCompletion.put("lastLoginDate", date);
+                        userCompletion.put("canUserSearch", false);
+                        userCompletion.put("sendGoodJob", false);
+                        userCompletion.put("blindDateParticipationWill", true);
+                        userCompletion.put("filledNecessaryInfo", false);
+                        userCompletion.put("premium", false);
+                        userCompletion.put("displayName", "");
+                        userCompletion.put("genderFemale", false);
+                        userCompletion.put("ageOfUser", 0);
+                        userCompletion.put("firstPhotoUri", "null");
+                        userCompletion.put("firstPhotoUploadMade", false);
+                        userCompletion.put("firstPhotoUploadDate", dateIntro);
+                        userCompletion.put("secondPhotoUri", "null");
+                        userCompletion.put("secondPhotoUploadMade", false);
+                        userCompletion.put("secondPhotoUploadDate", dateIntro);
+                        userCompletion.put("thirdPhotoUri", "null");
+                        userCompletion.put("thirdPhotoUploadMade", false);
+                        userCompletion.put("thirdPhotoUploadDate", dateIntro);
+                        userCompletion.put("locationUploadMade", false);
+                        userCompletion.put("locationUploadDate", dateIntro);
+                        userCompletion.put("locationCountryName", "");
+                        userCompletion.put("locationCountryCode", "");
+                        userCompletion.put("placeName", "");
+                        userCompletion.put("locationLatLng", new LatLng(0, 0));
+                        userCompletion.put("descriptionUploadMade", false);
+                        userCompletion.put("descriptionUploadDate", dateIntro);
+                        userCompletion.put("ageUploadMade", false);
+                        userCompletion.put("ageUploadDate", dateIntro);
+                        userCompletion.put("nameUploadMade", false);
+                        userCompletion.put("nameUploadDate", dateIntro);
+                        userCompletion.put("genderUploadMade", false);
+                        userCompletion.put("genderUploadDate", dateIntro);
+                        userCompletion.put("topicsUploadMade", false);
+                        userCompletion.put("topicsUploadDate", dateIntro);
+                        userCompletion.put("chosenTopicsArray", Arrays.asList("", "", ""));
+                        userCompletion.put("nrOfOngoingChats", 0);
+                        userCompletion.put("nrOfOngoingBlindDates", 0);
+                        userCompletion.put("fcmRegistrationToken", "MessageTokenNULL");
+                        Log.d(TAG, userCompletion.toString());
+                        docRef.set(userCompletion, SetOptions.merge());
 
-                            Map<String, Object> userUpdateValues = new HashMap<>();
-                            userUpdateValues.put("location", new GeoPoint(0, 0));
-                            userUpdateValues.put("age", 1);
-                            docRef.update(userUpdateValues);
+                        Map<String, Object> userUpdateValues = new HashMap<>();
+                        userUpdateValues.put("location", new GeoPoint(0, 0));
+                        userUpdateValues.put("age", 1);
+                        docRef.update(userUpdateValues);
 
-                        }
+                        profileCompleted = true;
 
+                        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+                            @Override
+                            public void onComplete(@NonNull Task<String> task) {
+                                if (!task.isSuccessful()) {
+                                    Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                                    return;
+                                }
+
+                                // Get new FCM registration token
+                                String token = task.getResult();
+                                Log.d(TAG, token);
+                                Toast.makeText(MainActivity.this, token, Toast.LENGTH_SHORT).show();
+                                db.collection("users").document(user.getUid()).update("fcmRegistrationToken", token);
+                            }
+                        });
+                    }
+                }
             }
         });
 
@@ -395,12 +433,24 @@ public class MainActivity extends AppCompatActivity {
     // PopUp with entry info about app.
     private void introAlertDialog() {
 
+        new Thread() {
+            public void run() {
+                android.os.SystemClock.sleep(1500);
+                try {
+                    fillUserDocument();
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+
         LayoutInflater inflaterDialog = LayoutInflater.from(this);
         View introDialogView = inflaterDialog.inflate(R.layout.intro_dialog_box, null);
 
         AlertDialog introDialog = new AlertDialog.Builder(this)
                 .setView(introDialogView)  // What to use in dialog box
                 .setPositiveButton(R.string.next_dialog_boxes, null)
+                .setCancelable(false)
                 .show();
 
         introDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
@@ -412,13 +462,15 @@ public class MainActivity extends AppCompatActivity {
                     AlertDialog introDialog2 = new AlertDialog.Builder(MainActivity.this)
                             .setView(introDialogView2)  // What to use in dialog box
                             .setPositiveButton(R.string.understand_text_dialog_boxes, null)
+                            .setCancelable(false)
                             .show();
                     introPage++;
                     introDialog2.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            introDialog2.dismiss();
-
+                            if (profileCompleted) {
+                                introDialog2.dismiss();
+                            }
                         }
                     });
                     introDialog.dismiss();
@@ -426,20 +478,8 @@ public class MainActivity extends AppCompatActivity {
                     introDialog.dismiss();
                 }
 
-                }
-            });
-    }
-
-    public void loadingAlertDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(false); // if you want user to wait for some process to finish
-        LayoutInflater inflater = getLayoutInflater();
-        View dialogAlertView = inflater.inflate(R.layout.progress_bar, null);
-        TextView messageAlertView = dialogAlertView.findViewById(R.id.loading_msg);
-        builder.setView(dialogAlertView);
-        messageAlertView.setText(R.string.alert_dialog_loading_profile);
-        dialog = builder.create();
-        dialog.show();
+            }
+        });
     }
 
 }

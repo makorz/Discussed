@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
-<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/topics_recycler"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_centerHorizontal="false"
-    android:scrollbars="none"
-    android:layout_gravity="center"
-    android:layout_margin="5dp" />
+    android:padding="10dp"
+    tools:context=".Controllers.MainActivity"
+    android:background="@color/drawer_menu"
+    android:id="@+id/layout_fragment_blindDates">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/blindDates_recycler"
+        android:scrollbars="none"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+</RelativeLayout>

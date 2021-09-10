@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,15 +27,24 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.gson.Gson;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import pl.makorz.discussed.Controllers.Functions.APIService;
+import pl.makorz.discussed.Controllers.Notifications.Client;
+import pl.makorz.discussed.Controllers.Notifications.Data;
+import pl.makorz.discussed.Controllers.Notifications.Response;
+import pl.makorz.discussed.Controllers.Notifications.Sender;
 import pl.makorz.discussed.Models.Adapters.MessageInChatAdapter;
 import pl.makorz.discussed.Models.MessageInChat;
 import pl.makorz.discussed.R;
+import retrofit2.Call;
+import retrofit2.Callback;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -46,6 +56,7 @@ public class ChatActivity extends AppCompatActivity {
     public static final String USERS_NAME_ARRAY = "usersParticipatingName";
     public static final String USERS_PHOTO_URI_ARRAY = "usersParticipatingFirstImageUri";
     public static final String POINTS_FROM_OTHER_USER = "pointsFromOtherUser";
+    private static final String PREMIUM_ACCOUNT = "premium";
 
     private List<String> listOfUsers, listOfUserNames, listOfUserPhotoUri;
     private String chatIdIntent, idOfOtherUser, otherUserName, displayName;
@@ -58,11 +69,14 @@ public class ChatActivity extends AppCompatActivity {
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+    private APIService apiService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); //no dark theme
 
         Intent intent = getIntent();
         chatIdIntent = intent.getStringExtra("chatIdIntent");
@@ -70,6 +84,8 @@ public class ChatActivity extends AppCompatActivity {
         idOfOtherUser = intent.getStringExtra("idOfOtherUser");
         getSupportActionBar().setTitle(otherUserName);
         messageText = findViewById(R.id.messageEditText);
+
+        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
 
         DocumentReference docRefUser = db.collection("users").document(user.getUid());
         docRefUser.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -79,7 +95,7 @@ public class ChatActivity extends AppCompatActivity {
                     documentOfUser = task.getResult();
                     if (documentOfUser != null) {
                     displayName = documentOfUser.getString(NAME_FIELD);
-                    }else {
+                    } else {
                         Log.d("LOGGER", "No such document");
                     }
                 } else {
@@ -89,6 +105,9 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+        db.collection("chats").document(chatIdIntent).collection("chatUsers").document(user.getUid())
+                .update("lastTimeInChatActivity",new Date());
+
         // What happens after send button click
         findViewById(R.id.sendMessageButton).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,17 +115,22 @@ public class ChatActivity extends AppCompatActivity {
                 InputFilter lengthFilter = new InputFilter.LengthFilter(1250);
                 messageText.setFilters(new InputFilter[]{lengthFilter});
                 if (messageText.getText().toString().length() <= 1250) {
-                    MessageInChat messageChat = new MessageInChat(messageText.getText().toString(), user.getUid(), displayName, new Date(), false);
-                    db.collection("chats").document(chatIdIntent).collection("messages").add(messageChat).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            String messageID = documentReference.getId();
-                            Map<String, Object> message = new HashMap<>();
-                            message.put("messageID",messageID);
-                            db.collection("chats").document(chatIdIntent).collection("messages").document(messageID).update(message);
-                        }
-                    });
-                    messageText.setText("");
+                    if (messageText.getText().toString().length() >= 1) {
+                        MessageInChat messageChat = new MessageInChat(messageText.getText().toString(), user.getUid(), displayName, new Date(), false);
+                        db.collection("chats").document(chatIdIntent).collection("messages").add(messageChat).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                String messageID = documentReference.getId();
+                                Map<String, Object> message = new HashMap<>();
+                                message.put("messageID", messageID);
+                                db.collection("chats").document(chatIdIntent).collection("messages").document(messageID).update(message);
+
+                            }
+                        });
+                        sendNotification(idOfOtherUser, user.getUid(), messageText.getText().toString());
+                        messageText.setText("");
+                    } else
+                        Toast.makeText(ChatActivity.this, "Type something!", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(ChatActivity.this, R.string.too_long_message_chat_activity_toast, Toast.LENGTH_SHORT).show();
                 }
@@ -150,29 +174,45 @@ public class ChatActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 DocumentSnapshot documentOfChat = task.getResult();
                                 if (documentOfChat != null) {
-
-                                    docRef.collection("chatUsers").document(idOfOtherUser).update(POINTS_FROM_OTHER_USER, FieldValue.increment(points));
-
-                                    Toast.makeText(ChatActivity.this, getString(R.string.award_info_text_1_chat_activity_toast) + otherUserName
-                                            + getString(R.string.award_info_text_2_chat_activity_toast) + points
-                                            + getString(R.string.award_info_text_3_chat_activity_toast), Toast.LENGTH_SHORT).show();
-
-                                    DocumentReference docRef2 = db.collection("chats").document(chatIdIntent).
-                                            collection("messages").document(idMessage);
-
-                                    docRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    db.collection("users").document(idOfOtherUser).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                         @Override
                                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                             if (task.isSuccessful()) {
-                                                DocumentSnapshot documentOfMessage = task.getResult();
-                                                if (documentOfMessage != null) {
-                                                    db.collection("chats").document(chatIdIntent).collection("messages")
-                                                            .document(idMessage).update(WAS_GRADED, true);
-                                                } else {
-                                                    Log.d("LOGGER", "No such document");
+                                                DocumentSnapshot documentOfUser = task.getResult();
+                                                if (documentOfUser != null) {
+                                                    boolean premium = documentOfUser.getBoolean(PREMIUM_ACCOUNT);
+                                                    if (premium) {
+                                                        docRef.collection("chatUsers").document(idOfOtherUser).update(POINTS_FROM_OTHER_USER, FieldValue.increment(points * 2L));
+                                                        Toast.makeText(ChatActivity.this, getString(R.string.award_info_text_1_chat_activity_toast) + otherUserName
+                                                                + getString(R.string.award_info_text_2_chat_activity_toast) + points * 2
+                                                                + getString(R.string.award_info_text_3_chat_activity_toast), Toast.LENGTH_SHORT).show();
+                                                    } else {
+                                                        docRef.collection("chatUsers").document(idOfOtherUser).update(POINTS_FROM_OTHER_USER, FieldValue.increment(points));
+                                                        Toast.makeText(ChatActivity.this, getString(R.string.award_info_text_1_chat_activity_toast) + otherUserName
+                                                                + getString(R.string.award_info_text_2_chat_activity_toast) + points
+                                                                + getString(R.string.award_info_text_3_chat_activity_toast), Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    DocumentReference docRef2 = db.collection("chats").document(chatIdIntent).
+                                                            collection("messages").document(idMessage);
+
+                                                    docRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                            if (task.isSuccessful()) {
+                                                                DocumentSnapshot documentOfMessage = task.getResult();
+                                                                if (documentOfMessage != null) {
+                                                                    db.collection("chats").document(chatIdIntent).collection("messages")
+                                                                            .document(idMessage).update(WAS_GRADED, true);
+                                                                } else {
+                                                                    Log.d("LOGGER", "No such document");
+                                                                }
+                                                            } else {
+                                                                Log.d("LOGGER", "get failed with ", task.getException());
+                                                            }
+                                                        }
+                                                    });
+
                                                 }
-                                            } else {
-                                                Log.d("LOGGER", "get failed with ", task.getException());
                                             }
                                         }
                                     });
@@ -194,6 +234,55 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
+    private void sendNotification(String otherUserID, final String userID, final String message){
+        DocumentReference docRefUser = db.collection("users").document(otherUserID);
+        docRefUser.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    documentOfUser = task.getResult();
+                    if (documentOfUser != null) {
+
+                        String token = documentOfUser.getString("fcmRegistrationToken");
+                        Data data = new Data(otherUserID, R.drawable.notification_icon_white, message,
+                                displayName, userID, displayName, chatIdIntent);
+                        Sender sender = new Sender(data, token);
+
+                        Gson gson = new Gson();
+                        String json = gson.toJson(sender);
+
+                        Log.d(TAG, displayName + message);
+
+                        apiService.sendNotification(sender).enqueue(new Callback<Response>() {
+                            @Override
+                            public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+
+                                Log.d(TAG, String.valueOf(response.code()));
+                                if (response.code() == 200) {
+                                    assert response.body() != null;
+                                    if (response.body().success != 1) {
+                                        Log.d(TAG, "Failure while sending notification.");
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Response> call, Throwable t) {
+
+                            }
+                        });
+
+                    } else {
+                        Log.d("LOGGER", "No such document");
+                    }
+                } else {
+                    Log.d("LOGGER", "get failed with ", task.getException());
+                }
+
+            }
+        });
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -206,6 +295,8 @@ public class ChatActivity extends AppCompatActivity {
     public void onStop() {
         super.onStop();
         messagesAdapter.stopListening();
+        db.collection("chats").document(chatIdIntent).collection("chatUsers").document(user.getUid())
+                .update("lastTimeInChatActivity",new Date());
     }
 
     @Override
@@ -216,7 +307,19 @@ public class ChatActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        finish();
+        //If Chat starts from notification and it's root start MainActivity instead of completely closing app
+        if (isTaskRoot()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            super.onBackPressed();
+            finish();
+        }else {
+            super.onBackPressed();
+            finish();
+        }
+
+
+
     }
 
     @Override

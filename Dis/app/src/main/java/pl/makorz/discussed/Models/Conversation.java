@@ -1,26 +1,50 @@
 package pl.makorz.discussed.Models;
 
-import androidx.annotation.NonNull;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.SetOptions;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Conversation {
 
-    private String lastMessage, otherUserID, chatID, otherUserName,otherUserFirstImageUri;
+    private String lastMessage, chatID;
     private List<String> usersParticipatingName, usersParticipatingID, usersParticipatingFirstImageUri;
-    private List<Boolean> isFirstPhotoOfUserUncovered;
+    private List<Boolean> isFirstPhotoOfUserUncovered, wasUserInActivity;
+    private boolean wasUserInActivityNr0, wasUserInActivityNr1;
+    private Date dateOfChatCreation, lastMessageDate;
 
-    private Date dateOfChatCreation;
+    public Conversation() {
+    }
 
+    public boolean getWasUserInActivityNr0() {
+        return wasUserInActivityNr0;
+    }
+
+    public void setWasUserInActivityNr0(Boolean wasUserInActivityNr0) {
+        this.wasUserInActivityNr0 = wasUserInActivityNr0;
+    }
+
+    public boolean getWasUserInActivityNr1() {
+        return wasUserInActivityNr1;
+    }
+
+    public void setWasUserInActivityNr1(Boolean getWasViewedByUser1) {
+        this.wasUserInActivityNr1 = getWasViewedByUser1;
+    }
+
+    public List<Boolean> getWasUserInActivity() {
+        return wasUserInActivity;
+    }
+
+    public void setWasUserInActivity(List<Boolean> wasUserInActivity) {
+        this.wasUserInActivity = wasUserInActivity;
+    }
+
+    public Date getLastMessageDate() {
+        return lastMessageDate;
+    }
+
+    public void setLastMessageDate(Date lastMessageDate) {
+        this.lastMessageDate = lastMessageDate;
+    }
 
     public String getLastMessage() {
         return lastMessage;
@@ -38,9 +62,6 @@ public class Conversation {
         return usersParticipatingID;
     }
 
-    public Conversation() {
-    }
-
     public List<Boolean> getIsFirstPhotoOfUserUncovered() {
         return isFirstPhotoOfUserUncovered;
     }
@@ -55,10 +76,6 @@ public class Conversation {
 
     public void setUsersParticipatingFirstImageUri(List<String> usersParticipatingFirstImageUri) {
         this.usersParticipatingFirstImageUri = usersParticipatingFirstImageUri;
-    }
-
-    public void getTextOfMessage(String chatID) {
-        checkLastMessage(chatID);
     }
 
     public void setUsersParticipatingName(List<String> usersParticipatingName) {
@@ -83,29 +100,6 @@ public class Conversation {
 
     public void setDateOfChatCreation(Date dateOfChatCreation) {
         this.dateOfChatCreation = dateOfChatCreation;
-    }
-
-    public void checkLastMessage(final String chatID) {
-        Query queryMessages = FirebaseFirestore.getInstance().collection("chats").document(chatID)
-                .collection("messages").orderBy("dateOfMessage", Query.Direction.DESCENDING).limit(1);
-
-        queryMessages.get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Map<String, Object> chat = new HashMap<>();
-                                String textShort = document.get("textOfMessage").toString();
-                                if (textShort.length() > 40) {
-                                    textShort = textShort.substring(0,25) + "...";
-                                }
-                                chat.put("lastMessage", textShort);
-                                FirebaseFirestore.getInstance().collection("chats").document(chatID).set(chat, SetOptions.merge());
-                            }
-                        }
-                    }
-                });
     }
 
 }

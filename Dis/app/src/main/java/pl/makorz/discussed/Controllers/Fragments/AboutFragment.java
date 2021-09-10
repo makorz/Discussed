@@ -20,18 +20,18 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import pl.makorz.discussed.BuildConfig;
 import pl.makorz.discussed.Models.Adapters.CustomExpandableListAdapter;
 import pl.makorz.discussed.R;
 
 public class AboutFragment extends Fragment {
 
     private static final String TAG = "AboutFragment";
-    private static final String VERSION_NR = "versionNr";
     private static final String GOOD_JOB_COUNTER = "nrOfGoodJobs";
 
     private LinkedHashMap<String, List<String>> expandableListDetail;
-    private String versionNr;
-    private TextView versionNrTextView, goodJobTextView;
+    private TextView goodJobTextView;
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -43,22 +43,19 @@ public class AboutFragment extends Fragment {
         // Loading data from server in second thread
         new Thread() {
             public void run() {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            updateInfoTab();
-                        } catch (ExecutionException | InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                });
+                try {
+                    updateInfoTab();
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }.start();
 
         View aboutLayout = inflater.inflate(R.layout.fragment_about, container, false);
-        versionNrTextView = aboutLayout.findViewById(R.id.versionNr_text_view);
+        TextView versionNrTextView = aboutLayout.findViewById(R.id.versionNr_text_view);
+        String version1 = getResources().getString(R.string.version_textView_about_tab);
+        String version2 = version1 + " v" + BuildConfig.VERSION_NAME;
+        versionNrTextView.setText(version2);
         goodJobTextView = aboutLayout.findViewById(R.id.goodJobNr_text_view);
         ExpandableListView expandableListView = (ExpandableListView) aboutLayout.findViewById(R.id.tutorial_list_view);
         populateList();
@@ -78,12 +75,6 @@ public class AboutFragment extends Fragment {
                 if (task.isSuccessful()) {
                     DocumentSnapshot document = task.getResult();
                     if (document != null) {
-
-                        versionNr = document.getString(VERSION_NR);
-
-                        String version1 = getResources().getString(R.string.version_textView_about_tab);
-                        String version2 = version1 + " " + versionNr;
-                        versionNrTextView.setText(version2);
 
                         String pointNr = Integer.toString(document.getDouble(GOOD_JOB_COUNTER).intValue());
                         String points1 = getResources().getString(R.string.nr_of_goodJob_clicks_text_about_tab);

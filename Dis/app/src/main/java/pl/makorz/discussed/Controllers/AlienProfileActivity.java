@@ -112,6 +112,7 @@ public class AlienProfileActivity extends AppCompatActivity implements View.OnCl
         }.start();
 
     }
+
     // This function updates profile information when activity is started
     private void updateAlienUserCollection() throws ExecutionException, InterruptedException {
         // Download document of current user, to retrieve actual info to profile view
@@ -124,104 +125,104 @@ public class AlienProfileActivity extends AppCompatActivity implements View.OnCl
                     if (documentOfOtherUser != null) {
 
                         DocumentReference docRef2 = db.collection("chats").document(chatIdIntent).collection("chatUsers").document(currentUserID);
-                                docRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                        if (task.isSuccessful()) {
-                                            DocumentSnapshot documentOfCurrentUserFromChat = task.getResult();
-                                            if (documentOfCurrentUserFromChat != null) {
+                        docRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot documentOfCurrentUserFromChat = task.getResult();
+                                    if (documentOfCurrentUserFromChat != null) {
 
-                                                firstPhotoUncovered = documentOfCurrentUserFromChat.getBoolean(UNCOVER_FIRST_PHOTO_MADE);
-                                                secondPhotoUncovered = documentOfCurrentUserFromChat.getBoolean(UNCOVER_SECOND_PHOTO_MADE);
-                                                thirdPhotoUncovered = documentOfCurrentUserFromChat.getBoolean(UNCOVER_THIRD_PHOTO_MADE);
-                                                locationUncovered = documentOfCurrentUserFromChat.getBoolean(UNCOVER_LOCATION_MADE);
-                                                ageUncovered = documentOfCurrentUserFromChat.getBoolean(UNCOVER_AGE_MADE);
-                                                descriptionUncovered = documentOfCurrentUserFromChat.getBoolean(UNCOVER_DESCRIPTION_MADE);
+                                        firstPhotoUncovered = documentOfCurrentUserFromChat.getBoolean(UNCOVER_FIRST_PHOTO_MADE);
+                                        secondPhotoUncovered = documentOfCurrentUserFromChat.getBoolean(UNCOVER_SECOND_PHOTO_MADE);
+                                        thirdPhotoUncovered = documentOfCurrentUserFromChat.getBoolean(UNCOVER_THIRD_PHOTO_MADE);
+                                        locationUncovered = documentOfCurrentUserFromChat.getBoolean(UNCOVER_LOCATION_MADE);
+                                        ageUncovered = documentOfCurrentUserFromChat.getBoolean(UNCOVER_AGE_MADE);
+                                        descriptionUncovered = documentOfCurrentUserFromChat.getBoolean(UNCOVER_DESCRIPTION_MADE);
 
-                                                pointsToUse = documentOfCurrentUserFromChat.getLong(POINTS_TO_USE);
+                                        pointsToUse = documentOfCurrentUserFromChat.getLong(POINTS_TO_USE);
 
-                                                firstPhotoUri = documentOfOtherUser.getString(FIRST_PHOTO_URI);
-                                                secondPhotoUri = documentOfOtherUser.getString(SECOND_PHOTO_URI);
-                                                thirdPhotoUri = documentOfOtherUser.getString(THIRD_PHOTO_URI);
+                                        firstPhotoUri = documentOfOtherUser.getString(FIRST_PHOTO_URI);
+                                        secondPhotoUri = documentOfOtherUser.getString(SECOND_PHOTO_URI);
+                                        thirdPhotoUri = documentOfOtherUser.getString(THIRD_PHOTO_URI);
 
-                                                String title1 = getString(R.string.title_text_1_alien_profile_activity);
-                                                String title2 = documentOfOtherUser.getString(NAME_FIELD);
-                                                String title3 = getString(R.string.title_text_2_alien_profile_activity);
-                                                SpannableString titleTextWords = new SpannableString(title1 + title2 + title3);
-                                                //Length of italic text if language set on device is polish (different style of title)
-                                                int endPoint = title1.length() + title2.length();
-                                                if (title3.length() > 1) {
-                                                    endPoint = title1.length() + title2.length() + 2;
-                                                }
-                                                titleTextWords.setSpan(new StyleSpan(Typeface.ITALIC), title1.length(), endPoint, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                                titleText.setText(titleTextWords);
-
-                                                String pointBegin = getString(R.string.nr_of_points_text_alien_profile_activity);
-                                                String pointNr = String.valueOf(pointsToUse);
-                                                SpannableString pointsText = new SpannableString(pointBegin + pointNr);
-                                                pointsText.setSpan(new StyleSpan(Typeface.BOLD), pointBegin.length(), pointBegin.length() + pointNr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                                nrOfPointsText.setText(pointsText);
-
-                                                if (descriptionUncovered) {
-                                                    buttonDescriptionUncover.setEnabled(false);
-                                                    profileDescriptionText.setText(documentOfOtherUser.getString(DESCRIPTION_FIELD));
-
-                                                }
-
-                                                if (ageUncovered) {
-                                                    buttonAgeUncover.setEnabled(false);
-                                                    String age = Integer.toString(documentOfOtherUser.getDouble(AGE_FIELD).intValue());
-                                                    ageText.setText(age);
-
-                                                }
-
-                                                if (locationUncovered) {
-                                                    buttonLocationUncover.setEnabled(false);
-                                                    String placeName = documentOfOtherUser.getString(PLACE_NAME_FIELD);
-                                                    String countryName = documentOfOtherUser.getString(COUNTRY_NAME_FIELD);
-                                                    String localisation = placeName + ", " + countryName + ".";
-                                                    locationText.setText(localisation);
-
-                                                }
-
-                                                topicList = (ArrayList<String>) documentOfOtherUser.get(TOPICS_ARRAY);
-                                                StringBuilder topicsListInTextView = new StringBuilder(getString(R.string.favorite_topics_text_alien_profile_activity));
-                                                for (int i = 0; i < topicList.size(); i++) {
-                                                        String addTopic;
-                                                        String nrOfTopic = String.valueOf(i + 1);
-                                                        if (i == topicList.size() - 1) {
-                                                            addTopic = nrOfTopic + ". " + topicList.get(i);
-                                                        } else {
-                                                            addTopic = nrOfTopic + ". " + topicList.get(i) + "\n";
-                                                        }
-                                                        topicsListInTextView.append(addTopic);
-                                                    }
-                                                topicsText.setText(topicsListInTextView);
-
-                                                if (firstPhotoUncovered) {
-                                                    buttonFirstImageUncover.setEnabled(false);
-                                                    Glide.with(getApplicationContext()).load(firstPhotoUri).into(firstImageView);
-                                                }
-                                                if (secondPhotoUncovered) {
-                                                    buttonSecondImageUncover.setEnabled(false);
-                                                    Glide.with(getApplicationContext()).load(secondPhotoUri).into(secondImageView);
-                                                }
-                                                if (thirdPhotoUncovered) {
-                                                    buttonThirdImageUncover.setEnabled(false);
-                                                    Glide.with(getApplicationContext()).load(thirdPhotoUri).into(thirdImageView);
-                                                }
-
-                                                layoutToDimWhenSearching.setAlpha(1.0f);
-                                                dialog.dismiss();
-
-                                            } else {
-                                                Log.d("LOGGER", "No such document");
-                                            }
-                                        } else {
-                                            Log.d("LOGGER", "get failed with ", task.getException());
+                                        String title1 = getString(R.string.title_text_1_alien_profile_activity);
+                                        String title2 = documentOfOtherUser.getString(NAME_FIELD);
+                                        String title3 = getString(R.string.title_text_2_alien_profile_activity);
+                                        SpannableString titleTextWords = new SpannableString(title1 + title2 + title3);
+                                        //Length of italic text if language set on device is polish (different style of title)
+                                        int endPoint = title1.length() + title2.length();
+                                        if (title3.length() > 1) {
+                                            endPoint = title1.length() + title2.length() + 2;
                                         }
+                                        titleTextWords.setSpan(new StyleSpan(Typeface.ITALIC), title1.length(), endPoint, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                        titleText.setText(titleTextWords);
+
+                                        String pointBegin = getString(R.string.nr_of_points_text_alien_profile_activity);
+                                        String pointNr = String.valueOf(pointsToUse);
+                                        SpannableString pointsText = new SpannableString(pointBegin + pointNr);
+                                        pointsText.setSpan(new StyleSpan(Typeface.BOLD), pointBegin.length(), pointBegin.length() + pointNr.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                        nrOfPointsText.setText(pointsText);
+
+                                        if (descriptionUncovered) {
+                                            buttonDescriptionUncover.setEnabled(false);
+                                            profileDescriptionText.setText(documentOfOtherUser.getString(DESCRIPTION_FIELD));
+
+                                        }
+
+                                        if (ageUncovered) {
+                                            buttonAgeUncover.setEnabled(false);
+                                            String age = Integer.toString(documentOfOtherUser.getDouble(AGE_FIELD).intValue());
+                                            ageText.setText(age);
+
+                                        }
+
+                                        if (locationUncovered) {
+                                            buttonLocationUncover.setEnabled(false);
+                                            String placeName = documentOfOtherUser.getString(PLACE_NAME_FIELD);
+                                            String countryName = documentOfOtherUser.getString(COUNTRY_NAME_FIELD);
+                                            String localisation = placeName + ", " + countryName + ".";
+                                            locationText.setText(localisation);
+
+                                        }
+
+                                        topicList = (ArrayList<String>) documentOfOtherUser.get(TOPICS_ARRAY);
+                                        StringBuilder topicsListInTextView = new StringBuilder(getString(R.string.favorite_topics_text_alien_profile_activity));
+                                        for (int i = 0; i < topicList.size(); i++) {
+                                            String addTopic;
+                                            String nrOfTopic = String.valueOf(i + 1);
+                                            if (i == topicList.size() - 1) {
+                                                addTopic = nrOfTopic + ". " + topicList.get(i);
+                                            } else {
+                                                addTopic = nrOfTopic + ". " + topicList.get(i) + "\n";
+                                            }
+                                            topicsListInTextView.append(addTopic);
+                                        }
+                                        topicsText.setText(topicsListInTextView);
+
+                                        if (firstPhotoUncovered) {
+                                            buttonFirstImageUncover.setEnabled(false);
+                                            Glide.with(getApplicationContext()).load(firstPhotoUri).into(firstImageView);
+                                        }
+                                        if (secondPhotoUncovered) {
+                                            buttonSecondImageUncover.setEnabled(false);
+                                            Glide.with(getApplicationContext()).load(secondPhotoUri).into(secondImageView);
+                                        }
+                                        if (thirdPhotoUncovered) {
+                                            buttonThirdImageUncover.setEnabled(false);
+                                            Glide.with(getApplicationContext()).load(thirdPhotoUri).into(thirdImageView);
+                                        }
+
+                                        layoutToDimWhenSearching.setAlpha(1.0f);
+                                        dialog.dismiss();
+
+                                    } else {
+                                        Log.d("LOGGER", "No such document");
                                     }
-                                });
+                                } else {
+                                    Log.d("LOGGER", "get failed with ", task.getException());
+                                }
+                            }
+                        });
 
                     } else {
                         Log.d("LOGGER", "No such document");
@@ -297,9 +298,9 @@ public class AlienProfileActivity extends AppCompatActivity implements View.OnCl
         infoDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    infoDialog.dismiss();
-                    finish();
-                }
+                infoDialog.dismiss();
+                finish();
+            }
         });
     }
 
@@ -314,44 +315,50 @@ public class AlienProfileActivity extends AppCompatActivity implements View.OnCl
         switch (view.getId()) {
             case R.id.description_alien_uncover_button:
                 spendPointsAlertDialog(getString(R.string.spend_points_text_1_dialog_alien_profile_activity) + descriptionCost
-                                + getString(R.string.spend_points_text_2_description_dialog_alien_profile_activity), descriptionCost, UNCOVER_DESCRIPTION_MADE);
+                        + getString(R.string.spend_points_text_2_description_dialog_alien_profile_activity), descriptionCost, UNCOVER_DESCRIPTION_MADE);
                 whatButtonPressed = 1;
                 break;
             case R.id.age_alien_uncover_button:
                 spendPointsAlertDialog(getString(R.string.spend_points_text_1_dialog_alien_profile_activity) + ageCost
-                                + getString(R.string.spend_points_text_2_age_dialog_alien_profile_activity), ageCost, UNCOVER_AGE_MADE);
+                        + getString(R.string.spend_points_text_2_age_dialog_alien_profile_activity), ageCost, UNCOVER_AGE_MADE);
                 whatButtonPressed = 2;
                 break;
             case R.id.location_alien_uncover_button:
                 spendPointsAlertDialog(getString(R.string.spend_points_text_1_dialog_alien_profile_activity) + locationCost
-                                + getString(R.string.spend_points_text_2_location_dialog_alien_profile_activity), locationCost, UNCOVER_LOCATION_MADE);
+                        + getString(R.string.spend_points_text_2_location_dialog_alien_profile_activity), locationCost, UNCOVER_LOCATION_MADE);
                 whatButtonPressed = 3;
                 break;
             case R.id.first_image_uncover:
                 spendPointsAlertDialog(getString(R.string.spend_points_text_1_dialog_alien_profile_activity) + photoCost
-                                + getString(R.string.spend_points_text_2_photo_dialog_alien_profile_activity), photoCost, UNCOVER_FIRST_PHOTO_MADE);
+                        + getString(R.string.spend_points_text_2_photo_dialog_alien_profile_activity), photoCost, UNCOVER_FIRST_PHOTO_MADE);
                 whatButtonPressed = 4;
                 break;
             case R.id.second_image_uncover:
                 spendPointsAlertDialog(getString(R.string.spend_points_text_1_dialog_alien_profile_activity) + photoCost
-                                + getString(R.string.spend_points_text_2_photo_dialog_alien_profile_activity), photoCost, UNCOVER_SECOND_PHOTO_MADE);
+                        + getString(R.string.spend_points_text_2_photo_dialog_alien_profile_activity), photoCost, UNCOVER_SECOND_PHOTO_MADE);
                 whatButtonPressed = 5;
                 break;
             case R.id.third_image_uncover:
                 spendPointsAlertDialog(getString(R.string.spend_points_text_1_dialog_alien_profile_activity) + photoCost
-                                + getString(R.string.spend_points_text_2_photo_dialog_alien_profile_activity), photoCost, UNCOVER_THIRD_PHOTO_MADE);
+                        + getString(R.string.spend_points_text_2_photo_dialog_alien_profile_activity), photoCost, UNCOVER_THIRD_PHOTO_MADE);
                 whatButtonPressed = 6;
                 break;
             case R.id.imageview_first_image_alien_profile:
-                photoShowDialog(firstPhotoUri, firstPhotoUncovered);
+                if (firstPhotoUncovered) {
+                    photoShowDialog(firstPhotoUri);
+                }
                 whatButtonPressed = 7;
                 break;
             case R.id.imageview_second_image_alien_profile:
-                photoShowDialog(secondPhotoUri,secondPhotoUncovered);
+                if (secondPhotoUncovered) {
+                    photoShowDialog(secondPhotoUri);
+                }
                 whatButtonPressed = 8;
                 break;
             case R.id.imageview_third_image_alien_profile:
-                photoShowDialog(thirdPhotoUri, thirdPhotoUncovered);
+                if (thirdPhotoUncovered) {
+                    photoShowDialog(thirdPhotoUri);
+                }
                 whatButtonPressed = 9;
                 break;
             default:
@@ -360,15 +367,14 @@ public class AlienProfileActivity extends AppCompatActivity implements View.OnCl
     }
 
     // This function shows images in bigger format
-    public void photoShowDialog(String imagePath, Boolean wasPhotoUncovered) {
+    public void photoShowDialog(String imagePath) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
         View dialogAlertView = inflater.inflate(R.layout.photo_full_screen, null);
         ImageView imageFullView = dialogAlertView.findViewById(R.id.full_screen_photo_show);
         imageFullView.setImageResource(R.drawable.question_icon);
-        if (wasPhotoUncovered) {
-            Glide.with(getApplicationContext()).load(imagePath).into(imageFullView);
-        }
+        Glide.with(getApplicationContext()).load(imagePath).into(imageFullView);
+
         builder.setView(dialogAlertView);
         dialog = builder.create();
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
@@ -412,15 +418,15 @@ public class AlienProfileActivity extends AppCompatActivity implements View.OnCl
                                         List<Boolean> listOfUsersUncoveredFirstPhoto = (List<Boolean>) documentOfChat.get(USERS_FIRST_PHOTO_UNCOVERED);
                                         int index = listOfUsers.indexOf(currentUserID);
 
-                                        Boolean a =  true;
+                                        Boolean a = true;
                                         Boolean b = listOfUsersUncoveredFirstPhoto.get(index);
 
                                         db.collection("chats").document(chatIdIntent)
                                                 .update(USERS_FIRST_PHOTO_UNCOVERED, FieldValue.delete());
                                         if (index == 0) {
-                                            docRef3.update(USERS_FIRST_PHOTO_UNCOVERED, FieldValue.arrayUnion(b,a));
+                                            docRef3.update(USERS_FIRST_PHOTO_UNCOVERED, FieldValue.arrayUnion(b, a));
                                         } else {
-                                            docRef3.update(USERS_FIRST_PHOTO_UNCOVERED, FieldValue.arrayUnion(a,b));
+                                            docRef3.update(USERS_FIRST_PHOTO_UNCOVERED, FieldValue.arrayUnion(a, b));
                                         }
 
                                     } else {

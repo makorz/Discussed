@@ -7,10 +7,12 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
@@ -51,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final int RC_GOOGLE_SIGN_IN = 496;
 
     private CheckBox checkTermsBox, checkAgeBox;
-    private int USER_NEW_ACCOUNT = -1;
+    private int USER_NEW_ACCOUNT = 10;
 
     private SignInButton buttonSignInGoogle;
     private LoginButton buttonSignInFacebook;
@@ -66,6 +68,17 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        getWindow().getDecorView()
+                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                );
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+            getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+        }
 
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
@@ -196,6 +209,8 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("USER_NEW_ACCOUNT",USER_NEW_ACCOUNT);
         intent.putExtra("USER_LOGIN_DATE", new Date(new Date().getTime()));
+
+        Log.d(TAG, String.valueOf(USER_NEW_ACCOUNT));
 
         startActivity(intent);
         // Don't want to show login in back stag
