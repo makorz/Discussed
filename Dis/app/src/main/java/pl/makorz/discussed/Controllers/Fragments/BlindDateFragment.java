@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,8 +34,11 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import pl.makorz.discussed.Controllers.ChatActivity;
 import pl.makorz.discussed.Models.Adapters.BlindDatesAdapter;
@@ -58,12 +63,15 @@ public class BlindDateFragment extends Fragment {
     public static final String USER_NR_1_WAS_REJECTED = "wasUserRejectedNr1";
     public static final String USER_NR_2_WAS_REJECTED = "wasUserRejectedNr2";
     public static final String USER_NR_3_WAS_REJECTED = "wasUserRejectedNr3";
-
+    public static final String BLIND_DATE_ID = "blindDateID";
     public static final String DATE_OF_CREATION_BLIND_DATE = "dateOfBlindDateCreation";
     public static final String ROUND_NO = "numberOfRoundInBlindDate";
+    public static final String DATE_OF_ROUND_2_STARTED = "dateOfRound2Started";
 
     private BlindDatesAdapter adapter;
     private RecyclerView blindDatesRecycler;
+    private ProgressBar waitUntilChatAppears;
+    private RelativeLayout layoutToDimWhenSearching;
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -74,6 +82,8 @@ public class BlindDateFragment extends Fragment {
 
         View blindDateView = inflater.inflate(R.layout.fragment_bilnddates, container, false);
         blindDatesRecycler = blindDateView.findViewById(R.id.blindDates_recycler);
+        waitUntilChatAppears = blindDateView.findViewById(R.id.progressBarOfSearchBlindDates);
+        layoutToDimWhenSearching = blindDateView.findViewById(R.id.layout_fragment_blindDates);
         setUpRecyclerView();
         setOnSingleClickAdapterListener(adapter);
         setOnLongClickAdapterListener(adapter);
@@ -103,6 +113,8 @@ public class BlindDateFragment extends Fragment {
             public void onItemClick(String blindDateID, int position) {
                 if (adapter.isClickable) {
                     adapter.isClickable = false;
+                    layoutToDimWhenSearching.setAlpha(0.15f);
+                    waitUntilChatAppears.setVisibility(View.VISIBLE);
                     DocumentReference docRef = db.collection("blindDates").document(blindDateID);
                     docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
@@ -110,6 +122,8 @@ public class BlindDateFragment extends Fragment {
                             if (task.isSuccessful()) {
                                 DocumentSnapshot document = task.getResult();
                                 if (document != null) {
+
+                                    Map<String, Object> blindDate = new HashMap<>();
 
                                     String userNameNr0 = document.getString(USER_NAME_NR_0);
                                     String userNameNr1 = document.getString(USER_NAME_NR_1);
@@ -126,28 +140,49 @@ public class BlindDateFragment extends Fragment {
                                     boolean wasUserNr3Rejected = document.getBoolean(USER_NR_3_WAS_REJECTED);
 
                                     Date blindDateCreationDate = document.getDate(DATE_OF_CREATION_BLIND_DATE);
+                                    Date dateOfStartRound2 = document.getDate(DATE_OF_ROUND_2_STARTED);
 
                                     int roundNumber = document.getDouble(ROUND_NO).intValue();
 
                                     Intent intent = new Intent(getActivity(), BlindDateActivity.class);
                                     adapter.stopListening();
 
-                                    intent.putExtra(USER_NAME_NR_0, userNameNr0);
-                                    intent.putExtra(USER_NAME_NR_1, userNameNr1);
-                                    intent.putExtra(USER_NAME_NR_2, userNameNr2);
-                                    intent.putExtra(USER_NAME_NR_3, userNameNr3);
-                                    intent.putExtra(USER_ID_NR_0, userIDNr0);
-                                    intent.putExtra(USER_ID_NR_1, userIDNr1);
-                                    intent.putExtra(USER_ID_NR_2, userIDNr2);
-                                    intent.putExtra(USER_ID_NR_3, userIDNr3);
-                                    intent.putExtra(USER_NR_1_WAS_REJECTED, wasUserNr1Rejected);
-                                    intent.putExtra(USER_NR_2_WAS_REJECTED, wasUserNr2Rejected);
-                                    intent.putExtra(USER_NR_3_WAS_REJECTED, wasUserNr3Rejected);
-                                    intent.putExtra(DATE_OF_CREATION_BLIND_DATE, blindDateCreationDate);
-                                    intent.putExtra(ROUND_NO, roundNumber);
+                                    blindDate.put("blindDateID", blindDateID);
+                                    blindDate.put("dateOfBlindDateCreation", blindDateCreationDate);
+                                    blindDate.put("dateOfRound2Started", dateOfStartRound2);
+                                    blindDate.put("userNameNr0", userNameNr0);
+                                    blindDate.put("userNameNr1", userNameNr1);
+                                    blindDate.put("userNameNr2", userNameNr2);
+                                    blindDate.put("userNameNr3", userNameNr3);
+                                    blindDate.put("userIDNr0", userIDNr0);
+                                    blindDate.put("userIDNr1", userIDNr1);
+                                    blindDate.put("userIDNr2", userIDNr2);
+                                    blindDate.put("userIDNr3", userIDNr3);
+                                    blindDate.put("wasUserRejectedNr1", wasUserNr1Rejected);
+                                    blindDate.put("wasUserRejectedNr2", wasUserNr2Rejected);
+                                    blindDate.put("wasUserRejectedNr3", wasUserNr3Rejected);
+                                    blindDate.put("numberOfRoundInBlindDate",roundNumber);
 
-                                    intent.putExtra("currentUserID", user.getUid());
+//                                    intent.putExtra(USER_NAME_NR_0, userNameNr0);
+//                                    intent.putExtra(USER_NAME_NR_1, userNameNr1);
+//                                    intent.putExtra(USER_NAME_NR_2, userNameNr2);
+//                                    intent.putExtra(USER_NAME_NR_3, userNameNr3);
+//                                    intent.putExtra(USER_ID_NR_0, userIDNr0);
+//                                    intent.putExtra(USER_ID_NR_1, userIDNr1);
+//                                    intent.putExtra(USER_ID_NR_2, userIDNr2);
+//                                    intent.putExtra(USER_ID_NR_3, userIDNr3);
+//                                    intent.putExtra(USER_NR_1_WAS_REJECTED, wasUserNr1Rejected);
+//                                    intent.putExtra(USER_NR_2_WAS_REJECTED, wasUserNr2Rejected);
+//                                    intent.putExtra(USER_NR_3_WAS_REJECTED, wasUserNr3Rejected);
+//                                    intent.putExtra(DATE_OF_CREATION_BLIND_DATE, blindDateCreationDate);
+//                                    intent.putExtra(ROUND_NO, roundNumber);
+//                                    intent.putExtra(BLIND_DATE_ID, blindDateID);
+//                                    intent.putExtra(DATE_OF_ROUND_2_STARTED,dateOfStartRound2);
+
+                                    intent.putExtra("blindDateMap", (Serializable) blindDate);
                                     startActivity(intent);
+                                    layoutToDimWhenSearching.setAlpha(1f);
+                                    waitUntilChatAppears.setVisibility(View.INVISIBLE);
                                     adapter.isClickable = true;
                                     Toast.makeText(getContext(), "Position: " + position + " BlindDateID: " + blindDateID, Toast.LENGTH_SHORT).show();
 

@@ -29,6 +29,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -87,57 +88,12 @@ public class ChatActivity extends AppCompatActivity {
 
         apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
 
-        DocumentReference docRefUser = db.collection("users").document(user.getUid());
-        docRefUser.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    documentOfUser = task.getResult();
-                    if (documentOfUser != null) {
-                    displayName = documentOfUser.getString(NAME_FIELD);
-                    } else {
-                        Log.d("LOGGER", "No such document");
-                    }
-                } else {
-                    Log.d("LOGGER", "get failed with ", task.getException());
-                }
-
-            }
-        });
+        getCurrentUserNecesseryData();
 
         db.collection("chats").document(chatIdIntent).collection("chatUsers").document(user.getUid())
                 .update("lastTimeInChatActivity",new Date());
 
-        // What happens after send button click
-        findViewById(R.id.sendMessageButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                InputFilter lengthFilter = new InputFilter.LengthFilter(1250);
-                messageText.setFilters(new InputFilter[]{lengthFilter});
-                if (messageText.getText().toString().length() <= 1250) {
-                    if (messageText.getText().toString().length() >= 1) {
-                        MessageInChat messageChat = new MessageInChat(messageText.getText().toString(), user.getUid(), displayName, new Date(), false);
-                        db.collection("chats").document(chatIdIntent).collection("messages").add(messageChat).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                            @Override
-                            public void onSuccess(DocumentReference documentReference) {
-                                String messageID = documentReference.getId();
-                                Map<String, Object> message = new HashMap<>();
-                                message.put("messageID", messageID);
-                                db.collection("chats").document(chatIdIntent).collection("messages").document(messageID).update(message);
-
-                            }
-                        });
-                        sendNotification(idOfOtherUser, user.getUid(), messageText.getText().toString());
-                        messageText.setText("");
-                    } else
-                        Toast.makeText(ChatActivity.this, "Type something!", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(ChatActivity.this, R.string.too_long_message_chat_activity_toast, Toast.LENGTH_SHORT).show();
-                }
-
-
-            }
-        });
+        setSendButtonClickListener();
 
         messagesRecycler = findViewById(R.id.messagesRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -162,76 +118,7 @@ public class ChatActivity extends AppCompatActivity {
         });
         messagesRecycler.setAdapter(messagesAdapter);
 
-        messagesAdapter.setOnLongItemCLickListener(new MessageInChatAdapter.onLongItemClickListener() {
-            @Override
-            public void onLongItemClick(int points, int position, String idMessage, boolean wasGraded) {
-
-                if (!wasGraded) {
-                    DocumentReference docRef = db.collection("chats").document(chatIdIntent);
-                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot documentOfChat = task.getResult();
-                                if (documentOfChat != null) {
-                                    db.collection("users").document(idOfOtherUser).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                            if (task.isSuccessful()) {
-                                                DocumentSnapshot documentOfUser = task.getResult();
-                                                if (documentOfUser != null) {
-                                                    boolean premium = documentOfUser.getBoolean(PREMIUM_ACCOUNT);
-                                                    if (premium) {
-                                                        docRef.collection("chatUsers").document(idOfOtherUser).update(POINTS_FROM_OTHER_USER, FieldValue.increment(points * 2L));
-                                                        Toast.makeText(ChatActivity.this, getString(R.string.award_info_text_1_chat_activity_toast) + otherUserName
-                                                                + getString(R.string.award_info_text_2_chat_activity_toast) + points * 2
-                                                                + getString(R.string.award_info_text_3_chat_activity_toast), Toast.LENGTH_SHORT).show();
-                                                    } else {
-                                                        docRef.collection("chatUsers").document(idOfOtherUser).update(POINTS_FROM_OTHER_USER, FieldValue.increment(points));
-                                                        Toast.makeText(ChatActivity.this, getString(R.string.award_info_text_1_chat_activity_toast) + otherUserName
-                                                                + getString(R.string.award_info_text_2_chat_activity_toast) + points
-                                                                + getString(R.string.award_info_text_3_chat_activity_toast), Toast.LENGTH_SHORT).show();
-                                                    }
-                                                    DocumentReference docRef2 = db.collection("chats").document(chatIdIntent).
-                                                            collection("messages").document(idMessage);
-
-                                                    docRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                            if (task.isSuccessful()) {
-                                                                DocumentSnapshot documentOfMessage = task.getResult();
-                                                                if (documentOfMessage != null) {
-                                                                    db.collection("chats").document(chatIdIntent).collection("messages")
-                                                                            .document(idMessage).update(WAS_GRADED, true);
-                                                                } else {
-                                                                    Log.d("LOGGER", "No such document");
-                                                                }
-                                                            } else {
-                                                                Log.d("LOGGER", "get failed with ", task.getException());
-                                                            }
-                                                        }
-                                                    });
-
-                                                }
-                                            }
-                                        }
-                                    });
-                                } else {
-                                    Log.d("LOGGER", "No such document");
-                                }
-                            } else {
-                                Log.d("LOGGER", "get failed with ", task.getException());
-                            }
-                        }
-                    });
-
-                } else {
-                    Toast.makeText(ChatActivity.this, R.string.graded_message_chat_activity_toast, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-
+        setGradeButtonLongClickListener();
     }
 
     private void sendNotification(String otherUserID, final String userID, final String message){
@@ -402,6 +289,134 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 } else {
                     Log.d("LOGGER", "get failed with ", task.getException());
+                }
+            }
+        });
+    }
+
+    public void getCurrentUserNecesseryData() {
+
+        DocumentReference docRefUser = db.collection("users").document(user.getUid());
+        docRefUser.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    documentOfUser = task.getResult();
+                    if (documentOfUser != null) {
+                        displayName = documentOfUser.getString(NAME_FIELD);
+                    } else {
+                        Log.d("LOGGER", "No such document");
+                    }
+                } else {
+                    Log.d("LOGGER", "get failed with ", task.getException());
+                }
+
+            }
+        });
+
+    }
+
+    public void setSendButtonClickListener() {
+
+        // What happens after send button click
+        findViewById(R.id.sendMessageButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                InputFilter lengthFilter = new InputFilter.LengthFilter(1250);
+                messageText.setFilters(new InputFilter[]{lengthFilter});
+                if (messageText.getText().toString().length() <= 1250) {
+                    if (messageText.getText().toString().length() >= 1) {
+                        MessageInChat messageChat = new MessageInChat(messageText.getText().toString(), user.getUid(), displayName, new Date(), false);
+                        db.collection("chats").document(chatIdIntent).collection("messages").add(messageChat).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                String messageID = documentReference.getId();
+                                Map<String, Object> message = new HashMap<>();
+                                message.put("messageID", messageID);
+                                db.collection("chats").document(chatIdIntent).collection("messages").document(messageID).update(message);
+
+                            }
+                        });
+                        sendNotification(idOfOtherUser, user.getUid(), messageText.getText().toString());
+                        messageText.setText("");
+                    } else
+                        Toast.makeText(ChatActivity.this, "Type something!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(ChatActivity.this, R.string.too_long_message_chat_activity_toast, Toast.LENGTH_SHORT).show();
+                }
+
+
+            }
+        });
+    }
+
+    public void setGradeButtonLongClickListener() {
+
+        messagesAdapter.setOnLongItemCLickListener(new MessageInChatAdapter.onLongItemClickListener() {
+            @Override
+            public void onLongItemClick(int points, int position, String idMessage, boolean wasGraded) {
+
+                if (!wasGraded) {
+                    DocumentReference docRef = db.collection("chats").document(chatIdIntent);
+                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot documentOfChat = task.getResult();
+                                if (documentOfChat != null) {
+                                    db.collection("users").document(idOfOtherUser).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                            if (task.isSuccessful()) {
+                                                DocumentSnapshot documentOfUser = task.getResult();
+                                                if (documentOfUser != null) {
+                                                    boolean premium = documentOfUser.getBoolean(PREMIUM_ACCOUNT);
+                                                    if (premium) {
+                                                        docRef.collection("chatUsers").document(idOfOtherUser).update(POINTS_FROM_OTHER_USER, FieldValue.increment(points * 2L));
+                                                        Toast.makeText(ChatActivity.this, getString(R.string.award_info_text_1_chat_activity_toast) + otherUserName
+                                                                + getString(R.string.award_info_text_2_chat_activity_toast) + points * 2
+                                                                + getString(R.string.award_info_text_3_chat_activity_toast), Toast.LENGTH_SHORT).show();
+                                                    } else {
+                                                        docRef.collection("chatUsers").document(idOfOtherUser).update(POINTS_FROM_OTHER_USER, FieldValue.increment(points));
+                                                        Toast.makeText(ChatActivity.this, getString(R.string.award_info_text_1_chat_activity_toast) + otherUserName
+                                                                + getString(R.string.award_info_text_2_chat_activity_toast) + points
+                                                                + getString(R.string.award_info_text_3_chat_activity_toast), Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    DocumentReference docRef2 = db.collection("chats").document(chatIdIntent).
+                                                            collection("messages").document(idMessage);
+
+                                                    docRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                            if (task.isSuccessful()) {
+                                                                DocumentSnapshot documentOfMessage = task.getResult();
+                                                                if (documentOfMessage != null) {
+                                                                    db.collection("chats").document(chatIdIntent).collection("messages")
+                                                                            .document(idMessage).update(WAS_GRADED, true);
+                                                                } else {
+                                                                    Log.d("LOGGER", "No such document");
+                                                                }
+                                                            } else {
+                                                                Log.d("LOGGER", "get failed with ", task.getException());
+                                                            }
+                                                        }
+                                                    });
+
+                                                }
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    Log.d("LOGGER", "No such document");
+                                }
+                            } else {
+                                Log.d("LOGGER", "get failed with ", task.getException());
+                            }
+                        }
+                    });
+
+                } else {
+                    Toast.makeText(ChatActivity.this, R.string.graded_message_chat_activity_toast, Toast.LENGTH_SHORT).show();
                 }
             }
         });

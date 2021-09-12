@@ -8,6 +8,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +35,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import pl.makorz.discussed.Models.Adapters.ConversationsAdapter;
@@ -44,11 +49,12 @@ public class ConversationsFragment extends Fragment {
     private static final String TAG = "ConversationsFragment";
     public static final String USERS_ID_ARRAY = "usersParticipatingID";
     public static final String NAME_FIELD = "displayName";
-    private static final String NR_OF_USER_CHATS = "nrOfOngoingChats";
 
     private ConversationsAdapter adapter;
     private RecyclerView conversationRecycler;
     private String otherUserID, otherUserName;
+    private ProgressBar waitUntilChatAppears;
+    private RelativeLayout layoutToDimWhenSearching;
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -58,6 +64,8 @@ public class ConversationsFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View conversationView = inflater.inflate(R.layout.fragment_conversations, container, false);
+        waitUntilChatAppears = conversationView.findViewById(R.id.progressBarOfSearchConversation);
+        layoutToDimWhenSearching = conversationView.findViewById(R.id.layout_fragment_conversations);
         conversationRecycler = conversationView.findViewById(R.id.users_recycler);
         setUpRecyclerView();
         setOnSingleClickAdapterListener(adapter);
@@ -88,6 +96,8 @@ public class ConversationsFragment extends Fragment {
             public void onItemClick(String chatID, int position) {
                 if (adapter.isClickable) {
                     adapter.isClickable = false;
+                    layoutToDimWhenSearching.setAlpha(0.15f);
+                    waitUntilChatAppears.setVisibility(View.VISIBLE);
                     DocumentReference docRef = db.collection("chats").document(chatID);
                     docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
@@ -120,6 +130,8 @@ public class ConversationsFragment extends Fragment {
                                                     intent.putExtra("idOfOtherUser", otherUserID);
                                                     intent.putExtra("currentUserID", user.getUid());
                                                     startActivity(intent);
+                                                    layoutToDimWhenSearching.setAlpha(1f);
+                                                    waitUntilChatAppears.setVisibility(View.INVISIBLE);
                                                     adapter.isClickable = true;
                                                     Toast.makeText(getContext(), "Position: " + position + " ChatID: " + chatID, Toast.LENGTH_SHORT).show();
 
@@ -194,9 +206,12 @@ public class ConversationsFragment extends Fragment {
 
                                             } else {
 
+                                                List<String> userIDList = new ArrayList<>();
+
                                                 int nrOfChatMembers = 0;
                                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                                     nrOfChatMembers ++;
+                                                    userIDList.add(document.getString("userID"));
                                                 }
 
                                                 if (nrOfChatMembers == 1) {
@@ -215,6 +230,8 @@ public class ConversationsFragment extends Fragment {
                                                                 }
                                                             });
 
+
+
                                                 } else {
                                                     db.collection("chats").document(chatID).collection("chatUsers").document(user.getUid()).delete()
                                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -230,11 +247,12 @@ public class ConversationsFragment extends Fragment {
                                                                 }
                                                             });
 
+                                                    db.collection("users").document(userIDList.get(0)).update("otherUsersIDFromStartedChatsArray", FieldValue.arrayRemove(userIDList.get(1)));
+                                                    db.collection("users").document(userIDList.get(1)).update("otherUsersIDFromStartedChatsArray", FieldValue.arrayRemove(userIDList.get(0)));
                                                     db.collection("chats").document(chatID).update("usersThatHaveNotDeletedConversation", FieldValue.arrayRemove(user.getUid()));
 
                                                 }
                                             }
-                                            db.collection("users").document(user.getUid()).update(NR_OF_USER_CHATS, FieldValue.increment(-1));
                                         }
                                     }
                                 });

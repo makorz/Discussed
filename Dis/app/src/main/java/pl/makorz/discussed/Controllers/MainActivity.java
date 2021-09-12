@@ -22,13 +22,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -39,14 +37,13 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import pl.makorz.discussed.Controllers.Fragments.*;
@@ -65,10 +62,10 @@ public class MainActivity extends AppCompatActivity {
     private int currentPosition = 0;
     private int introPage = 0;
     private int userAge;
-    public String searchID = "";
     private String countryCode, searchWorld, searchCountry;
     private boolean profileCompleted = false;
     private boolean isPremium, canUserSearch, isUserFemale;
+    private Date lastLoginDate,currentLoginDate;
 
     private FirebaseAuth mAuth;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -79,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); //no dark theme
         int USER_NEW_ACCOUNT = getIntent().getIntExtra("USER_NEW_ACCOUNT", -10);
-        Date USER_LOGIN_DATE = (Date) getIntent().getSerializableExtra("USER_LOGIN_DATE");
+        currentLoginDate = (Date) getIntent().getSerializableExtra("USER_LOGIN_DATE");
         Log.d(TAG, String.valueOf(USER_NEW_ACCOUNT));
         setContentView(R.layout.activity_main);
         initView(savedInstanceState);
@@ -87,51 +84,8 @@ public class MainActivity extends AppCompatActivity {
         if (USER_NEW_ACCOUNT == 0) {
             introAlertDialog();
         } else {
-            db.collection("users").document(user.getUid())
-                    .update("lastLoginDate", USER_LOGIN_DATE);
-            db.collection("users").document(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if (task.isSuccessful()) {
-                        DocumentSnapshot document = task.getResult();
-                        if (document != null) {
-                            isPremium = document.getBoolean("premium");
-                            canUserSearch = document.getBoolean("canUserSearch");
-                            isUserFemale = document.getBoolean("genderFemale");
-                            countryCode = document.getString("locationCountryCode");
-                            searchCountry = document.getString("searchIDCountry");
-                            searchWorld = document.getString("searchIDWorld");
-                            userAge = document.getDouble("ageOfUser").intValue();
-                            if (canUserSearch) {
-
-                                String gender;
-                                if (isUserFemale) {
-                                    gender = "female";
-                                } else {
-                                    gender = "male";
-                                }
-                                String age = Integer.toString(userAge);
-
-                                db.collection("search").document("world").collection("gender").document(gender)
-                                        .collection("age").document(age).collection("users").document(searchWorld).update("lastLoginDate", USER_LOGIN_DATE);
-
-                                db.collection("search").document(countryCode).collection("gender").document(gender)
-                                        .collection("age").document(age).collection("users").document(searchCountry).update("lastLoginDate", USER_LOGIN_DATE);
-
-                            }
-
-                        } else {
-                            Log.d("LOGGER", "No such document");
-                        }
-
-                    } else {
-                        Log.d("LOGGER", "get failed with ", task.getException());
-                    }
-                }
-            });
+            updateLoginDateAndPremiumCheck();
         }
-
-
 
     }
 
@@ -359,7 +313,6 @@ public class MainActivity extends AppCompatActivity {
                         Log.d(TAG, dateIntro.toString());
                         Map<String, Object> userCompletion = new HashMap<>();
                         userCompletion.put("isActive", true);
-                        userCompletion.put("searchID", searchID);
                         userCompletion.put("lastLoginDate", date);
                         userCompletion.put("canUserSearch", false);
                         userCompletion.put("sendGoodJob", false);
@@ -395,8 +348,10 @@ public class MainActivity extends AppCompatActivity {
                         userCompletion.put("topicsUploadMade", false);
                         userCompletion.put("topicsUploadDate", dateIntro);
                         userCompletion.put("chosenTopicsArray", Arrays.asList("", "", ""));
-                        userCompletion.put("nrOfOngoingChats", 0);
-                        userCompletion.put("nrOfOngoingBlindDates", 0);
+                        userCompletion.put("nrOfStartedChatsToday", 0);
+                        userCompletion.put("nrOfStartedBlindDatesToday", 0);
+                        userCompletion.put("lastDateOfStartedChat", date);
+                        userCompletion.put("lastDateOfStartedBlindDate", date);
                         userCompletion.put("fcmRegistrationToken", "MessageTokenNULL");
                         Log.d(TAG, userCompletion.toString());
                         docRef.set(userCompletion, SetOptions.merge());
@@ -478,6 +433,78 @@ public class MainActivity extends AppCompatActivity {
                     introDialog.dismiss();
                 }
 
+            }
+        });
+    }
+
+    private void updateLoginDateAndPremiumCheck() {
+
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
+            @Override
+            public void onComplete(@NonNull Task<String> task) {
+                if (!task.isSuccessful()) {
+                    Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                    return;
+                }
+
+                // Get new FCM registration token
+                String token = task.getResult();
+                Log.d(TAG, token);
+                Toast.makeText(MainActivity.this, token, Toast.LENGTH_SHORT).show();
+                db.collection("users").document(user.getUid()).update("fcmRegistrationToken", token);
+            }
+        });
+
+        db.collection("users").document(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document != null) {
+                        isPremium = document.getBoolean("premium");
+                        canUserSearch = document.getBoolean("canUserSearch");
+                        isUserFemale = document.getBoolean("genderFemale");
+                        countryCode = document.getString("locationCountryCode");
+                        searchCountry = document.getString("searchIDCountry");
+                        searchWorld = document.getString("searchIDWorld");
+                        userAge = document.getDouble("ageOfUser").intValue();
+                        lastLoginDate = document.getDate("lastLoginDate");
+
+
+                        // Prevent often writing new Login date in documents
+                        Date currentDate = new Date(new Date().getTime());
+                        long dateDiff = currentDate.getTime() - lastLoginDate.getTime();
+                        int hoursToChangeLoginDate = 12;
+                        int nrOfHoursSinceLastLogin = (int) (dateDiff / (1000*60*60));
+
+                        if (canUserSearch && nrOfHoursSinceLastLogin >= hoursToChangeLoginDate) {
+
+                            db.collection("users").document(user.getUid())
+                                    .update("lastLoginDate", currentLoginDate);
+
+                            String gender;
+                            if (isUserFemale) {
+                                gender = "female";
+                            } else {
+                                gender = "male";
+                            }
+                            String age = Integer.toString(userAge);
+
+                            db.collection("search").document("world").collection("gender").document(gender)
+                                    .collection("age").document(age).collection("users").document(searchWorld).update("lastLoginDate", currentLoginDate);
+
+                            db.collection("search").document(countryCode).collection("gender").document(gender)
+                                    .collection("age").document(age).collection("users").document(searchCountry).update("lastLoginDate", currentLoginDate);
+
+                        }
+
+                    } else {
+                        Log.d("LOGGER", "No such document");
+                    }
+
+                } else {
+                    Log.d("LOGGER", "get failed with ", task.getException());
+                }
             }
         });
     }

@@ -6,6 +6,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -136,6 +137,7 @@ public class FirebaseMessaging extends FirebaseMessagingService {
                                         }
                                         // Get new FCM registration token
                                         String token = task.getResult();
+                                        Toast.makeText(getApplicationContext(), "asfafs" + token, Toast.LENGTH_SHORT).show();
                                         db.collection("users").document(currentUser.getUid()).update("fcmRegistrationToken", token);
                                     }
                                 });

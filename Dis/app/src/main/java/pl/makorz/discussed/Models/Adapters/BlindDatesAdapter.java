@@ -57,19 +57,19 @@ public class BlindDatesAdapter extends FirestoreRecyclerAdapter<BlindDate, Blind
         if (currentUser.getUid().equals(model.getUserIDNr0())){
             currentUserNumberInBlindDate = 0;
             wasUserInActivity = model.getWasUserInActivityNr0();
-            holder.hostName.setTextColor(Color.parseColor("#99aa00"));
+          //  holder.hostName.setTextColor(Color.parseColor("#99aa00"));
         } else if (currentUser.getUid().equals(model.getUserIDNr1())) {
             currentUserNumberInBlindDate = 1;
             wasUserInActivity = model.getWasUserInActivityNr1();
-            holder.userNameNr1.setTextColor(Color.parseColor("#99aa00"));
+          //  holder.userNameNr1.setTextColor(Color.parseColor("#99aa00"));
         } else if (currentUser.getUid().equals(model.getUserIDNr2())) {
             currentUserNumberInBlindDate = 2;
             wasUserInActivity = model.getWasUserInActivityNr2();
-            holder.userNameNr2.setTextColor(Color.parseColor("#99aa00"));
+         //  holder.userNameNr2.setTextColor(Color.parseColor("#99aa00"));
         } else {
             currentUserNumberInBlindDate = 3;
             wasUserInActivity = model.getWasUserInActivityNr3();
-            holder.userNameNr3.setTextColor(Color.parseColor("#99aa00"));
+          //  holder.userNameNr3.setTextColor(Color.parseColor("#99aa00"));
         }
 
         holder.blindDatesIDtext.setText(model.getBlindDateID());
@@ -77,9 +77,10 @@ public class BlindDatesAdapter extends FirestoreRecyclerAdapter<BlindDate, Blind
         int roundNo = model.getNumberOfRoundInBlindDate();
         switch (roundNo) {
             case 2:
+            case 3:
                 holder.imageOfRound.setImageResource(R.drawable.blind_date_logo_round2);
                 break;
-            case 3:
+            case 4:
                 holder.imageOfRound.setImageResource(R.drawable.blind_date_logo_ended);
                 break;
             default:

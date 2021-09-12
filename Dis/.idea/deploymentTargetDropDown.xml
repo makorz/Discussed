@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="deploymentTargetDropDown">
-    <multipleDevicesSelectedInDropDown value="true" />
     <runningDeviceTargetsSelectedWithDialog>
       <Target>
         <type value="RUNNING_DEVICE_TARGET" />
         <deviceKey>
           <Key>
             <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\Mateusz\.android\avd\Pixel_2_API_26.avd" />
+            <value value="C:\Users\Mateusz\.android\avd\Pixel_4_API_26_Google_Play_.avd" />
           </Key>
         </deviceKey>
       </Target>
@@ -16,8 +15,8 @@
         <type value="RUNNING_DEVICE_TARGET" />
         <deviceKey>
           <Key>
-            <type value="SERIAL_NUMBER" />
-            <value value="RF8M213Z8EH" />
+            <type value="VIRTUAL_DEVICE_PATH" />
+            <value value="C:\Users\Mateusz\.android\avd\Pixel_2_API_26.avd" />
           </Key>
         </deviceKey>
       </Target>

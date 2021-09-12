@@ -155,29 +155,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
-        // Make totally fullscreen activity including Notch
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
-            getSupportActionBar().hide();
-            getWindow().getDecorView()
-                    .setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-
-                    );
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-            getWindow().getAttributes().layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
-        } else {
-            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
-            getSupportActionBar().hide();
-            getWindow().getDecorView()
-                    .setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    );
-        }
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().hide();
 
         // Alert of loading data of profile from server
         loadingAlertDialog();
@@ -234,6 +213,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
                         if (premiumAccount) {
                             backgroundView.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.gold_background));
+                            blindDateParticipationSwitch.setEnabled(true);
                         }
 
                         firstPhotoUri = document.getString(FIRST_PHOTO_URI);
@@ -461,6 +441,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public void initView() {
 
         blindDateParticipationSwitch = findViewById(R.id.switch_blindDate_participation);
+        blindDateParticipationSwitch.setEnabled(false);
         profileDescriptionText = findViewById(R.id.own_description_my_profile);
         ageText = findViewById(R.id.own_age_my_profile);
         nameText = findViewById(R.id.name_my_profile);
@@ -689,11 +670,11 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         long dateDiff;
 
         if (premiumAccount) {
-            daysToChangeName = 1;
-            daysToChangeAge = 1;
-            daysToChangePhoto = 1;
-            daysToChangeDescription = 1;
-            daysToChangeGender = 1;
+            daysToChangeName = 2;
+            daysToChangeAge = 2;
+            daysToChangePhoto = 2;
+            daysToChangeDescription = 2;
+            daysToChangeGender = 2;
             daysToChangeLocation = 0;
         }
 

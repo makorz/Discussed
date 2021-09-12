@@ -5,11 +5,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
@@ -36,18 +39,15 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import pl.makorz.discussed.Controllers.BlindDateActivity;
 import pl.makorz.discussed.Controllers.ChatActivity;
@@ -56,6 +56,7 @@ import pl.makorz.discussed.Controllers.Notifications.Client;
 import pl.makorz.discussed.Controllers.Notifications.Data;
 import pl.makorz.discussed.Controllers.Notifications.Response;
 import pl.makorz.discussed.Controllers.Notifications.Sender;
+import pl.makorz.discussed.Controllers.ProfileActivity;
 import pl.makorz.discussed.R;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -74,8 +75,14 @@ public class MainFragment extends Fragment {
     private static final String DESCRIPTION_UPLOAD_MADE = "descriptionUploadMade";
     private static final String GENDER_UPLOAD_MADE = "genderUploadMade";
     private static final String NAME_UPLOAD_MADE = "nameUploadMade";
-    private static final String NR_OF_USER_CHATS = "nrOfOngoingChats";
-
+    private static final String NR_OF_STARTED_CHATS_TODAY = "nrOfStartedChatsToday";
+    private static final String NR_OF_STARTED_BLIND_DATES_TODAY = "nrOfStartedBlindDatesToday";
+    private static final String BLIND_DATE_PARTICIPATION_WILL = "blindDateParticipationWill";
+    private static final String LAST_DATE_OF_STARTED_CHAT = "lastDateOfStartedChat";
+    private static final String LAST_DATE_OF_STARTED_BLIND_DATE = "lastDateOfStartedBlindDate";
+    private static final String ARRAY_OF_USERS_WITH_ACTIVE_CONVERSATIONS = "otherUsersIDFromStartedChatsArray";
+    private static final String LAST_LOGIN_DATE = "lastLoginDate";
+    private static final String PREMIUM = "premium";
     private static final String TOPICS_ARRAY = "chosenTopicsArray";
     private static final String COUNTRY_CODE_FIELD = "locationCountryCode";
     private static final String LOCATION_FIELD = "location";
@@ -83,29 +90,34 @@ public class MainFragment extends Fragment {
     private static final String FIRST_PHOTO_URI = "firstPhotoUri";
 
     private String chatID, blindDateID, nameOfUser, nameOfOtherUser, firstPhotoUriOfUser, firstPhotoUriOfOtherUser, idOfOtherUser, countryCode;
+    private float latitudeUser, longitudeUser, minLatitude, maxLatitude, minLongitude, maxLongitude;
+    private Boolean firstPhotoUploadMade, secondPhotoUploadMade, thirdPhotoUploadMade, locationUploadMade, descriptionUploadMade, ageUploadMade, topicsUploadMade,
+            genderUploadMade, nameUploadMade, canUserSearch, isFemaleToSearch, blindDateParticipationWill, isPremium;
+    private GeoPoint locationUser, otherUserLocation;
+    private int nrOfUserChats, nrOfUserBlindDates, radiusToSearch, randomUser1, randomUser2, randomUser3;
+    private int nrOfAttemptsToFindSomeone = 0;
+    private Date lastDateOfStartedBlindDate, lastDateOfStartedChat, lastLoginDateOfSearchedUser;
+
     private Button buttonChat, buttonBlindDate;
     private RangeSlider ageSlider;
     private ProgressBar waitUntilChatAppears;
     private LinearLayout layoutToDimWhenSearching;
-    private Boolean firstPhotoUploadMade, secondPhotoUploadMade, thirdPhotoUploadMade, locationUploadMade, descriptionUploadMade, ageUploadMade, topicsUploadMade,
-            genderUploadMade, nameUploadMade, canUserSearch, isFemaleToSearch, blindDateParticipationWill;
-    private GeoPoint locationUser, otherUserLocation;
-    private int nrOfUserChats, radiusToSearch, randomUser1, randomUser2, randomUser3;
-    private int nrOfAttemptsToFindSomeone = 0;
-    private List<Float> ageValues = new ArrayList<>();
     private RadioGroup radioGroupLocation1, radioGroupLocation2, radioGroupGender;
+    private AlertDialog fieldValueChangeDialog;
 
-    private float latitudeUser, longitudeUser, minLatitude, maxLatitude, minLongitude, maxLongitude;
     private ArrayList<String> topicList;
     private final Map<String, Boolean> userSearchAvailability = new HashMap<>();
-    private APIService apiService;
+    private List<String> idsForBlindDate = new ArrayList<>();
+    private List<String> namesForBlindDate = new ArrayList<>();
+    private List<String> activeChatUsersID = new ArrayList<>();
+    private List<Float> ageValues = new ArrayList<>();
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private DocumentSnapshot userSnapshot, otherUserSnapshot;
+    private DocumentSnapshot userSnapshot, otherUserSnapshot, otherUserSnapshot1, otherUserSnapshot2, otherUserSnapshot3;
     private DocumentReference docRefBlindDates;
-    private List<String> idsForBlindDate = new ArrayList<>();
-    private List<String> namesForBlindDate = new ArrayList<>();
+    private APIService apiService;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -148,7 +160,7 @@ public class MainFragment extends Fragment {
             public void onClick(View v) {
                 buttonChat.setEnabled(false);
                 buttonBlindDate.setEnabled(false);
-                layoutToDimWhenSearching.setAlpha(0.3f);
+                layoutToDimWhenSearching.setAlpha(0.15f);
                 waitUntilChatAppears.setVisibility(View.VISIBLE);
                 try {
                     checkIfUserCanSearch(false);
@@ -165,7 +177,7 @@ public class MainFragment extends Fragment {
 
                 buttonChat.setEnabled(false);
                 buttonBlindDate.setEnabled(false);
-                layoutToDimWhenSearching.setAlpha(0.3f);
+                layoutToDimWhenSearching.setAlpha(0.15f);
                 waitUntilChatAppears.setVisibility(View.VISIBLE);
                 try {
                     checkIfUserCanSearch(true);
@@ -387,7 +399,7 @@ public class MainFragment extends Fragment {
                             if (task.getResult().isEmpty()) {
                                 Log.d(TAG, "USERS NOT FOUND");
 
-                                if (nrOfAttemptsToFindSomeone < 5) {
+                                if (nrOfAttemptsToFindSomeone < 8) {
                                     nrOfAttemptsToFindSomeone++;
                                     searchForUser(minAge, maxAge, radius, isFemale, blindDatesSearching);
                                 } else {
@@ -403,13 +415,24 @@ public class MainFragment extends Fragment {
 
                                 for (QueryDocumentSnapshot document : task.getResult()) {
 
-                                    Log.d(TAG + "ITERACION", document.get("idOfUser").toString());
-
                                     idOfOtherUser = document.get("idOfUser").toString();
+                                    lastLoginDateOfSearchedUser = document.getDate(LAST_LOGIN_DATE);
+                                    Date currentDate = new Date(new Date().getTime());
+                                    long dateDiff = currentDate.getTime() - lastLoginDateOfSearchedUser.getTime();
+                                    int maxNrOfDaysSinceLogin = 5;
+                                    int nrOfDaysSinceLastLogin = (int) (dateDiff / (1000 * 60 * 60 * 24));
 
                                     if (idOfOtherUser.equals(user.getUid())) {
 
-                                        Log.d(TAG, "User who started searching searched himself/herself");
+                                        Log.d(TAG, "User who started searching searched himself/herself ");
+
+                                    } else if (activeChatUsersID.contains(idOfOtherUser) && !blindDatesSearching) {
+
+                                        Log.d(TAG, "User who started searching searched have active chat with that person");
+
+                                    } else if (nrOfDaysSinceLastLogin > maxNrOfDaysSinceLogin) {
+
+                                        Log.d(TAG, "User have not used an app since more than " + nrOfDaysSinceLastLogin + " days");
 
                                     } else {
 
@@ -433,18 +456,38 @@ public class MainFragment extends Fragment {
                                     }
                                 }
 
-                                Log.d(TAG, "querysearchusersssssss" + idOfOtherUsers.toString());
-
+                                Log.d(TAG, "SearchedUsersByQuery" + idOfOtherUsers.toString());
                                 int nrOfFoundUsers = idOfOtherUsers.size();
+
                                 if (nrOfFoundUsers > 0 && !blindDatesSearching) {
 
                                     getUsersNames(idOfOtherUsers, false);
-                                } else if (nrOfFoundUsers > 2 && blindDatesSearching) {
+
+                                } else if (nrOfFoundUsers <= 0 && !blindDatesSearching) {
+
+                                    Toast.makeText(getContext(), "User with such parameters not found, try again with different parameters", Toast.LENGTH_SHORT).show();
+                                    nrOfAttemptsToFindSomeone = 0;
+                                    idOfOtherUsers.clear();
+                                    waitUntilChatAppears.setVisibility(View.INVISIBLE);
+                                    layoutToDimWhenSearching.setAlpha(1f);
+                                    buttonChat.setEnabled(true);
+                                    buttonBlindDate.setEnabled(true);
+
+                                } else if (nrOfFoundUsers > 2) {
+
                                     getUsersNames(idOfOtherUsers, true);
 
                                 } else {
+
                                     Log.d(TAG, "ENOUGH USERS NOT FOUND");
                                     Toast.makeText(getContext(), "Users with such parameters not found, try again with different parameters", Toast.LENGTH_SHORT).show();
+                                    nrOfAttemptsToFindSomeone = 0;
+                                    idOfOtherUsers.clear();
+                                    waitUntilChatAppears.setVisibility(View.INVISIBLE);
+                                    layoutToDimWhenSearching.setAlpha(1f);
+                                    buttonChat.setEnabled(true);
+                                    buttonBlindDate.setEnabled(true);
+
                                 }
                             }
                         }
@@ -504,15 +547,23 @@ public class MainFragment extends Fragment {
                         Log.d(TAG, user2.toString());
                         db.collection("chats").document(chatID).collection("chatUsers").document(idOfOtherUser).set(user2);
 
-                        db.collection("users").document(user.getUid()).update(NR_OF_USER_CHATS, FieldValue.increment(1));
+                        if (nrOfUserBlindDates == 0) {
+                            db.collection("users").document(user.getUid()).update(LAST_DATE_OF_STARTED_CHAT, new Date());
+                        }
+                        db.collection("users").document(user.getUid()).update(NR_OF_STARTED_CHATS_TODAY, FieldValue.increment(1));
+
+                        db.collection("users").document(user.getUid()).update(ARRAY_OF_USERS_WITH_ACTIVE_CONVERSATIONS, FieldValue.arrayUnion(idOfOtherUser));
+
+                        db.collection("users").document(idOfOtherUser).update(ARRAY_OF_USERS_WITH_ACTIVE_CONVERSATIONS, FieldValue.arrayUnion(user.getUid()));
+
 
                         db.collection("chats").document(chatID).set(chat)
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
 
-                                        sendNotificationAboutChat(idOfOtherUser, user.getUid(),"New conversation just started with " + nameOfUser
-                                                ,nameOfOtherUser, nameOfUser, chatID);
+                                        sendNotificationAboutChat(idOfOtherUser, user.getUid(), "New conversation just started with " + nameOfUser
+                                                , nameOfOtherUser, nameOfUser, chatID);
 
                                         Intent intent = new Intent(getActivity(), ChatActivity.class);
                                         intent.putExtra("chatIdIntent", chatID);
@@ -521,7 +572,6 @@ public class MainFragment extends Fragment {
                                         waitUntilChatAppears.setVisibility(View.INVISIBLE);
                                         layoutToDimWhenSearching.setAlpha(1f);
                                         requireActivity().startActivity(intent);
-
 
 
                                     }
@@ -567,26 +617,27 @@ public class MainFragment extends Fragment {
             docRefBlindDates.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task1) {
-                    otherUserSnapshot = task1.getResult();
-                    namesForBlindDate.add(otherUserSnapshot.getString("displayName"));
+                    otherUserSnapshot1 = task1.getResult();
+                    namesForBlindDate.add(otherUserSnapshot1.getString("displayName"));
                     idsForBlindDate.add(id.get(randomUser1));
                     docRefBlindDates = db.collection("users").document(id.get(randomUser2));
                     docRefBlindDates.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task2) {
-                            otherUserSnapshot = task2.getResult();
-                            namesForBlindDate.add(otherUserSnapshot.getString("displayName"));
+                            otherUserSnapshot2 = task2.getResult();
+                            namesForBlindDate.add(otherUserSnapshot2.getString("displayName"));
                             idsForBlindDate.add(id.get(randomUser2));
                             docRefBlindDates = db.collection("users").document(id.get(randomUser3));
                             docRefBlindDates.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                 @Override
                                 public void onComplete(@NonNull Task<DocumentSnapshot> task3) {
-                                    otherUserSnapshot = task3.getResult();
-                                    namesForBlindDate.add(otherUserSnapshot.getString("displayName"));
+                                    otherUserSnapshot3 = task3.getResult();
+                                    namesForBlindDate.add(otherUserSnapshot3.getString("displayName"));
                                     idsForBlindDate.add(id.get(randomUser3));
-
                                     Log.d(TAG, namesForBlindDate.toString() + idsForBlindDate.toString());
-                                    createBlindDate(namesForBlindDate, idsForBlindDate);
+                                    questionsForBlindDateDialog();
+
+
                                 }
                             });
                         }
@@ -649,14 +700,20 @@ public class MainFragment extends Fragment {
 
     }
 
-    public void notEnoughSpaceForChats() {
+    public void tooManyTimesStartedToday(boolean isSearchingForBlindDates) {
 
         layoutToDimWhenSearching.setAlpha(1f);
         waitUntilChatAppears.setVisibility(View.INVISIBLE);
         LayoutInflater inflaterDialog = LayoutInflater.from(getContext());
         View alertNotFiledProfileDialogView = inflaterDialog.inflate(R.layout.dialog_search_not_available, null);
         TextView notFiledProfileAlertTitle = alertNotFiledProfileDialogView.findViewById(R.id.title_of_search_availability_box);
-        notFiledProfileAlertTitle.setText(R.string.title_not_enough_sapce_for_chats_alert_dialog);
+        if (isSearchingForBlindDates) {
+            notFiledProfileAlertTitle.setText("You have reached max amount of Blind Dates You can start per day (5). If You want to start more You can get premium account with 20 starts per day!");
+
+        } else {
+            notFiledProfileAlertTitle.setText("You have reached max amount of chats You can start per day (5). If You want to write more You can get premium account with 20 starts per day!");
+
+        }
 
         AlertDialog alertDateDialog = new AlertDialog.Builder(getContext())
                 .setView(alertNotFiledProfileDialogView)  // What to use in dialog box
@@ -674,6 +731,56 @@ public class MainFragment extends Fragment {
 
     }
 
+    // This functions show dialog boxes where user can input specific data
+    private void questionsForBlindDateDialog() {
+
+        // Layout dialog box
+        LayoutInflater inflaterDialog = LayoutInflater.from(getContext());
+        View dialogView = inflaterDialog.inflate(R.layout.dialog_blind_date_questions_start, null);
+        EditText editDialogText1 = dialogView.findViewById(R.id.editText_question1_blind_date);
+        EditText editDialogText2 = dialogView.findViewById(R.id.editText_question2_blind_date);
+        EditText editDialogText3 = dialogView.findViewById(R.id.editText_question3_blind_date);
+
+        InputFilter lengthFilter = new InputFilter.LengthFilter(500);
+        editDialogText1.setHint("Question nr 1 (20-500 letters)");
+        editDialogText1.setInputType(InputType.TYPE_CLASS_TEXT);
+        editDialogText1.setFilters(new InputFilter[]{lengthFilter});
+        editDialogText2.setHint("Question nr 2 (20-500 letters)");
+        editDialogText2.setInputType(InputType.TYPE_CLASS_TEXT);
+        editDialogText2.setFilters(new InputFilter[]{lengthFilter});
+        editDialogText3.setHint("Question nr 3 (20-500 letters)");
+        editDialogText3.setInputType(InputType.TYPE_CLASS_TEXT);
+        editDialogText3.setFilters(new InputFilter[]{lengthFilter});
+
+        fieldValueChangeDialog = new AlertDialog.Builder(getContext())
+                .setTitle("Three questions for Blind Dates")
+                .setView(dialogView)  // What to use in dialog box
+                .setNegativeButton(R.string.no_text_dialog_boxes, null)
+                .setPositiveButton("OK", null)
+                .show();
+
+        fieldValueChangeDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(TAG, "Clicked positive!");
+                List<String> questionsForBlindDate = new ArrayList<>();
+                questionsForBlindDate.add("1. " + editDialogText1.getText().toString());
+                questionsForBlindDate.add("2. " + editDialogText2.getText().toString());
+                questionsForBlindDate.add("3. " + editDialogText3.getText().toString());
+
+
+                if (questionsForBlindDate.get(0).length() < 20 || questionsForBlindDate.get(1).length() < 20
+                        || questionsForBlindDate.get(2).length() < 20) {
+                    Toast.makeText(getContext(), getString(R.string.wrong_input_info_profile_activity), Toast.LENGTH_SHORT).show();
+                } else {
+
+                    createBlindDate(namesForBlindDate, idsForBlindDate, questionsForBlindDate);
+
+                }
+            }
+        });
+    }
+
     private void checkIfUserCanSearch(boolean blindDatesSearching) throws ExecutionException, InterruptedException {
         // Download document of current user, to retrieve actual info to profile view
         DocumentReference docRef = db.collection("users").document(user.getUid());
@@ -684,6 +791,13 @@ public class MainFragment extends Fragment {
                     DocumentSnapshot document = task.getResult();
                     if (document != null) {
 
+                        isPremium = document.getBoolean(PREMIUM);
+                        int maxAmountOfStartedConversationsAndBlindDates = 5;
+                        if (isPremium) {
+                            maxAmountOfStartedConversationsAndBlindDates = 20;
+                        }
+
+                        activeChatUsersID = (ArrayList<String>) document.get("otherUsersIDFromStartedChatsArray");
                         canUserSearch = document.getBoolean(CAN_USER_SEARCH);
                         locationUser = document.getGeoPoint(LOCATION_FIELD);
                         latitudeUser = (float) locationUser.getLatitude();
@@ -692,12 +806,62 @@ public class MainFragment extends Fragment {
                         countryCode = document.getString(COUNTRY_CODE_FIELD);
                         nameOfUser = document.getString(NAME_FIELD);
                         firstPhotoUriOfUser = document.getString(FIRST_PHOTO_URI);
-                        nrOfUserChats = document.getDouble(NR_OF_USER_CHATS).intValue();
-                        blindDateParticipationWill = document.getBoolean("blindDateParticipationWill");
+                        nrOfUserChats = document.getDouble(NR_OF_STARTED_CHATS_TODAY).intValue();
+                        nrOfUserBlindDates = document.getDouble(NR_OF_STARTED_BLIND_DATES_TODAY).intValue();
+                        blindDateParticipationWill = document.getBoolean(BLIND_DATE_PARTICIPATION_WILL);
 
-                        if (canUserSearch && nrOfUserChats <= 20) {
+                        // Check if time from first started chat was more than 24 hours and reset the countdown to zero
+                        lastDateOfStartedBlindDate = document.getDate(LAST_DATE_OF_STARTED_BLIND_DATE);
+                        lastDateOfStartedChat = document.getDate(LAST_DATE_OF_STARTED_CHAT);
+                        Date currentDate = new Date(new Date().getTime());
+                        long dateDiffChat = currentDate.getTime() - lastDateOfStartedChat.getTime();
+                        long dateDiffBlindDate = currentDate.getTime() - lastDateOfStartedBlindDate.getTime();
+                        int hoursToReset = 24;
+                        int nrOfHoursSinceFirstStartedChat = (int) (dateDiffChat / (1000 * 60 * 60));
+                        int nrOfHoursSinceFirstStartedBlindDate = (int) (dateDiffBlindDate / (1000 * 60 * 60));
 
-                            if (ageValues.get(1) - ageValues.get(0) > 15 || ageValues.get(1) - ageValues.get(0) < 5 ) {
+                        Log.d(TAG, String.valueOf(nrOfUserChats) + "   " + String.valueOf(nrOfUserBlindDates));
+
+                        if (nrOfHoursSinceFirstStartedChat >= hoursToReset) {
+                            nrOfUserChats = 0;
+                            db.collection("users").document(user.getUid()).update(NR_OF_STARTED_CHATS_TODAY, FieldValue.increment(-nrOfUserChats));
+
+                        }
+                        if (nrOfHoursSinceFirstStartedBlindDate >= hoursToReset) {
+                            nrOfUserBlindDates = 0;
+                            db.collection("users").document(user.getUid()).update(NR_OF_STARTED_BLIND_DATES_TODAY, FieldValue.increment(-nrOfUserBlindDates));
+
+                        }
+
+                        if (canUserSearch && blindDatesSearching && nrOfUserBlindDates <= maxAmountOfStartedConversationsAndBlindDates) {
+
+                            if (!blindDateParticipationWill) {
+                                Toast.makeText(getContext(), "You don't want to participate in Blind Dates according to Your profile, if You changed Your mind" +
+                                        "check Your profile and update Your will", Toast.LENGTH_SHORT).show();
+                                waitUntilChatAppears.setVisibility(View.INVISIBLE);
+                                layoutToDimWhenSearching.setAlpha(1f);
+                            } else {
+                                if (ageValues.get(1) - ageValues.get(0) > 15 || ageValues.get(1) - ageValues.get(0) < 5) {
+                                    Toast.makeText(getContext(), "Age range can be set between 5 to 15 years difference.", Toast.LENGTH_SHORT).show();
+                                    waitUntilChatAppears.setVisibility(View.INVISIBLE);
+                                    layoutToDimWhenSearching.setAlpha(1f);
+                                    buttonChat.setEnabled(true);
+                                    buttonBlindDate.setEnabled(true);
+                                } else if (radioGroupGender.getCheckedRadioButtonId() == -1 || (radioGroupLocation1.getCheckedRadioButtonId() == -1 && radioGroupLocation2.getCheckedRadioButtonId() == -1)) {
+                                    Toast.makeText(getContext(), "Check gender of user you are searching and radius where to search for them.", Toast.LENGTH_SHORT).show();
+                                    waitUntilChatAppears.setVisibility(View.INVISIBLE);
+                                    layoutToDimWhenSearching.setAlpha(1f);
+                                    buttonChat.setEnabled(true);
+                                    buttonBlindDate.setEnabled(true);
+                                } else {
+                                    searchForUser((int) Math.round(ageValues.get(0)), (int) Math.round(ageValues.get(1)), radiusToSearch, isFemaleToSearch, blindDatesSearching);
+                                }
+                            }
+
+
+                        } else if (canUserSearch && !blindDatesSearching && nrOfUserChats <= maxAmountOfStartedConversationsAndBlindDates) {
+
+                            if (ageValues.get(1) - ageValues.get(0) > 15 || ageValues.get(1) - ageValues.get(0) < 5) {
                                 Toast.makeText(getContext(), "Age range can be set between 5 to 15 years difference.", Toast.LENGTH_SHORT).show();
                                 waitUntilChatAppears.setVisibility(View.INVISIBLE);
                                 layoutToDimWhenSearching.setAlpha(1f);
@@ -710,7 +874,7 @@ public class MainFragment extends Fragment {
                                 buttonChat.setEnabled(true);
                                 buttonBlindDate.setEnabled(true);
                             } else {
-                                searchForUser( (int) Math.round(ageValues.get(0)), (int) Math.round(ageValues.get(1)), radiusToSearch, isFemaleToSearch, blindDatesSearching);
+                                searchForUser((int) Math.round(ageValues.get(0)), (int) Math.round(ageValues.get(1)), radiusToSearch, isFemaleToSearch, blindDatesSearching);
                             }
 
                         } else if (!canUserSearch) {
@@ -739,9 +903,10 @@ public class MainFragment extends Fragment {
 
                         } else {
 
-                            notEnoughSpaceForChats();
+                            tooManyTimesStartedToday(blindDatesSearching);
 
                         }
+
 
                     } else {
                         Log.d("LOGGER", "No such document");
@@ -756,7 +921,7 @@ public class MainFragment extends Fragment {
     }
 
     private void sendNotificationAboutChat(String otherUserID, final String userID, final String message,
-                                           final String creatorName, final String otherUserName, final String chatID){
+                                           final String creatorName, final String otherUserName, final String chatID) {
         DocumentReference docRefUser = db.collection("users").document(otherUserID);
 
         docRefUser.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -801,12 +966,15 @@ public class MainFragment extends Fragment {
         });
     }
 
-    private void createBlindDate(List<String> names, List<String> ids) {
+    private void createBlindDate(List<String> names, List<String> ids, List<String> questions) {
         Map<String, Object> blindDate = new HashMap<>();
         Map<String, Object> user0 = new HashMap<>();
         Map<String, Object> user1 = new HashMap<>();
         Map<String, Object> user2 = new HashMap<>();
         Map<String, Object> user3 = new HashMap<>();
+        Map<String, Object> message1 = new HashMap<>();
+        Map<String, Object> message2 = new HashMap<>();
+        Map<String, Object> message3 = new HashMap<>();
 
         db.collection("blindDates").add(blindDate)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -815,6 +983,7 @@ public class MainFragment extends Fragment {
                         blindDateID = documentReference.getId();
                         blindDate.put("blindDateID", blindDateID);
                         blindDate.put("dateOfBlindDateCreation", new Date());
+                        blindDate.put("dateOfRound2Started", new Date());
                         blindDate.put("lastMessageDate", new Date());
                         blindDate.put("usersParticipatingThatHaveNotDeletedBlindDates", ids);
                         blindDate.put("userNameNr0", names.get(0));
@@ -828,7 +997,7 @@ public class MainFragment extends Fragment {
                         blindDate.put("wasUserRejectedNr1", false);
                         blindDate.put("wasUserRejectedNr2", false);
                         blindDate.put("wasUserRejectedNr3", false);
-                        blindDate.put("numberOfRoundInBlindDate",1);
+                        blindDate.put("numberOfRoundInBlindDate", 0);
                         blindDate.put("wasUserInActivityNr0", false);
                         blindDate.put("wasUserInActivityNr1", false);
                         blindDate.put("wasUserInActivityNr2", false);
@@ -836,29 +1005,57 @@ public class MainFragment extends Fragment {
 
                         user0.put("userID", ids.get(0));
                         user0.put("userName", names.get(0));
-                        user0.put("lastTimeInChatActivity", new Date());
+                        user0.put("lastTimeInChatActivity", new Date(new Date().getTime() - 86400000L));
                         db.collection("blindDates").document(blindDateID).collection("blindDateUsers")
                                 .document(ids.get(0)).set(user0);
 
                         user1.put("userID", ids.get(1));
                         user1.put("userName", names.get(1));
-                        user1.put("lastTimeInChatActivity", new Date());
+                        user1.put("lastTimeInChatActivity", new Date(new Date().getTime() - 86400000L));
                         db.collection("blindDates").document(blindDateID).collection("blindDateUsers")
                                 .document(ids.get(1)).set(user1);
 
                         user2.put("userID", ids.get(2));
                         user2.put("userName", names.get(2));
-                        user2.put("lastTimeInChatActivity", new Date());
+                        user2.put("lastTimeInChatActivity", new Date(new Date().getTime() - 86400000L));
                         db.collection("blindDates").document(blindDateID).collection("blindDateUsers")
                                 .document(ids.get(2)).set(user2);
 
                         user3.put("userID", ids.get(3));
                         user3.put("userName", names.get(3));
-                        user3.put("lastTimeInChatActivity", new Date());
+                        user3.put("lastTimeInChatActivity", new Date(new Date().getTime() - 86400000L));
                         db.collection("blindDates").document(blindDateID).collection("blindDateUsers")
                                 .document(ids.get(3)).set(user3);
 
-                        db.collection("users").document(user.getUid()).update(NR_OF_USER_CHATS, FieldValue.increment(1));
+                        message1.put("textOfMessage", questions.get(0));
+                        message1.put("userName", names.get(0));
+                        message1.put("userID", ids.get(0));
+                        message1.put("whatRoundSend", 0);
+                        message1.put("typeOfMessage", 0);
+                        message1.put("dateOfMessage", new Date());
+                        db.collection("blindDates").document(blindDateID).collection("messages").add(message1);
+
+                        message2.put("textOfMessage", questions.get(1));
+                        message2.put("userName", names.get(0));
+                        message2.put("userID", ids.get(0));
+                        message2.put("whatRoundSend", 0);
+                        message2.put("typeOfMessage", 0);
+                        message2.put("dateOfMessage", new Date());
+                        db.collection("blindDates").document(blindDateID).collection("messages").add(message2);
+
+                        message3.put("textOfMessage", questions.get(2));
+                        message3.put("userName", names.get(0));
+                        message3.put("userID", ids.get(0));
+                        message3.put("whatRoundSend", 0);
+                        message3.put("typeOfMessage", 0);
+                        message3.put("dateOfMessage", new Date());
+                        db.collection("blindDates").document(blindDateID).collection("messages").add(message3);
+
+                        if (nrOfUserBlindDates == 0) {
+                            db.collection("users").document(user.getUid()).update(LAST_DATE_OF_STARTED_BLIND_DATE, new Date());
+                        }
+
+                        db.collection("users").document(user.getUid()).update(NR_OF_STARTED_BLIND_DATES_TODAY, FieldValue.increment(1));
 
                         db.collection("blindDates").document(blindDateID).set(blindDate)
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -868,16 +1065,14 @@ public class MainFragment extends Fragment {
 //                                        sendNotificationAboutChat(idOfOtherUser, user.getUid(),"New conversation just started with " + nameOfUser
 //                                                ,nameOfOtherUser, nameOfUser, chatID);
 
+                                        ids.clear();
+                                        names.clear();
+                                        fieldValueChangeDialog.dismiss();
                                         Intent intent = new Intent(getActivity(), BlindDateActivity.class);
-//                                        intent.putExtra("chatIdIntent", chatID);
-//                                        intent.putExtra("otherUserName", nameOfOtherUser);
-//                                        intent.putExtra("idOfOtherUser", idOfOtherUser);
-//                                        waitUntilChatAppears.setVisibility(View.INVISIBLE);
-//                                        layoutToDimWhenSearching.setAlpha(1f);
+                                        intent.putExtra("blindDateMap", (Serializable) blindDate);
                                         requireActivity().startActivity(intent);
-
-
-
+                                        waitUntilChatAppears.setVisibility(View.INVISIBLE);
+                                        layoutToDimWhenSearching.setAlpha(1f);
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {

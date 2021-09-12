@@ -4,9 +4,9 @@ import java.util.Date;
 
 public class MessageInChat {
 
-    public String textOfMessage, userID, userNameID, messageID;
-    Date dateOfMessage;
-    public boolean wasGraded;
+    private String textOfMessage, userID, userNameID, messageID;
+    private Date dateOfMessage;
+    private boolean wasGraded;
 
     public MessageInChat() {
     }
