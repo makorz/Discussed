@@ -107,8 +107,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@+id/linear_alien_photos">
+        android:visibility="gone">
 
         <Button
             android:id="@+id/button_first_date_delete"
@@ -162,7 +161,7 @@
             android:layout_marginStart="10dp"
             android:layout_gravity="center_horizontal"
             android:gravity="center"
-            android:textColor="@color/teal_green_700"
+            android:textColor="#388E3C"
             android:textAllCaps="true"
             android:layout_weight="5"
             android:text="Info" />
@@ -174,7 +173,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/textview_timer"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-            android:textColor="@color/red_500"
+            android:textColor="@color/red_700"
             android:textStyle="bold"
             android:visibility="gone"
             android:textSize="14sp"
@@ -224,9 +223,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_weight="1"
+            android:inputType="textCapSentences|textMultiLine"
+            android:maxLines="3"
             android:hint="@string/edit_text_hint_chat_activity"
-            android:importantForAutofill="no"
-            android:inputType="text" />
+            android:importantForAutofill="no"/>
 
         <ImageButton
             android:id="@+id/sendMessageBlindDateButton"

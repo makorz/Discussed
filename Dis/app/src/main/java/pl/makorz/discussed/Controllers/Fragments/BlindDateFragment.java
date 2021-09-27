@@ -162,6 +162,7 @@ public class BlindDateFragment extends Fragment {
                                     blindDate.put("wasUserRejectedNr2", wasUserNr2Rejected);
                                     blindDate.put("wasUserRejectedNr3", wasUserNr3Rejected);
                                     blindDate.put("numberOfRoundInBlindDate",roundNumber);
+                                    blindDate.put("fromNotification",String.valueOf(false));
 
 //                                    intent.putExtra(USER_NAME_NR_0, userNameNr0);
 //                                    intent.putExtra(USER_NAME_NR_1, userNameNr1);
@@ -237,6 +238,12 @@ public class BlindDateFragment extends Fragment {
                                                             @Override
                                                             public void onSuccess(Void aVoid) {
                                                                 Log.d(TAG, "BlindDate completely and successfully deleted!");
+                                                                Fragment fragment = new BlindDateFragment();
+                                                                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                                                                ft.detach(BlindDateFragment.this);
+                                                                ft.replace(R.id.content_frame, fragment, "visible_fragment");
+                                                                ft.commit();
+                                                                deleteDialog.dismiss();
                                                             }
                                                         })
                                                         .addOnFailureListener(new OnFailureListener() {
@@ -260,6 +267,12 @@ public class BlindDateFragment extends Fragment {
                                                                 @Override
                                                                 public void onSuccess(Void aVoid) {
                                                                     Log.d(TAG, "BlindDate completely and successfully deleted!");
+                                                                    Fragment fragment = new BlindDateFragment();
+                                                                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                                                                    ft.detach(BlindDateFragment.this);
+                                                                    ft.replace(R.id.content_frame, fragment, "visible_fragment");
+                                                                    ft.commit();
+                                                                    deleteDialog.dismiss();
                                                                 }
                                                             })
                                                             .addOnFailureListener(new OnFailureListener() {
@@ -275,6 +288,12 @@ public class BlindDateFragment extends Fragment {
                                                                 @Override
                                                                 public void onSuccess(Void aVoid) {
                                                                     Log.d(TAG, "Single BlindDateMemberDocument successfully deleted!");
+                                                                    Fragment fragment = new BlindDateFragment();
+                                                                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                                                                    ft.detach(BlindDateFragment.this);
+                                                                    ft.replace(R.id.content_frame, fragment, "visible_fragment");
+                                                                    ft.commit();
+                                                                    deleteDialog.dismiss();
                                                                 }
                                                             })
                                                             .addOnFailureListener(new OnFailureListener() {
@@ -293,12 +312,7 @@ public class BlindDateFragment extends Fragment {
                                     }
                                 });
 
-                        Fragment fragment = new BlindDateFragment();
-                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ft.detach(BlindDateFragment.this);
-                        ft.replace(R.id.content_frame, fragment, "visible_fragment");
-                        ft.commit();
-                        deleteDialog.dismiss();
+
 
                     }
                 });

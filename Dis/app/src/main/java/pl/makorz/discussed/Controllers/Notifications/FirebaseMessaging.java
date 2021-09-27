@@ -2,11 +2,8 @@ package pl.makorz.discussed.Controllers.Notifications;
 
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -20,6 +17,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+import pl.makorz.discussed.Controllers.BlindDateActivity;
 import pl.makorz.discussed.Controllers.ChatActivity;
 
 public class FirebaseMessaging extends FirebaseMessagingService {
@@ -32,17 +35,21 @@ public class FirebaseMessaging extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        String sent = remoteMessage.getData().get("userTargetedID");
-        if (currentUser != null && sent.equals(currentUser.getUid())) {
+        String userTargetedID = remoteMessage.getData().get("userTargetedID");
+        int type = Integer.parseInt(remoteMessage.getData().get("typeData"));
 
-        sendOreoNotification(remoteMessage);
-
-       }
+        if (currentUser != null && userTargetedID.equals(currentUser.getUid())) {
+            if (type == 1) {
+                sendOreoNotificationB(remoteMessage);
+            } else {
+                sendOreoNotification(remoteMessage);
+            }
+        }
 
     }
 
-    private void sendOreoNotification(RemoteMessage remoteMessage){
-        String userTargetedID = remoteMessage.getData().get("userTargetedID");
+    private void sendOreoNotification(RemoteMessage remoteMessage) {
+
         String icon = remoteMessage.getData().get("icon");
         String title = remoteMessage.getData().get("title");
         String body = remoteMessage.getData().get("body");
@@ -53,67 +60,45 @@ public class FirebaseMessaging extends FirebaseMessagingService {
         Intent intent = new Intent(this, ChatActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("idOfOtherUser", whoSendID);
-        bundle.putString("otherUserName",whoSendName);
+        bundle.putString("otherUserName", whoSendName);
         bundle.putString("chatIdIntent", chatID);
         intent.putExtras(bundle);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,whoSendID.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, whoSendID.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         String groupKey = "groupNotifications";
 
         OreoNotification oreoNotification = new OreoNotification(this);
-        NotificationCompat.Builder builder = oreoNotification.getOreoNotification(title, body, pendingIntent, defaultSound, icon, groupKey);
+        NotificationCompat.Builder builder = oreoNotification.getOreoNotification(title, body, pendingIntent, icon, groupKey);
 
         oreoNotification.getManager().notify(whoSendID.hashCode(), builder.build());
 
     }
 
+    private void sendOreoNotificationB(RemoteMessage remoteMessage) {
 
-//    private void sendNotification(RemoteMessage remoteMessage) {
-//
-//        String userTargetedID = remoteMessage.getData().get("userTargetedID");
-//        String icon = remoteMessage.getData().get("icon");
-//        String title = remoteMessage.getData().get("title");
-//        String body = remoteMessage.getData().get("body");
-//        String whoSendID = remoteMessage.getData().get("whoSendID");
-//        String whoSendName = remoteMessage.getData().get("whoSendName");
-//        String chatID = remoteMessage.getData().get("chatID");
-//
-//        RemoteMessage.Notification notification = remoteMessage.getNotification();
-//        //int a = Integer.parseInt(userTargetedID.replaceAll("[\\D]",""));
-//        Random r2 = new Random();
-//        int a = r2.nextInt(1000);
-//        Intent intent = new Intent(this, ChatActivity.class);
-//        Bundle bundle = new Bundle();
-//        bundle.putString("idOfOtherUser", whoSendID);
-//        bundle.putString("otherUserName",whoSendName);
-//        bundle.putString("chatIdIntent", chatID);
-//        intent.putExtras(bundle);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this,a, intent, PendingIntent.FLAG_ONE_SHOT);
-//
-//        Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-//                .setSmallIcon(Integer.parseInt(icon))
-//                .setContentTitle(title)
-//                .setContentText(body)
-//                .setAutoCancel(true)
-//                .setSound(defaultSound)
-//                .setContentIntent(pendingIntent);
-//        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//
-//        int i = 0;
-//        if (a > 0) {
-//            i = a;
-//        }
-//
-//        notificationManager.notify(i, builder.build());
-//
-//    }
+        String icon = remoteMessage.getData().get("icon");
+        String title = remoteMessage.getData().get("title");
+        String body = remoteMessage.getData().get("body");
+        String whoSendID = remoteMessage.getData().get("whoSendID");
 
+        Map<String, String> map = new HashMap<>();
+        map.put("blindDateID", remoteMessage.getData().get("blindDateID"));
+        map.put("fromNotification", String.valueOf(true));
 
+        Intent intent = new Intent(this, BlindDateActivity.class);
+        intent.putExtra("blindDateMap", (Serializable) map);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, whoSendID.hashCode(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        String groupKey = "groupNotifications";
+
+        OreoNotification oreoNotification = new OreoNotification(this);
+        NotificationCompat.Builder builder = oreoNotification.getOreoNotification(title, body, pendingIntent, icon, groupKey);
+
+        oreoNotification.getManager().notify(whoSendID.hashCode(), builder.build());
+
+    }
 
     @Override
     public void onNewToken(@NonNull String s) {
@@ -137,7 +122,6 @@ public class FirebaseMessaging extends FirebaseMessagingService {
                                         }
                                         // Get new FCM registration token
                                         String token = task.getResult();
-                                        Toast.makeText(getApplicationContext(), "asfafs" + token, Toast.LENGTH_SHORT).show();
                                         db.collection("users").document(currentUser.getUid()).update("fcmRegistrationToken", token);
                                     }
                                 });

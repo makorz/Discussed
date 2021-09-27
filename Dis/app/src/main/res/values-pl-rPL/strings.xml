@@ -93,7 +93,7 @@
     <string name="radius_100km_fragment_main">100km</string>
     <string name="radius_150km_fragment_main">150km</string>
     <string name="radius_250km_fragment_main">250km</string>
-    <string name="radius_country_fragment_main">Państwo</string>
+    <string name="radius_country_fragment_main">Kraj</string>
     <string name="radius_world_fragment_main">Świat</string>
     <string name="age_criteria_fragment_main">Wiek:</string>
     <string name="gender_criteria_fragment_main">Płeć:</string>
@@ -112,7 +112,8 @@
     <string name="good_job_text_view_settings_tab">Jeżeli chciałby pochwalić za dobrą robotę, kliknij przycisk z prawej strony! Dziękuję ;)</string>
     <string name="deleteAccount_textview_settings_tab">CZy chcesz usunąć swoje konto (wszystkie zdjęcia, opis, lokalizacje, itd.)?</string>
     <string name="logout_textview_settings_tab">Czy chcesz sie wylogować?</string>
-    <string name="donate_textview_settings_tab">Jeżeli chcesz podarować więcej niż proste, acz łądn "Dziękuję" możesz mi rzucić trochę grosza! ;D</string>
+    <string name="donate_textview_settings_tab">Jeżeli chcesz podarować więcej niż proste "Dziękuję" możesz mi rzucić trochę grosza!
+        Dodatkowo dostaniesz pakiet PREMIUM! Co on daje? -> Zaglądnij do zakładki "O aplikacji"</string>
     <string name="participation_in_blind_date_switch">Czy chcesz brać udział w randkach w ciemno?</string>
 
     <!--LoginFragment strings-->
@@ -296,13 +297,26 @@ Questions &amp; Contact Information \n\n
 
     <!--MainActivity strings-->
     <string name="info_dialog_box_text1"><b>\nWitam w mojej aplikacji!</b></string>
-    <string name="info_dialog_box_text2">Podczas użytkowanie tej wspaniale wyglądającej apliakcji, możesz odnaleźć kogoś kto chciałby porozmawiać na temat, który Ty chciałbyś teraz poruszyć!\n</string>
+    <string name="info_dialog_box_text2">Podczas użytkowanie tej wspaniale wyglądającej apliakcji, <b>możesz odnaleźć kogoś kto chciałby porozmawiać na temat, który Ty chciałbyś teraz poruszyć!</b>\n\n
+        Dyskusja rozpoczyna się z ukrytymi informacjami profilowymi takimi jak zdjęcia, lokalizacja, wiek, opis. Podczas konwersacji Ty i osoba, z którą rozmowaisz możecie oceniać swoje
+        wiadomosci. Ocena wiadomości nagradza towarzysza/towarzyszkę punktami, które mogą zostać wykorzystane do odkrycia informacji profilowych. ilośc otrzymanych punktów oparta jest
+        głównie na długości wiadomości. Jeden punkt otrzymasz za wiadomości o długości minimum 50 znaków, a maksymalna ilość punktów jaką możesz otrzymać za pojedynczą wiadomośc to
+        5 punktów (w przypadku posiadania konta premium możesz uzyskać dwa razy więcej, czyli 10 punktów). \n\n <b>Drugą opcją w aplikacji jest rozpoczęte randki w ciemno.</b> Randka w ceimno
+        to dyskusja 3 losowych osób (wyłonionych do rozmowy na podstawie wybranych paramterów) na temat pytań zadanych przez prowadzącego randkę, dyskusja i wybory prowadzacego prowadzą do
+        wybrania jednej osoby spośród trzech i rozpoczęcia prywatnego czatu z prowadzącym. <b>Randka w ciemnno składa się z 5 rund.</b> \n\n<b>1. </b>Prowadzący przygotowuje 3 pytania i
+        rozpoczyna randkę w ciemno. \n<b>2. </b>Wybrane trzy osoby dyskutują na temat pytań zadanych rpzez prowadzacego - mają na to 30 minut od momentu utworzenia randki w ciemno. W tej rundzie
+        prowadzący może tylko czytać co uczestnicy pisza w dyskusji. \n<b>3. </b>Po upływie 30 minut uczestnicy nie mogą już dalej prowadzić dyskusji, natomiast prowadzący decyduje, która osoba zostanie
+        wykluczona z randki w ciemno, dodatkowo przygotowuje on ostanite pytanie na rundę czwartą. \n<b>4. </b>Prowadzacy z dwoma pozsotałymi osobami prowadzi dyskusję opartą na ostatnim
+        pytaniu, trwającą 15 minut od czasu odrzuecenia pierwszej osoby. \n<b>5. </b>W ostatniej rundzie prowadzący podejmuje ostateczną decyzję, która osoba zostanie odrzucona, a z ostatnią osoba
+        rozpoczyna się prywatny czat (pierwsza fotografia profilowa zosaje ujawniona dla obu osób).\n</string>
+
     <string name="info_dialog_box_text3">Ale zanim rozpoczniesz wyszukiwanie współtowarzysza rozmowy muszisz uzupełnić swój profil (ikona w prawym górnym rogu) o następujące informacje: \n\n1. Lokalizacja.
         \n2. Imię. \n3. Wiek. \n4. Płeć. \n5. Opis swojej osoby. \n6. Trzy fotografie. \n7. Ulubione tematy do rozmowy. \n\nPo dostarczeniu wskazanych danych, możesz rozpocząć wyszukiwanie podobnej duszy do rozmowy!</string>
-    <string name="info_dialog_box_text4">\nW celu wejścia na swój profil, kliknij ikonę w prawym górnym rogu ekranu (ikona z zarysem osoby w okręgu). \n\nPo wejściu na swój profil, możesz edytować swoje dane zgodnie
-        z następującymi warunkami: \n\n1. Lokalizacja - codziennie. \n2. Imię - raz na 7 dni. \n3. Wiek - raz na 30 dni. \n4. Opis swojej osoby - raz na 7 dni. \n5. Płeć - raz na 30 dni. \n6. Fotografie - raz na 7 dni.
+    <string name="info_dialog_box_text4">\nW celu wejścia na swój profil, <b> kliknij ikonę w prawym górnym rogu ekranu (ikona z zarysem osoby w okręgu).</b> \n\nPo wejściu na swój profil, możesz edytować swoje dane zgodnie
+        z następującymi warunkami: \n\n1. Lokalizacja - codziennie. \n2. Imię - raz na 7 dni. \n3. Wiek - raz na 7 dni. \n4. Opis swojej osoby - raz na 7 dni. \n5. Płeć - raz na 7 dni. \n6. Fotografie - raz na 7 dni.
         \n7. Ulubione tematy do rozmowy - kiedy chcesz. \n\n Takie ograniczenia zostały wprowadzone, aby wykluczyć osoby, które nie traktują aplikacji w sposób odowiedni dla innych użytkowników.\n\n
-        <b>Więc UWAŻAJ podczas ich wprowadzania, gdyż zmiany mogą zostać dokonane dopiero po upływie określonego czasu!</b> \n\nPowodzenia! Mam nadzieję, że znajdziesz to czego potrzebujesz!</string>
+        <b>Więc UWAŻAJ podczas ich wprowadzania, gdyż zmiany mogą zostać dokonane dopiero po upływie określonego czasu!</b>\n\n Możesz wyszukać <b> maksymalnie 5 osób do rozmowy dziennie i tak samo możesz uruchomić
+        5 randek w ciemno w przeciągu 24 godzin </b>od uruchomienia swojej pierwszej randki. \n\nPowodzenia! Mam nadzieję, że znajdziesz to czego potrzebujesz!</string>
     <string name="loading_text_dialog_box">Wczytywanie…</string>
     <string name="yes_text_dialog_boxes">TAK</string>
     <string name="no_text_dialog_boxes">NIE</string>
@@ -310,23 +324,43 @@ Questions &amp; Contact Information \n\n
 
     <!--AboutFragment strings-->
     <string-array name="about_options">
-        <item>Podstawowe informacje</item>
+        <item>Podstawowe informacje.</item>
         <item>Jak często mogę zmieniać dane profilowe?</item>
+        <item>Co daje pakiet PREMIUM?</item>
         <item>Jak nagrodzić nieznajomego za wiadomość?</item>
         <item>Jak liczone są punkty za wiadomości?</item>
+        <item>Jak działają randki w ciemno?</item>
+        <item>Zasady i Warunki.</item>
+        <item>Licencje open source.</item>
     </string-array>
+
     <string-array name="about_options_answers">
-        <item>Podczas użytkowanie tej wspaniale wyglądającej apliakcji, możesz odnaleźć kogoś kto chciałby porozmawiać na temat, który Ty chciałbyś teraz poruszyć!\n
-           \nAle zanim rozpoczniesz wyszukiwanie
-            współtowarzysza rozmowy muszisz uzupełnić swój profil (ikona w prawym górnym rogu) o następujące informacje: \n\n1. Lokalizacja.\n2. Imię. \n3. Wiek. \n4. Płeć.
+        <item>Podczas użytkowanie tej wspaniale wyglądającej apliakcji, <b>możesz odnaleźć kogoś kto chciałby porozmawiać na temat, który Ty chciałbyś teraz poruszyć!</b>\n\n
+        Dyskusja rozpoczyna się z ukrtytymi informacjami profilowymi takimi jak zdjęcia, lokalizacja, wiek, opis. Podczas konwersacji Ty i osoba, z którą rozmowaisz możecie oceniać swoje
+        wiadomosci. Ocena wiadomości nagradza towarzysza/towarzyszkę punktami, które mogą zostać wykorzystane do odkrycia informacji profilowych. ilośc otrzymanych punktów oparta jest
+        głównie na długości wiadomości. Jeden punkt otrzymasz za wiadomości o długości minimum 50 znaków, a maksymalna ilość punktów jaką możesz otrzymać za pojedynczą wiadomośc to
+        5 punktów (w przypadku posiadania konta premium możesz uzyskać dwa razy więcej, czyli 10 punktów).\nAle zanim rozpoczniesz wyszukiwanie współtowarzysza rozmowy muszisz uzupełnić swój profil (ikona w prawym górnym rogu) o następujące informacje: \n\n1. Lokalizacja.\n2. Imię. \n3. Wiek. \n4. Płeć.
             \n5. Opis swojej osoby. \n6. Trzy fotografie. \n7. Ulubione tematy do rozmowy. \n\nPo dostarczeniu wskazanych danych, możesz rozpocząć wyszukiwanie podobnej
             duszy do rozmowy!</item>
-        <item>1. Lokalizacja - codziennie. \n2. Imię - raz na 7 dni. \n3. Wiek - raz na 30 dni. \n4. Opis swojej osoby - raz na 7 dni. \n5. Płeć - raz na 30 dni. \n6. Fotografie - raz na 7 dni.
+        <item>1. Lokalizacja - codziennie. \n2. Imię - raz na 7 dni. \n3. Wiek - raz na 7 dni. \n4. Opis swojej osoby - raz na 7 dni. \n5. Płeć - raz na 7 dni. \n6. Fotografie - raz na 7 dni.
         \n7. Ulubione tematy do rozmowy - kiedy chcesz.</item>
+        <item>Podstawowym dodatkiem jaki otrzymuje użytkownik za wykupienie pakietu PREMIUM jest podwojenie ilości punktów jakie otrzymuje on od innych użytkowników podczas rozmowy (czyli może on otrzymać nawet 10 punktów
+        za pojedynczą wiadomość. \n\n Kolejnym dodatkiem jest możliwosć wyłączenia funkcji randek w ciemno (użytkownik nie jest już brany pod uwagę przy wyszukiwaniu przez innych użytkowników,
+           ale również sam nie może ich rozpoczynać) - wyłączenie/włączenie możliwe w dowolnym momencie. \n\n Ostatnim dodatkiem jest możliwość edycji wszystkich elementów profilu raz na 2 dni.</item>
         <item>Kliknij i przytrzymaj dłużej wiadomość, którą chcesz nagordzić, po chwili pojawi się powiadomienie o ilości punktów jakie otrzymał współrozmówca oraz w dymku wiadomości pojawi się
             złota gwiazda infromująca, że wiadomość została już oceniona.</item>
         <item>Ilość punktów zależy od długości wiadomości. Proste "OK, zgadzam się!" nie zapewni autorowi żadnych punktów. By otrzymać przynajmniej jeden punkt, wiadomośc musi się składać z
-            minimum 100 znaków.\n\n Nieznajomy może otrzymać maksymalnie 5 punktów za pojedynczą wiadomość.</item>
+            minimum 50 znaków.\n\n Nieznajomy może otrzymać maksymalnie 5 punktów za pojedynczą wiadomość.</item>
+        <item>Randka w ceimno to dyskusja 3 losowych osób (wyłonionych do rozmowy na podstawie wybranych paramterów) na temat pytań zadanych przez prowadzącego randkę, dyskusja i wybory prowadzacego prowadzą do
+        wybrania jednej osoby spośród trzech i rozpoczęcia prywatnego czatu z prowadzącym. <b>Randka w ciemnno składa się z 5 rund.</b> \n\n<b>1. </b>Prowadzący przygotowuje 3 pytania i
+        rozpoczyna randkę w ciemno. \n<b>2. </b>Wybrane trzy osoby dyskutują na temat pytań zadanych rpzez prowadzacego - mają na to 30 minut od momentu utworzenia randki w ciemno. W tej rundzie
+        prowadzący może tylko czytać co uczestnicy pisza w dyskusji. \n<b>3. </b> Po upływie 30 minut uczestnicy nie mogą już dalej prowadzić dyskusji, natomiast prowadzący decyduje, która osoba zostanie
+        wykluczona z randki w ciemno, dodatkowo przygotowuje on ostanite pytanie na rundę czwartą. \n<b>4. </b>Prowadzacy z dwoma pozsotałymi osobami prowadzi dyskusję opartą na ostatnim
+        pytaniu, trwającą 15 minut od czasu odrzuecenia pierwszej osoby. \n<b>5. </b>W ostatniej rundzie prowadzący podejmuje ostateczną decyzję, która osoba zostanie odrzucona, a z ostatnią osoba
+        rozpoczyna się prywatny czat (pierwsza fotografia profilowa zosaje ujawniona dla obu osób).</item>
+        <item>null</item>
+        <item>\'com.google.firebase\' -> Firebase Platform\n\n\'de.hdodenhof\' -> Rounded Image View\n\n\'org.ocpsoft.prettytime\' -> Multiple language time in words\n\n\'com.github.bumptech.glide\' -> Image loading framework\n\n
+            \'com.facebook.android:\' -> Facebook Authentication\n\n\'com.squareup.retrofit2\' -> Work with API interfaces</item>
     </string-array>
     <string name="copyright_by_text_view_about_tab">Copyright &#169; by <i>MatKorzDev</i></string>
     <string name="nr_of_goodJob_clicks_text_about_tab">Ilość klikniętych przyciskó "Dobra robota!" na całym świecie: </string>

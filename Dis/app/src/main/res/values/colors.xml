@@ -20,6 +20,8 @@
     <color name="drawer_menu">#efebe9</color>
     <color name="transparent">#00EFEBE9</color>
     <color name="red_500">#d50000</color>
+    <color name="red_700">#b71c1c</color>
+
 
 
 </resources>

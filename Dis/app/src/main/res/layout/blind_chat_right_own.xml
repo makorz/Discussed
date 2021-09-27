@@ -13,6 +13,7 @@
         android:background="@drawable/own_buble_blind_date"
         android:orientation="vertical"
         android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
         tools:ignore="UselessParent"
         android:focusable="true"
         android:clickable="true"

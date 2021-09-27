@@ -3,20 +3,15 @@ package pl.makorz.discussed.Controllers;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.InputFilter;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +23,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -41,7 +35,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,13 +46,15 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import pl.makorz.discussed.Controllers.Functions.APIService;
+import pl.makorz.discussed.Controllers.Functions.APIServiceB;
 import pl.makorz.discussed.Controllers.Notifications.Client;
 import pl.makorz.discussed.Controllers.Notifications.Data;
+import pl.makorz.discussed.Controllers.Notifications.DataB;
 import pl.makorz.discussed.Controllers.Notifications.Response;
 import pl.makorz.discussed.Controllers.Notifications.Sender;
+import pl.makorz.discussed.Controllers.Notifications.SenderB;
 import pl.makorz.discussed.Models.Adapters.MessageInBlindDateAdapter;
 import pl.makorz.discussed.Models.MessageInBlindDate;
-import pl.makorz.discussed.Models.MessageInChat;
 import pl.makorz.discussed.R;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -91,10 +86,11 @@ public class BlindDateActivity extends AppCompatActivity implements View.OnClick
     private TextView dateNr1Name, dateNr2Name, dateNr3Name, timer, infoText, messageAlertView;
     private RecyclerView messagesRecycler;
     private MessageInBlindDateAdapter messagesAdapter;
-    private AlertDialog dialog;
+    private AlertDialog dialog, kickOutDialog, lastQuestionDialog;
     private LinearLayout wholeLayout, linear_space_dates1, linear_dates_buttons;
+    private CountDownTimer timerCount;
 
-    private int roundNumber;
+    private int roundNumber, currentUserNr;
     private String blindDateID, userNameNr0, userNameNr1, userNameNr2, userNameNr3, userIDNr0, userIDNr1, userIDNr2, userIDNr3, currentUserName;
     private boolean wasUserNr1Rejected, wasUserNr2Rejected, wasUserNr3Rejected;
     private Date blindDateCreationDate, dateOfStartRound2;
@@ -103,7 +99,7 @@ public class BlindDateActivity extends AppCompatActivity implements View.OnClick
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-    private APIService apiService;
+    private APIServiceB apiServiceB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,33 +110,36 @@ public class BlindDateActivity extends AppCompatActivity implements View.OnClick
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); //no dark theme
 
         loadingAlertDialog();
-        messageAlertView.setText(R.string.alert_dialog_loading_profile);
+        messageAlertView.setText("Loading blind date...");
         wholeLayout = findViewById(R.id.linearBlindDateWholeLayout);
         wholeLayout.setAlpha(0.0f);
 
-        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
+        apiServiceB = Client.getClient("https://fcm.googleapis.com/").create(APIServiceB.class);
 
-        Intent intent = getIntent();
         Map intentMap = new HashMap<>();
         intentMap = (Map) getIntent().getSerializableExtra("blindDateMap");
-
         blindDateID = (String) intentMap.get(BLIND_DATE_ID);
-        userNameNr0 = (String) intentMap.get(USER_NAME_NR_0);
-        userNameNr1 = (String) intentMap.get(USER_NAME_NR_1);
-        userNameNr2 = (String) intentMap.get(USER_NAME_NR_2);
-        userNameNr3 = (String) intentMap.get(USER_NAME_NR_3);
-        userIDNr0 = (String) intentMap.get(USER_ID_NR_0);
-        userIDNr1 = (String) intentMap.get(USER_ID_NR_1);
-        userIDNr2 = (String) intentMap.get(USER_ID_NR_2);
-        userIDNr3 = (String) intentMap.get(USER_ID_NR_3);
-        blindDateCreationDate = (Date) intentMap.get(DATE_OF_CREATION_BLIND_DATE);
-        dateOfStartRound2 = (Date) intentMap.get(DATE_OF_ROUND_2_STARTED);
-        wasUserNr1Rejected = (Boolean) intentMap.get(USER_NR_1_WAS_REJECTED);
-        wasUserNr2Rejected = (Boolean) intentMap.get(USER_NR_2_WAS_REJECTED);
-        wasUserNr3Rejected = (Boolean) intentMap.get(USER_NR_3_WAS_REJECTED);
-        roundNumber = (int) intentMap.get(ROUND_NO);
+        String fromNotification = (String) intentMap.get("fromNotification");
 
-        getSupportActionBar().setTitle("Host: " + userNameNr0);
+        if (fromNotification.equals("false")) {
+
+            userNameNr0 = (String) intentMap.get(USER_NAME_NR_0);
+            userNameNr1 = (String) intentMap.get(USER_NAME_NR_1);
+            userNameNr2 = (String) intentMap.get(USER_NAME_NR_2);
+            userNameNr3 = (String) intentMap.get(USER_NAME_NR_3);
+            userIDNr0 = (String) intentMap.get(USER_ID_NR_0);
+            userIDNr1 = (String) intentMap.get(USER_ID_NR_1);
+            userIDNr2 = (String) intentMap.get(USER_ID_NR_2);
+            userIDNr3 = (String) intentMap.get(USER_ID_NR_3);
+            blindDateCreationDate = (Date) intentMap.get(DATE_OF_CREATION_BLIND_DATE);
+            dateOfStartRound2 = (Date) intentMap.get(DATE_OF_ROUND_2_STARTED);
+            wasUserNr1Rejected = (Boolean) intentMap.get(USER_NR_1_WAS_REJECTED);
+            wasUserNr2Rejected = (Boolean) intentMap.get(USER_NR_2_WAS_REJECTED);
+            wasUserNr3Rejected = (Boolean) intentMap.get(USER_NR_3_WAS_REJECTED);
+            roundNumber = (int) intentMap.get(ROUND_NO);
+
+        }
+
         linear_dates_buttons = findViewById(R.id.linear_dates_buttons);
         linear_space_dates1 = findViewById(R.id.linear_space_dates1);
         dateNr1Name = findViewById(R.id.textview_date_nr_1);
@@ -161,8 +160,6 @@ public class BlindDateActivity extends AppCompatActivity implements View.OnClick
         buttonKickOffDateNr1.setOnClickListener(this);
         buttonKickOffDateNr2.setOnClickListener(this);
         buttonKickOffDateNr3.setOnClickListener(this);
-
-        initView(roundNumber);
 
         try {
             updateBlindDateStatus();
@@ -204,22 +201,99 @@ public class BlindDateActivity extends AppCompatActivity implements View.OnClick
         return number <= 9 ? "0" + number : String.valueOf(number);
     }
 
-    public void myCountDownTimer(long dateDifference, int roundNo) {
+    public void myCountDownTimer(long dateDifference, long countDownInterval, int roundNo) {
 
-        new CountDownTimer(dateDifference, 1000) {
+        Log.d(TAG, "COUNTDOWN" + roundNo);
+
+        timerCount = new CountDownTimer(dateDifference, countDownInterval) {
 
             @Override
             public void onTick(long l) {
-                String time = (l / (1000 * 60)) + ":" + checkDigit((int) ((l % (1000 * 60) / 1000)));
-                timer.setText(time);
+                if (roundNo == 1) {
+                    db.collection("blindDates").document(blindDateID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document != null) {
+                                    Log.d(TAG, "DBCHECK" + roundNo);
+                                    roundNumber = document.getDouble(ROUND_NO).intValue();
+                                    dateOfStartRound2 = document.getDate(DATE_OF_ROUND_2_STARTED);
+                                    wasUserNr1Rejected = document.getBoolean(USER_NR_1_WAS_REJECTED);
+                                    wasUserNr2Rejected = document.getBoolean(USER_NR_2_WAS_REJECTED);
+                                    wasUserNr3Rejected = document.getBoolean(USER_NR_3_WAS_REJECTED);
+                                    if (roundNumber == 2) {
+                                        timerCount.cancel();
+                                        initView(2);
+                                    }
+                                } else {
+                                    Log.d("LOGGER", "No such document");
+                                }
+                            } else {
+                                Log.d("LOGGER", "get failed with ", task.getException());
+                            }
+
+                        }
+                    });
+                } else if (roundNo == 3) {
+                    db.collection("blindDates").document(blindDateID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DocumentSnapshot document = task.getResult();
+                                if (document != null) {
+                                    roundNumber = document.getDouble(ROUND_NO).intValue();
+                                    wasUserNr1Rejected = document.getBoolean(USER_NR_1_WAS_REJECTED);
+                                    wasUserNr2Rejected = document.getBoolean(USER_NR_2_WAS_REJECTED);
+                                    wasUserNr3Rejected = document.getBoolean(USER_NR_3_WAS_REJECTED);
+                                    if (roundNumber == 4) {
+                                        timerCount.cancel();
+                                        initView(4);
+                                    }
+                                } else {
+                                    Log.d("LOGGER", "No such document");
+                                }
+                            } else {
+                                Log.d("LOGGER", "get failed with ", task.getException());
+                            }
+
+                        }
+                    });
+                } else {
+                    String time = (l / (1000 * 60)) + ":" + checkDigit((int) ((l % (1000 * 60) / 1000)));
+                    timer.setText(time);
+                }
             }
 
             @Override
             public void onFinish() {
-                Log.d(TAG, "HOW OFTEN HERE I AM");
+
                 timer.setText("Round is over!");
-                db.collection("blindDates").document(blindDateID).update(ROUND_NO, FieldValue.increment(1));
+//                db.collection("blindDates").document(blindDateID).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            DocumentSnapshot document = task.getResult();
+//                            if (document != null) {
+//                                roundNumber = document.getDouble(ROUND_NO).intValue();
+//                                wasUserNr1Rejected = document.getBoolean(USER_NR_1_WAS_REJECTED);
+//                                wasUserNr2Rejected = document.getBoolean(USER_NR_2_WAS_REJECTED);
+//                                wasUserNr3Rejected = document.getBoolean(USER_NR_3_WAS_REJECTED);
+//
+//
+//                                Log.d(TAG, "HOW OFTEN HERE I AM INSIDE " + roundNo);
+//
+//                             } else {
+//                                Log.d("LOGGER", "No such document");
+//                            }
+//                        } else {
+//                            Log.d("LOGGER", "get failed with ", task.getException());
+//                        }
+//
+//                    }
+//                });
                 roundNumber = roundNumber + 1;
+                Log.d(TAG, "HOW OFTEN HERE I AM ON FINISH" + roundNo);
                 initView(roundNumber);
             }
         }.start();
@@ -244,18 +318,22 @@ public class BlindDateActivity extends AppCompatActivity implements View.OnClick
 
         if (user.getUid().equals(userIDNr0)) {
             currentUserName = userNameNr0;
+            currentUserNr = 0;
             linear_dates_buttons.setVisibility(View.VISIBLE);
             linear_space_dates1.setVisibility(View.VISIBLE);
         } else if (user.getUid().equals(userIDNr1)) {
             currentUserName = userNameNr1;
+            currentUserNr = 1;
             linear_dates_buttons.setVisibility(View.GONE);
             linear_space_dates1.setVisibility(View.GONE);
         } else if (user.getUid().equals(userIDNr2)) {
             currentUserName = userNameNr2;
+            currentUserNr = 2;
             linear_dates_buttons.setVisibility(View.GONE);
             linear_space_dates1.setVisibility(View.GONE);
         } else if (user.getUid().equals(userIDNr3)) {
             currentUserName = userNameNr3;
+            currentUserNr = 3;
             linear_dates_buttons.setVisibility(View.GONE);
             linear_space_dates1.setVisibility(View.GONE);
         }
@@ -293,6 +371,7 @@ public class BlindDateActivity extends AppCompatActivity implements View.OnClick
                     messageText.setVisibility(View.GONE);
                     buttonSendMessage.setVisibility(View.GONE);
                     timer.setVisibility(View.GONE);
+                    myCountDownTimer(1800000, 2500, round);
                 }
                 break;
             case 2:
@@ -304,13 +383,23 @@ public class BlindDateActivity extends AppCompatActivity implements View.OnClick
                     buttonKickOffDateNr2.setEnabled(false);
                     buttonKickOffDateNr3.setEnabled(false);
                     timer.setVisibility(View.VISIBLE);
-                    myCountDownTimer(dateDiffSinceRound2Start, round);
+                    myCountDownTimer(dateDiffSinceRound2Start, 1000, round);
                 } else {
                     infoText.setText("Discuss last question with " + userNameNr0 + "!");
                     messageText.setVisibility(View.VISIBLE);
                     buttonSendMessage.setVisibility(View.VISIBLE);
                     timer.setVisibility(View.VISIBLE);
-                    myCountDownTimer(dateDiffSinceRound2Start, round);
+                    if (wasUserNr1Rejected && userIDNr1.equals(user.getUid())) {
+                        messageText.setVisibility(View.GONE);
+                        buttonSendMessage.setVisibility(View.GONE);
+                    } else if (wasUserNr2Rejected && userIDNr2.equals(user.getUid())) {
+                        messageText.setVisibility(View.GONE);
+                        buttonSendMessage.setVisibility(View.GONE);
+                    } else if (wasUserNr3Rejected && userIDNr3.equals(user.getUid())) {
+                        messageText.setVisibility(View.GONE);
+                        buttonSendMessage.setVisibility(View.GONE);
+                    }
+                    myCountDownTimer(dateDiffSinceRound2Start, 1000, round);
                 }
                 break;
             case 3:
@@ -337,6 +426,7 @@ public class BlindDateActivity extends AppCompatActivity implements View.OnClick
                     messageText.setVisibility(View.GONE);
                     buttonSendMessage.setVisibility(View.GONE);
                     timer.setVisibility(View.GONE);
+                    myCountDownTimer(1800000, 2500, round);
                 }
                 break;
             case 4:
@@ -344,9 +434,8 @@ public class BlindDateActivity extends AppCompatActivity implements View.OnClick
                     infoText.setText("You've chosen Your Date, private chat have been initialised. All the best for both of You!");
                     messageText.setVisibility(View.GONE);
                     buttonSendMessage.setVisibility(View.GONE);
-                    buttonKickOffDateNr1.setEnabled(false);
-                    buttonKickOffDateNr2.setEnabled(false);
-                    buttonKickOffDateNr3.setEnabled(false);
+                    linear_dates_buttons.setVisibility(View.GONE);
+                    linear_space_dates1.setVisibility(View.GONE);
                     timer.setVisibility(View.GONE);
                 } else {
                     infoText.setText("Final decision have been made! Private chat have been initialised. All the best for both of You!");
@@ -364,13 +453,13 @@ public class BlindDateActivity extends AppCompatActivity implements View.OnClick
                     buttonKickOffDateNr2.setEnabled(false);
                     buttonKickOffDateNr3.setEnabled(false);
                     timer.setVisibility(View.VISIBLE);
-                    myCountDownTimer(dateDiffSinceRound1Start, round);
+                    myCountDownTimer(dateDiffSinceRound1Start, 1000, round);
                 } else {
                     infoText.setText("Discuss questions made by " + userNameNr0 + "!");
                     messageText.setVisibility(View.VISIBLE);
                     buttonSendMessage.setVisibility(View.VISIBLE);
                     timer.setVisibility(View.VISIBLE);
-                    myCountDownTimer(dateDiffSinceRound1Start, round);
+                    myCountDownTimer(dateDiffSinceRound1Start, 1000, round);
                 }
                 break;
         }
@@ -413,7 +502,7 @@ public class BlindDateActivity extends AppCompatActivity implements View.OnClick
             kickOutTextView.setText("Are You sure You want to kick out " + userNameNr3 + " (nr 3)?");
         }
 
-        AlertDialog kickOutDialog = new AlertDialog.Builder(this)
+        kickOutDialog = new AlertDialog.Builder(this)
                 .setView(kickOutView)  // What to use in dialog box
                 .setNegativeButton(R.string.no_text_dialog_boxes, null)
                 .setPositiveButton(R.string.yes_text_dialog_boxes, null)
@@ -422,14 +511,93 @@ public class BlindDateActivity extends AppCompatActivity implements View.OnClick
         kickOutDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 buttonKickOffDateNr1.setEnabled(false);
                 buttonKickOffDateNr2.setEnabled(false);
                 buttonKickOffDateNr3.setEnabled(false);
 
-                db.collection("blindDates").document(blindDateID).update(ROUND_NO, FieldValue.increment(1));
-
                 if (roundNumber == 1) {
 
+                    lastQuestionAlertDialog(whatUser);
+                } else if (roundNumber == 3) {
+
+                    String messageNotificationReject = "Host has made a decision. Sorry, You were not chosen.";
+                    db.collection("blindDates").document(blindDateID).update(ROUND_NO, 4);
+                    if (whatUser == 1) {
+                        db.collection("blindDates").document(blindDateID).update(USER_NR_1_WAS_REJECTED, true);
+                        wasUserNr1Rejected = true;
+                        sendNotification(userIDNr1, user.getUid(), userIDNr1, messageNotificationReject);
+                    } else if (whatUser == 2) {
+                        db.collection("blindDates").document(blindDateID).update(USER_NR_2_WAS_REJECTED, true);
+                        wasUserNr2Rejected = true;
+                        sendNotification(userIDNr2, user.getUid(), userIDNr2, messageNotificationReject);
+                    } else {
+                        db.collection("blindDates").document(blindDateID).update(USER_NR_3_WAS_REJECTED, true);
+                        wasUserNr3Rejected = true;
+                        sendNotification(userIDNr3, user.getUid(), userIDNr3, messageNotificationReject);
+                    }
+
+                    String messageNotificationWin = " has chosen You. Congratulations!";
+                    if (wasUserNr1Rejected && wasUserNr2Rejected) {
+                        createChat(userIDNr3, userNameNr3);
+                        sendNotification(userIDNr3, user.getUid(), userIDNr3, userNameNr0 + messageNotificationWin);
+                    } else if (wasUserNr2Rejected && wasUserNr3Rejected) {
+                        createChat(userIDNr1, userNameNr1);
+                        sendNotification(userIDNr1, user.getUid(), userIDNr1, userNameNr0 + messageNotificationWin);
+                    } else if (wasUserNr1Rejected && wasUserNr3Rejected) {
+                        createChat(userIDNr2, userNameNr2);
+                        sendNotification(userIDNr2, user.getUid(), userIDNr2, userNameNr0 + messageNotificationWin);
+                    }
+
+                    roundNumber = roundNumber + 1;
+                    Log.d(TAG, "HALLLLOOOOOOO" + roundNumber);
+                    initView(roundNumber);
+                }
+
+                kickOutDialog.dismiss();
+
+            }
+        });
+
+        kickOutDialog.getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                buttonKickOffDateNr1.setEnabled(true);
+                buttonKickOffDateNr2.setEnabled(true);
+                buttonKickOffDateNr3.setEnabled(true);
+                kickOutDialog.dismiss();
+
+            }
+        });
+
+    }
+
+    public void lastQuestionAlertDialog(int whatUser) {
+
+        kickOutDialog.dismiss();
+        LayoutInflater inflater = getLayoutInflater();
+        View lastQuestionView = inflater.inflate(R.layout.dialog_blind_date_last_question, null);
+        EditText lastEditText = lastQuestionView.findViewById(R.id.editText_questionLast_blind_date);
+
+        InputFilter lengthFilter = new InputFilter.LengthFilter(500);
+        lastEditText.setHint("Last question (20-500 letters)");
+        lastEditText.setFilters(new InputFilter[]{lengthFilter});
+
+        lastQuestionDialog = new AlertDialog.Builder(this)
+                .setView(lastQuestionView)  // What to use in dialog box
+                .setNegativeButton(R.string.no_text_dialog_boxes, null)
+                .setPositiveButton(R.string.yes_text_dialog_boxes, null)
+                .setTitle("Prepare last question:")
+                .show();
+
+        lastQuestionDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (lastEditText.getText().toString().length() >= 1) {
+
+                    db.collection("blindDates").document(blindDateID).update(ROUND_NO, 2);
                     db.collection("blindDates").document(blindDateID).update(DATE_OF_ROUND_2_STARTED, new Date());
                     dateOfStartRound2 = new Date();
 
@@ -444,41 +612,54 @@ public class BlindDateActivity extends AppCompatActivity implements View.OnClick
                         wasUserNr3Rejected = true;
                     }
                     roundNumber = roundNumber + 1;
-                    Log.d(TAG, "HALLLLOOOOydntduryyyinOOO" + roundNumber);
-                    initView(roundNumber);
 
-                } else if (roundNumber == 3) {
+                    MessageInBlindDate messageBlindDate = new MessageInBlindDate("4. " + lastEditText.getText().toString(), "HOST", currentUserName, new Date(), roundNumber, 10);
+                    db.collection("blindDates").document(blindDateID).collection("messages").add(messageBlindDate).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            String messageID = documentReference.getId();
+                            Map<String, Object> message = new HashMap<>();
+                            message.put("messageID", messageID);
+                            db.collection("blindDates").document(blindDateID).collection("messages").document(messageID).update(message);
 
-                    if (whatUser == 1) {
-                        db.collection("blindDates").document(blindDateID).update(USER_NR_1_WAS_REJECTED, true);
-                        wasUserNr1Rejected = true;
-                    } else if (whatUser == 2) {
-                        db.collection("blindDates").document(blindDateID).update(USER_NR_2_WAS_REJECTED, true);
-                        wasUserNr2Rejected = true;
-                    } else {
-                        db.collection("blindDates").document(blindDateID).update(USER_NR_3_WAS_REJECTED, true);
-                        wasUserNr3Rejected = true;
-                    }
+                            String messageNotification = "Round 2 has started! Host has made a decision";
+                            if (whatUser == 1) {
+                                sendNotification(userIDNr1, user.getUid(), userIDNr1, messageNotification);
+                                sendNotification(userIDNr2, user.getUid(), userIDNr2, messageNotification);
+                                sendNotification(userIDNr3, user.getUid(), userIDNr3, messageNotification);
+                            } else if (whatUser == 2) {
+                                sendNotification(userIDNr1, user.getUid(), userIDNr1, messageNotification);
+                                sendNotification(userIDNr2, user.getUid(), userIDNr2, messageNotification);
+                                sendNotification(userIDNr3, user.getUid(), userIDNr3, messageNotification);
+                            } else {
+                                sendNotification(userIDNr1, user.getUid(), userIDNr1, messageNotification);
+                                sendNotification(userIDNr2, user.getUid(), userIDNr2, messageNotification);
+                                sendNotification(userIDNr3, user.getUid(), userIDNr3, messageNotification);
+                            }
 
-                    if (wasUserNr1Rejected && wasUserNr2Rejected) {
-                        createChat(userIDNr3, userNameNr3);
-                    } else if (wasUserNr2Rejected && wasUserNr3Rejected) {
-                        createChat(userIDNr1, userNameNr1);
-                    } else if (wasUserNr1Rejected && wasUserNr3Rejected) {
-                        createChat(userIDNr2, userNameNr2);
-                    }
+                            initView(roundNumber);
+                            lastQuestionDialog.dismiss();
 
-                    roundNumber = roundNumber + 1;
-                    Log.d(TAG, "HALLLLOOOOOOO" + roundNumber);
-                    initView(roundNumber);
+                        }
+                    });
+
+                } else {
+                    Toast.makeText(BlindDateActivity.this, "Type something!", Toast.LENGTH_SHORT).show();
                 }
-
-                kickOutDialog.dismiss();
 
             }
         });
-    }
 
+        lastQuestionDialog.getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                buttonKickOffDateNr1.setEnabled(true);
+                buttonKickOffDateNr2.setEnabled(true);
+                buttonKickOffDateNr3.setEnabled(true);
+                lastQuestionDialog.dismiss();
+            }
+        });
+    }
 
     // This function updates profile information when activity is started
     private void updateBlindDateStatus() throws ExecutionException, InterruptedException {
@@ -506,6 +687,37 @@ public class BlindDateActivity extends AppCompatActivity implements View.OnClick
                         blindDateCreationDate = document.getDate(DATE_OF_CREATION_BLIND_DATE);
                         dateOfStartRound2 = document.getDate(DATE_OF_ROUND_2_STARTED);
 
+                        int whatToDo = 0;
+                        if (wasUserNr1Rejected) {
+                            whatToDo++;
+                        } else if (wasUserNr2Rejected) {
+                            whatToDo++;
+                        } else if (wasUserNr3Rejected) {
+                            whatToDo++;
+                        }
+
+                        Date currentDate = new Date(new Date().getTime());
+                        Date timeRound1 = new Date(blindDateCreationDate.getTime() + 30000); //1800000
+                        Date timeRound2 = new Date(dateOfStartRound2.getTime() + 30000); //1200000
+                        long dateDiffSinceRound1Start = timeRound1.getTime() - currentDate.getTime();
+                        long dateDiffSinceRound2Start = timeRound2.getTime() - currentDate.getTime();
+
+                        if (dateDiffSinceRound1Start <= 0 && roundNumber == 0) {
+                            db.collection("blindDates").document(blindDateID).update(ROUND_NO, 1);
+                            wholeLayout.setAlpha(1.0f);
+                            dialog.dismiss();
+                            initView(1);
+                        } else if (dateDiffSinceRound2Start <= 0 && roundNumber == 2){
+                            db.collection("blindDates").document(blindDateID).update(ROUND_NO, 3);
+                            wholeLayout.setAlpha(1.0f);
+                            dialog.dismiss();
+                            initView(3);
+                        } else {
+                            wholeLayout.setAlpha(1.0f);
+                            dialog.dismiss();
+                            initView(roundNumber);
+                        }
+
                     } else {
                         Log.d("LOGGER", "No such document");
                     }
@@ -513,62 +725,56 @@ public class BlindDateActivity extends AppCompatActivity implements View.OnClick
                 } else {
                     Log.d("LOGGER", "get failed with ", task.getException());
                 }
-                wholeLayout.setAlpha(1.0f);
-                dialog.dismiss();
+
             }
         });
 
     }
 
 
-//    private void sendNotification(String otherUserID, final String userID, final String message) {
-//        DocumentReference docRefUser = db.collection("users").document(otherUserID);
-//        docRefUser.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    documentOfUser = task.getResult();
-//                    if (documentOfUser != null) {
-//
-//                        String token = documentOfUser.getString("fcmRegistrationToken");
-//                        Data data = new Data(otherUserID, R.drawable.notification_icon_white, message,
-//                                displayName, userID, displayName, chatIdIntent);
-//                        Sender sender = new Sender(data, token);
-//
-//                        Gson gson = new Gson();
-//                        String json = gson.toJson(sender);
-//
-//                        Log.d(TAG, displayName + message);
-//
-//                        apiService.sendNotification(sender).enqueue(new Callback<Response>() {
-//                            @Override
-//                            public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
-//
-//                                Log.d(TAG, String.valueOf(response.code()));
-//                                if (response.code() == 200) {
-//                                    assert response.body() != null;
-//                                    if (response.body().success != 1) {
-//                                        Log.d(TAG, "Failure while sending notification.");
-//                                    }
-//                                }
-//                            }
-//
-//                            @Override
-//                            public void onFailure(Call<Response> call, Throwable t) {
-//
-//                            }
-//                        });
-//
-//                    } else {
-//                        Log.d("LOGGER", "No such document");
-//                    }
-//                } else {
-//                    Log.d("LOGGER", "get failed with ", task.getException());
-//                }
-//
-//            }
-//        });
-//    }
+    private void sendNotification(String otherUserID, final String userID, final String otherUserName, final String body) {
+        DocumentReference docRefUser = db.collection("users").document(otherUserID);
+        docRefUser.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot documentOfUser = task.getResult();
+                    if (documentOfUser != null) {
+
+                        String token = documentOfUser.getString("fcmRegistrationToken");
+                        DataB data = new DataB(otherUserID, R.drawable.notification_icon_white, body,
+                                "Blind date with: " + userNameNr0, userID, otherUserName, blindDateID,1);
+                        SenderB sender = new SenderB(data, token);
+
+                        apiServiceB.sendNotification(sender).enqueue(new Callback<Response>() {
+                            @Override
+                            public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+
+                                Log.d(TAG, String.valueOf(response.code()));
+                                if (response.code() == 200) {
+                                    assert response.body() != null;
+                                    if (response.body().success != 1) {
+                                        Log.d(TAG, "Failure while sending notification.");
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Response> call, Throwable t) {
+
+                            }
+                        });
+
+                    } else {
+                        Log.d("LOGGER", "No such document");
+                    }
+                } else {
+                    Log.d("LOGGER", "get failed with ", task.getException());
+                }
+
+            }
+        });
+    }
 
     @Override
     protected void onStart() {
@@ -605,7 +811,7 @@ public class BlindDateActivity extends AppCompatActivity implements View.OnClick
         if (messageText.getText().toString().length() <= 1250) {
             if (messageText.getText().toString().length() >= 1) {
 
-                MessageInBlindDate messageBlindDate = new MessageInBlindDate(messageText.getText().toString(), user.getUid(), currentUserName, new Date(), roundNumber);
+                MessageInBlindDate messageBlindDate = new MessageInBlindDate(messageText.getText().toString(), user.getUid(), currentUserName, new Date(), roundNumber, currentUserNr);
                 db.collection("blindDates").document(blindDateID).collection("messages").add(messageBlindDate).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
@@ -708,6 +914,10 @@ public class BlindDateActivity extends AppCompatActivity implements View.OnClick
                                                             Log.d(TAG, user2.toString());
                                                             db.collection("chats").document(chatID).collection("chatUsers").document(idOfWinner).set(user2);
 
+                                                            db.collection("users").document(user.getUid()).update("otherUsersIDFromStartedChatsArray", FieldValue.arrayUnion(idOfWinner));
+
+                                                            db.collection("users").document(idOfWinner).update("otherUsersIDFromStartedChatsArray", FieldValue.arrayUnion(user.getUid()));
+
                                                             db.collection("chats").document(chatID).set(chat)
                                                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                         @Override
@@ -752,10 +962,5 @@ public class BlindDateActivity extends AppCompatActivity implements View.OnClick
             }
         });
     }
-
-    public void checkIfUserHaveAlreadyChatWithWinner() {
-
-    }
-
 
 }

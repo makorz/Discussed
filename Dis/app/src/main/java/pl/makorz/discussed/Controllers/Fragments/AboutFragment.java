@@ -100,25 +100,50 @@ public class AboutFragment extends Fragment {
 
         List<String> tutorials = Arrays.asList(getResources().getStringArray(R.array.about_options));
         List<String> tutorialsAnswers = Arrays.asList(getResources().getStringArray(R.array.about_options_answers));
-        List<String> zero = new ArrayList<String>();
-        List<String> one = new ArrayList<String>();
-        List<String> two = new ArrayList<String>();
-        List<String> three = new ArrayList<String>();
+        List<String> zero = new ArrayList<>();
+        List<String> one = new ArrayList<>();
+        List<String> two = new ArrayList<>();
+        List<String> three = new ArrayList<>();
+        List<String> four = new ArrayList<>();
+        List<String> five = new ArrayList<>();
+        List<String> six = new ArrayList<>();
+        List<String> seven = new ArrayList<>();
 
         for (int i = 0; i < tutorials.size(); i++) {
 
-            if (i == 0){
-                zero.add(tutorialsAnswers.get(i));
-                expandableListDetail.put(tutorials.get(i),zero);
-            } else if (i == 1) {
-                one.add(tutorialsAnswers.get(i));
-                expandableListDetail.put(tutorials.get(i),one);
-            } else if (i == 2) {
-                two.add(tutorialsAnswers.get(i));
-                expandableListDetail.put(tutorials.get(i),two);
-            } else if (i == 3) {
-                three.add(tutorialsAnswers.get(i));
-                expandableListDetail.put(tutorials.get(i),three);
+            switch (i) {
+                case 1:
+                    one.add(tutorialsAnswers.get(i));
+                    expandableListDetail.put(tutorials.get(i),one);
+                    break;
+                case 2:
+                    two.add(tutorialsAnswers.get(i));
+                    expandableListDetail.put(tutorials.get(i),two);
+                    break;
+                case 3:
+                    three.add(tutorialsAnswers.get(i));
+                    expandableListDetail.put(tutorials.get(i),three);
+                    break;
+                case 4:
+                    four.add(tutorialsAnswers.get(i));
+                    expandableListDetail.put(tutorials.get(i),four);
+                    break;
+                case 5:
+                    five.add(tutorialsAnswers.get(i));
+                    expandableListDetail.put(tutorials.get(i),five);
+                    break;
+                case 6:
+                    six.add(tutorialsAnswers.get(i));
+                    expandableListDetail.put(tutorials.get(i),six);
+                    break;
+                case 7:
+                    seven.add(tutorialsAnswers.get(i));
+                    expandableListDetail.put(tutorials.get(i),seven);
+                    break;
+                default:
+                    zero.add(tutorialsAnswers.get(i));
+                    expandableListDetail.put(tutorials.get(i),zero);
+                    break;
             }
 
         }

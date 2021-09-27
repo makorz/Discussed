@@ -8,6 +8,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,7 +31,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -57,19 +58,21 @@ public class ChatActivity extends AppCompatActivity {
     public static final String USERS_NAME_ARRAY = "usersParticipatingName";
     public static final String USERS_PHOTO_URI_ARRAY = "usersParticipatingFirstImageUri";
     public static final String POINTS_FROM_OTHER_USER = "pointsFromOtherUser";
-    private static final String PREMIUM_ACCOUNT = "premium";
+    public static final String PREMIUM_ACCOUNT = "premium";
+    public static final String USER_THAT_HAVE_NOT_DELETED_CHAT = "usersThatHaveNotDeletedConversation";
 
-    private List<String> listOfUsers, listOfUserNames, listOfUserPhotoUri;
+    private List<String> listOfUsers, listOfUserNames, listOfUserPhotoUri, listOfUsersWhoDidNotDeletedChat;
     private String chatIdIntent, idOfOtherUser, otherUserName, displayName;
     private int index;
     private EditText messageText;
+    private ImageButton sendButton;
     private RecyclerView messagesRecycler;
+    private TextView infoText;
     private MessageInChatAdapter messagesAdapter;
     private DocumentSnapshot documentOfUser;
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
     private APIService apiService;
 
     @Override
@@ -84,18 +87,21 @@ public class ChatActivity extends AppCompatActivity {
         otherUserName = intent.getStringExtra("otherUserName");
         idOfOtherUser = intent.getStringExtra("idOfOtherUser");
         getSupportActionBar().setTitle(otherUserName);
+
         messageText = findViewById(R.id.messageEditText);
+        messagesRecycler = findViewById(R.id.messagesRecyclerView);
+        sendButton = findViewById(R.id.sendMessageButton);
+        infoText = findViewById(R.id.textview_chat_info);
 
         apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
 
-        getCurrentUserNecesseryData();
+        getCurrentUserNecessaryData();
 
         db.collection("chats").document(chatIdIntent).collection("chatUsers").document(user.getUid())
                 .update("lastTimeInChatActivity",new Date());
 
         setSendButtonClickListener();
 
-        messagesRecycler = findViewById(R.id.messagesRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setStackFromEnd(true);
         messagesRecycler.setLayoutManager(layoutManager);
@@ -121,6 +127,7 @@ public class ChatActivity extends AppCompatActivity {
         setGradeButtonLongClickListener();
     }
 
+    // Send notification from Chat
     private void sendNotification(String otherUserID, final String userID, final String message){
         DocumentReference docRefUser = db.collection("users").document(otherUserID);
         docRefUser.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -132,7 +139,7 @@ public class ChatActivity extends AppCompatActivity {
 
                         String token = documentOfUser.getString("fcmRegistrationToken");
                         Data data = new Data(otherUserID, R.drawable.notification_icon_white, message,
-                                displayName, userID, displayName, chatIdIntent);
+                                displayName, userID, displayName, chatIdIntent,0);
                         Sender sender = new Sender(data, token);
 
                         Gson gson = new Gson();
@@ -169,64 +176,8 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
     }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        messagesAdapter.startListening();
-        checkUserNameAndPhotoUri(chatIdIntent,user.getUid());
-        getSupportActionBar().setTitle(otherUserName);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        messagesAdapter.stopListening();
-        db.collection("chats").document(chatIdIntent).collection("chatUsers").document(user.getUid())
-                .update("lastTimeInChatActivity",new Date());
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_chat, menu);
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        //If Chat starts from notification and it's root start MainActivity instead of completely closing app
-        if (isTaskRoot()) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            super.onBackPressed();
-            finish();
-        }else {
-            super.onBackPressed();
-            finish();
-        }
-
-
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_show_alien_profile:
-                Intent intent = new Intent(this, AlienProfileActivity.class);
-                intent.putExtra("idOfOtherUser",idOfOtherUser);
-                intent.putExtra("chatIdIntent",chatIdIntent);
-                intent.putExtra("currentUserID",user.getUid());
-                intent.putExtra("otherUserName",otherUserName);
-                startActivity(intent);
-                onStop();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    public void checkUserNameAndPhotoUri(final String chatID, String currentUserID) {
+    // Check if another user change his/her name and first photo
+    private void checkUserNameAndPhotoUri(final String chatID, String currentUserID) {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference docRef = db.collection("chats").document(chatID);
@@ -239,6 +190,15 @@ public class ChatActivity extends AppCompatActivity {
                         listOfUsers = (List<String>) documentOfChat.get(USERS_ID_ARRAY);
                         listOfUserNames = (List<String>) documentOfChat.get(USERS_NAME_ARRAY);
                         listOfUserPhotoUri = (List<String>) documentOfChat.get(USERS_PHOTO_URI_ARRAY);
+                        listOfUsersWhoDidNotDeletedChat = (List<String>) documentOfChat.get(USER_THAT_HAVE_NOT_DELETED_CHAT);
+
+                        if (listOfUsersWhoDidNotDeletedChat.size() < 2) {
+                            infoText.setText("Other user got rid off this chat, You can't write nothing more.");
+                            infoText.setVisibility(View.VISIBLE);
+                            messageText.setVisibility(View.GONE);
+                            sendButton.setVisibility(View.GONE);
+                        }
+
                         DocumentReference docRef2 = db.collection("users").document(idOfOtherUser);
 
                         docRef2.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -247,7 +207,7 @@ public class ChatActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     DocumentSnapshot documentOfUser = task.getResult();
                                     if (documentOfUser != null) {
-                                        index = listOfUsers.indexOf(user.getUid());
+                                        index = listOfUsers.indexOf(currentUserID);
                                         if (!listOfUserNames.contains(documentOfUser.getString("displayName"))) {
 
                                             String a = documentOfUser.getString("displayName");
@@ -293,8 +253,8 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
     }
-
-    public void getCurrentUserNecesseryData() {
+    // Get user data tha will be used in activity
+    private void getCurrentUserNecessaryData() {
 
         DocumentReference docRefUser = db.collection("users").document(user.getUid());
         docRefUser.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -315,11 +275,11 @@ public class ChatActivity extends AppCompatActivity {
         });
 
     }
-
-    public void setSendButtonClickListener() {
+    // Set the sending message function on image button next to edit text field
+    private void setSendButtonClickListener() {
 
         // What happens after send button click
-        findViewById(R.id.sendMessageButton).setOnClickListener(new View.OnClickListener() {
+        sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 InputFilter lengthFilter = new InputFilter.LengthFilter(1250);
@@ -327,12 +287,14 @@ public class ChatActivity extends AppCompatActivity {
                 if (messageText.getText().toString().length() <= 1250) {
                     if (messageText.getText().toString().length() >= 1) {
                         MessageInChat messageChat = new MessageInChat(messageText.getText().toString(), user.getUid(), displayName, new Date(), false);
+                        Log.d("MessageInChat", String.valueOf(messageChat.wasGraded()));
                         db.collection("chats").document(chatIdIntent).collection("messages").add(messageChat).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
                                 String messageID = documentReference.getId();
                                 Map<String, Object> message = new HashMap<>();
                                 message.put("messageID", messageID);
+                                message.put("wasGraded", false);
                                 db.collection("chats").document(chatIdIntent).collection("messages").document(messageID).update(message);
 
                             }
@@ -349,8 +311,8 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
     }
-
-    public void setGradeButtonLongClickListener() {
+    // Set the long click listener on chat bubbles to grade them
+    private void setGradeButtonLongClickListener() {
 
         messagesAdapter.setOnLongItemCLickListener(new MessageInChatAdapter.onLongItemClickListener() {
             @Override
@@ -421,5 +383,59 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        messagesAdapter.startListening();
+        checkUserNameAndPhotoUri(chatIdIntent,user.getUid());
+        getSupportActionBar().setTitle(otherUserName);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        messagesAdapter.stopListening();
+        db.collection("chats").document(chatIdIntent).collection("chatUsers").document(user.getUid())
+                .update("lastTimeInChatActivity",new Date());
+    }
+
+    @Override
+    public void onBackPressed() {
+        //If Chat starts from notification and it's root start MainActivity instead of completely closing app
+        if (isTaskRoot()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
+        super.onBackPressed();
+        finish();
+
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_chat, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_show_alien_profile:
+                Intent intent = new Intent(this, AlienProfileActivity.class);
+                intent.putExtra("idOfOtherUser",idOfOtherUser);
+                intent.putExtra("chatIdIntent",chatIdIntent);
+                intent.putExtra("currentUserID",user.getUid());
+                intent.putExtra("otherUserName",otherUserName);
+                startActivity(intent);
+                onStop();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
 
 }

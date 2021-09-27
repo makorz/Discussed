@@ -105,15 +105,15 @@ public class MessageInChatAdapter extends FirestoreRecyclerAdapter<MessageInChat
                      if (getItemViewType() == MSG_TYPE_LEFT && !wasGraded.isChecked()){
                         if (position != RecyclerView.NO_POSITION && listener != null) {
                             int size = textOfMessage.getText().length();
-                            if (size >= 750) {
+                            if (size >= 600) {
                                 points = 5;
-                            } else if (size >= 500) {
+                            } else if (size >= 400) {
                                 points = 4;
-                            } else if (size >= 350) {
+                            } else if (size >= 250) {
                                 points = 3;
-                            } else if (size >= 200) {
+                            } else if (size >= 150) {
                                 points = 2;
-                            } else if (size >= 100) {
+                            } else if (size >= 50) {
                                 points = 1;
                             }
                             listener.onLongItemClick(points, position, idMessage, false);

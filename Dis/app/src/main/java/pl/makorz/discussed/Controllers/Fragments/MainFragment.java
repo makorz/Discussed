@@ -52,10 +52,13 @@ import java.util.concurrent.ExecutionException;
 import pl.makorz.discussed.Controllers.BlindDateActivity;
 import pl.makorz.discussed.Controllers.ChatActivity;
 import pl.makorz.discussed.Controllers.Functions.APIService;
+import pl.makorz.discussed.Controllers.Functions.APIServiceB;
 import pl.makorz.discussed.Controllers.Notifications.Client;
 import pl.makorz.discussed.Controllers.Notifications.Data;
+import pl.makorz.discussed.Controllers.Notifications.DataB;
 import pl.makorz.discussed.Controllers.Notifications.Response;
 import pl.makorz.discussed.Controllers.Notifications.Sender;
+import pl.makorz.discussed.Controllers.Notifications.SenderB;
 import pl.makorz.discussed.Controllers.ProfileActivity;
 import pl.makorz.discussed.R;
 import retrofit2.Call;
@@ -117,8 +120,7 @@ public class MainFragment extends Fragment {
     private DocumentSnapshot userSnapshot, otherUserSnapshot, otherUserSnapshot1, otherUserSnapshot2, otherUserSnapshot3;
     private DocumentReference docRefBlindDates;
     private APIService apiService;
-
-
+    private APIServiceB apiServiceB;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -142,6 +144,7 @@ public class MainFragment extends Fragment {
         radioGroupGender.setOnCheckedChangeListener(listenerGender);
 
         apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
+        apiServiceB = Client.getClient("https://fcm.googleapis.com/").create(APIServiceB.class);
 
         // Default ageValues
         ageValues.add(0, 30f);
@@ -354,7 +357,7 @@ public class MainFragment extends Fragment {
         int moreRandomSearching = r.nextInt(12 - 1) + 1;
         int randomAgeFromChosenRange = r.nextInt(maxAge - minAge) + minAge;
         int randomLimitSize = r.nextInt(101 - 50) + 50;
-        String agePickedFromRange = Integer.toString(minAge);
+        String agePickedFromRange = Integer.toString(minAge); //Change when official start
         Query queryUser = null;
 
         if (!blindDatesSearching) {
@@ -743,19 +746,17 @@ public class MainFragment extends Fragment {
 
         InputFilter lengthFilter = new InputFilter.LengthFilter(500);
         editDialogText1.setHint("Question nr 1 (20-500 letters)");
-        editDialogText1.setInputType(InputType.TYPE_CLASS_TEXT);
         editDialogText1.setFilters(new InputFilter[]{lengthFilter});
         editDialogText2.setHint("Question nr 2 (20-500 letters)");
-        editDialogText2.setInputType(InputType.TYPE_CLASS_TEXT);
         editDialogText2.setFilters(new InputFilter[]{lengthFilter});
         editDialogText3.setHint("Question nr 3 (20-500 letters)");
-        editDialogText3.setInputType(InputType.TYPE_CLASS_TEXT);
         editDialogText3.setFilters(new InputFilter[]{lengthFilter});
 
         fieldValueChangeDialog = new AlertDialog.Builder(getContext())
                 .setTitle("Three questions for Blind Dates")
                 .setView(dialogView)  // What to use in dialog box
                 .setNegativeButton(R.string.no_text_dialog_boxes, null)
+                .setCancelable(false)
                 .setPositiveButton("OK", null)
                 .show();
 
@@ -779,6 +780,18 @@ public class MainFragment extends Fragment {
                 }
             }
         });
+
+        fieldValueChangeDialog.getButton(DialogInterface.BUTTON_NEGATIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i(TAG, "Clicked negative!");
+                fieldValueChangeDialog.dismiss();
+                buttonChat.setEnabled(true);
+                buttonBlindDate.setEnabled(true);
+                waitUntilChatAppears.setVisibility(View.INVISIBLE);
+                layoutToDimWhenSearching.setAlpha(1f);
+            }
+        });
     }
 
     private void checkIfUserCanSearch(boolean blindDatesSearching) throws ExecutionException, InterruptedException {
@@ -794,7 +807,7 @@ public class MainFragment extends Fragment {
                         isPremium = document.getBoolean(PREMIUM);
                         int maxAmountOfStartedConversationsAndBlindDates = 5;
                         if (isPremium) {
-                            maxAmountOfStartedConversationsAndBlindDates = 20;
+                            maxAmountOfStartedConversationsAndBlindDates = 15;
                         }
 
                         activeChatUsersID = (ArrayList<String>) document.get("otherUsersIDFromStartedChatsArray");
@@ -823,13 +836,15 @@ public class MainFragment extends Fragment {
                         Log.d(TAG, String.valueOf(nrOfUserChats) + "   " + String.valueOf(nrOfUserBlindDates));
 
                         if (nrOfHoursSinceFirstStartedChat >= hoursToReset) {
-                            nrOfUserChats = 0;
+
                             db.collection("users").document(user.getUid()).update(NR_OF_STARTED_CHATS_TODAY, FieldValue.increment(-nrOfUserChats));
+                            nrOfUserChats = 0;
 
                         }
                         if (nrOfHoursSinceFirstStartedBlindDate >= hoursToReset) {
-                            nrOfUserBlindDates = 0;
+
                             db.collection("users").document(user.getUid()).update(NR_OF_STARTED_BLIND_DATES_TODAY, FieldValue.increment(-nrOfUserBlindDates));
+                            nrOfUserBlindDates = 0;
 
                         }
 
@@ -922,6 +937,7 @@ public class MainFragment extends Fragment {
 
     private void sendNotificationAboutChat(String otherUserID, final String userID, final String message,
                                            final String creatorName, final String otherUserName, final String chatID) {
+
         DocumentReference docRefUser = db.collection("users").document(otherUserID);
 
         docRefUser.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -933,7 +949,7 @@ public class MainFragment extends Fragment {
 
                         String token = otherUserSnapshot.getString("fcmRegistrationToken");
                         Data data = new Data(otherUserID, R.drawable.notification_icon_white, message,
-                                otherUserName, userID, creatorName, chatID);
+                                otherUserName, userID, creatorName, chatID,0);
                         Sender sender = new Sender(data, token);
 
                         apiService.sendNotification(sender).enqueue(new Callback<Response>() {
@@ -965,6 +981,55 @@ public class MainFragment extends Fragment {
             }
         });
     }
+
+    private void sendNotificationAboutBlindDate(String targetID, final String userID, final String body,
+                                                final String targetName, final String title, final String blindID) {
+
+        DocumentReference docRefUser = db.collection("users").document(targetID);
+
+        docRefUser.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    otherUserSnapshot = task.getResult();
+                    if (otherUserSnapshot != null) {
+
+                        String token = otherUserSnapshot.getString("fcmRegistrationToken");
+
+                        DataB data = new DataB(targetID, R.drawable.notification_icon_white,  body,
+                                title, userID, targetName, blindID,1);
+                        SenderB sender = new SenderB(data, token);
+
+                        apiServiceB.sendNotification(sender).enqueue(new Callback<Response>() {
+                            @Override
+                            public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+
+                                Log.d(TAG, String.valueOf(response.code()));
+                                if (response.code() == 200) {
+                                    assert response.body() != null;
+                                    if (response.body().success != 1) {
+                                        Log.d(TAG, "Failure while sending notification.");
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Response> call, Throwable t) {
+
+                            }
+                        });
+
+                    } else {
+                        Log.d("LOGGER", "No such document");
+                    }
+                } else {
+                    Log.d("LOGGER", "get failed with ", task.getException());
+                }
+
+            }
+        });
+    }
+
 
     private void createBlindDate(List<String> names, List<String> ids, List<String> questions) {
         Map<String, Object> blindDate = new HashMap<>();
@@ -1003,6 +1068,7 @@ public class MainFragment extends Fragment {
                         blindDate.put("wasUserInActivityNr2", false);
                         blindDate.put("wasUserInActivityNr3", false);
 
+
                         user0.put("userID", ids.get(0));
                         user0.put("userName", names.get(0));
                         user0.put("lastTimeInChatActivity", new Date(new Date().getTime() - 86400000L));
@@ -1029,58 +1095,75 @@ public class MainFragment extends Fragment {
 
                         message1.put("textOfMessage", questions.get(0));
                         message1.put("userName", names.get(0));
-                        message1.put("userID", ids.get(0));
+                        message1.put("userID", "HOST");
                         message1.put("whatRoundSend", 0);
-                        message1.put("typeOfMessage", 0);
+                        message1.put("typeOfMessage", 10);
                         message1.put("dateOfMessage", new Date());
-                        db.collection("blindDates").document(blindDateID).collection("messages").add(message1);
+                        db.collection("blindDates").document(blindDateID).collection("messages").add(message1).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentReference> task) {
 
-                        message2.put("textOfMessage", questions.get(1));
-                        message2.put("userName", names.get(0));
-                        message2.put("userID", ids.get(0));
-                        message2.put("whatRoundSend", 0);
-                        message2.put("typeOfMessage", 0);
-                        message2.put("dateOfMessage", new Date());
-                        db.collection("blindDates").document(blindDateID).collection("messages").add(message2);
-
-                        message3.put("textOfMessage", questions.get(2));
-                        message3.put("userName", names.get(0));
-                        message3.put("userID", ids.get(0));
-                        message3.put("whatRoundSend", 0);
-                        message3.put("typeOfMessage", 0);
-                        message3.put("dateOfMessage", new Date());
-                        db.collection("blindDates").document(blindDateID).collection("messages").add(message3);
-
-                        if (nrOfUserBlindDates == 0) {
-                            db.collection("users").document(user.getUid()).update(LAST_DATE_OF_STARTED_BLIND_DATE, new Date());
-                        }
-
-                        db.collection("users").document(user.getUid()).update(NR_OF_STARTED_BLIND_DATES_TODAY, FieldValue.increment(1));
-
-                        db.collection("blindDates").document(blindDateID).set(blindDate)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                message2.put("textOfMessage", questions.get(1));
+                                message2.put("userName", names.get(0));
+                                message2.put("userID", "HOST");
+                                message2.put("whatRoundSend", 0);
+                                message2.put("typeOfMessage", 10);
+                                message2.put("dateOfMessage", new Date());
+                                db.collection("blindDates").document(blindDateID).collection("messages").add(message2).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                                     @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
+                                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                                        message3.put("textOfMessage", questions.get(2));
+                                        message3.put("userName", names.get(0));
+                                        message3.put("userID", "HOST");
+                                        message3.put("whatRoundSend", 0);
+                                        message3.put("typeOfMessage", 10);
+                                        message3.put("dateOfMessage", new Date());
+                                        db.collection("blindDates").document(blindDateID).collection("messages").add(message3);
 
-//                                        sendNotificationAboutChat(idOfOtherUser, user.getUid(),"New conversation just started with " + nameOfUser
-//                                                ,nameOfOtherUser, nameOfUser, chatID);
+                                        if (nrOfUserBlindDates == 0) {
+                                            db.collection("users").document(user.getUid()).update(LAST_DATE_OF_STARTED_BLIND_DATE, new Date());
+                                        }
 
-                                        ids.clear();
-                                        names.clear();
-                                        fieldValueChangeDialog.dismiss();
-                                        Intent intent = new Intent(getActivity(), BlindDateActivity.class);
-                                        intent.putExtra("blindDateMap", (Serializable) blindDate);
-                                        requireActivity().startActivity(intent);
-                                        waitUntilChatAppears.setVisibility(View.INVISIBLE);
-                                        layoutToDimWhenSearching.setAlpha(1f);
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w(TAG, "Error writing document", e);
+                                        db.collection("users").document(user.getUid()).update(NR_OF_STARTED_BLIND_DATES_TODAY, FieldValue.increment(1));
+
+                                        db.collection("blindDates").document(blindDateID).set(blindDate)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+
+                                                        for (int i = 1; i < 4; i++) {
+
+//                                                            sendNotificationAboutChat(ids.get(i), user.getUid(),nameOfUser + " has started blind date with You."
+//                                                                    ,names.get(i), "Blind date with: " + nameOfUser, blindDateID);
+                                                            sendNotificationAboutBlindDate(ids.get(i), user.getUid(),nameOfUser + " has started blind date with You."
+                                                                    ,names.get(i), "Blind date with: " + nameOfUser, blindDateID);
+
+                                                        }
+
+                                                        ids.clear();
+                                                        names.clear();
+                                                        fieldValueChangeDialog.dismiss();
+                                                        blindDate.put("fromNotification",String.valueOf(false));
+                                                        Intent intent = new Intent(getActivity(), BlindDateActivity.class);
+                                                        Log.d("NOTIFIFIFIFIF", blindDate.toString());
+                                                        intent.putExtra("blindDateMap", (Serializable) blindDate);
+                                                        requireActivity().startActivity(intent);
+                                                        waitUntilChatAppears.setVisibility(View.INVISIBLE);
+                                                        layoutToDimWhenSearching.setAlpha(1f);
+                                                    }
+                                                })
+                                                .addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w(TAG, "Error writing document", e);
+                                                    }
+                                                });
                                     }
                                 });
+                            }
+                        });
+
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

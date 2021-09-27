@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private String countryCode, searchWorld, searchCountry;
     private boolean profileCompleted = false;
     private boolean isPremium, canUserSearch, isUserFemale;
-    private Date lastLoginDate,currentLoginDate;
+    private Date lastLoginDate, currentLoginDate;
 
     private FirebaseAuth mAuth;
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -374,7 +374,6 @@ public class MainActivity extends AppCompatActivity {
                                 // Get new FCM registration token
                                 String token = task.getResult();
                                 Log.d(TAG, token);
-                                Toast.makeText(MainActivity.this, token, Toast.LENGTH_SHORT).show();
                                 db.collection("users").document(user.getUid()).update("fcmRegistrationToken", token);
                             }
                         });
@@ -419,10 +418,12 @@ public class MainActivity extends AppCompatActivity {
                             .setPositiveButton(R.string.understand_text_dialog_boxes, null)
                             .setCancelable(false)
                             .show();
+
                     introPage++;
                     introDialog2.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+
                             if (profileCompleted) {
                                 introDialog2.dismiss();
                             }
@@ -450,7 +451,6 @@ public class MainActivity extends AppCompatActivity {
                 // Get new FCM registration token
                 String token = task.getResult();
                 Log.d(TAG, token);
-                Toast.makeText(MainActivity.this, token, Toast.LENGTH_SHORT).show();
                 db.collection("users").document(user.getUid()).update("fcmRegistrationToken", token);
             }
         });
@@ -470,7 +470,6 @@ public class MainActivity extends AppCompatActivity {
                         userAge = document.getDouble("ageOfUser").intValue();
                         lastLoginDate = document.getDate("lastLoginDate");
 
-
                         // Prevent often writing new Login date in documents
                         Date currentDate = new Date(new Date().getTime());
                         long dateDiff = currentDate.getTime() - lastLoginDate.getTime();
@@ -480,7 +479,7 @@ public class MainActivity extends AppCompatActivity {
                         if (canUserSearch && nrOfHoursSinceLastLogin >= hoursToChangeLoginDate) {
 
                             db.collection("users").document(user.getUid())
-                                    .update("lastLoginDate", currentLoginDate);
+                                    .update("lastLoginDate", currentDate);
 
                             String gender;
                             if (isUserFemale) {
@@ -491,10 +490,10 @@ public class MainActivity extends AppCompatActivity {
                             String age = Integer.toString(userAge);
 
                             db.collection("search").document("world").collection("gender").document(gender)
-                                    .collection("age").document(age).collection("users").document(searchWorld).update("lastLoginDate", currentLoginDate);
+                                    .collection("age").document(age).collection("users").document(searchWorld).update("lastLoginDate", currentDate);
 
                             db.collection("search").document(countryCode).collection("gender").document(gender)
-                                    .collection("age").document(age).collection("users").document(searchCountry).update("lastLoginDate", currentLoginDate);
+                                    .collection("age").document(age).collection("users").document(searchCountry).update("lastLoginDate", currentDate);
 
                         }
 

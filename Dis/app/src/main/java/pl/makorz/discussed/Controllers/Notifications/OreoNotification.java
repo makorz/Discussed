@@ -53,7 +53,7 @@ public class OreoNotification extends ContextWrapper {
     }
 
     @TargetApi(Build.VERSION_CODES.O)
-    public NotificationCompat.Builder getOreoNotification(String title, String body, PendingIntent pendingIntent, Uri soundUri,
+    public NotificationCompat.Builder getOreoNotification(String title, String body, PendingIntent pendingIntent,
                                                     String icon, String groupName) {
 
 
@@ -66,6 +66,7 @@ public class OreoNotification extends ContextWrapper {
                 .setGroup(title)
                 .setGroupSummary(false)
                 .setAutoCancel(true);
+
     }
 
 

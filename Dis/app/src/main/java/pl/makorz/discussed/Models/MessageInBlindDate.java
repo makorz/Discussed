@@ -11,12 +11,13 @@ public class MessageInBlindDate {
     public MessageInBlindDate() {
     }
 
-    public MessageInBlindDate(String textOfMessage, String userID, String userName, Date dateOfMessage, int whatRoundSend) {
+    public MessageInBlindDate(String textOfMessage, String userID, String userName, Date dateOfMessage, int whatRoundSend, int typeOfMessage) {
         this.textOfMessage = textOfMessage;
         this.userID = userID;
         this.userName = userName;
         this.dateOfMessage = dateOfMessage;
         this.whatRoundSend = whatRoundSend;
+        this.typeOfMessage = typeOfMessage;
     }
 
     public int getWhatRoundSend() {

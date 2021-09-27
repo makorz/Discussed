@@ -6,12 +6,20 @@ import java.util.List;
 public class Conversation {
 
     private String lastMessage, chatID;
-    private List<String> usersParticipatingName, usersParticipatingID, usersParticipatingFirstImageUri;
+    private List<String> usersParticipatingName, usersParticipatingID, usersParticipatingFirstImageUri, usersThatHaveNotDeletedConversation;
     private List<Boolean> isFirstPhotoOfUserUncovered, wasUserInActivity;
     private boolean wasUserInActivityNr0, wasUserInActivityNr1;
     private Date dateOfChatCreation, lastMessageDate;
 
     public Conversation() {
+    }
+
+    public List<String> getUsersThatHaveNotDeletedConversation() {
+        return usersThatHaveNotDeletedConversation;
+    }
+
+    public void setUsersThatHaveNotDeletedConversation(List<String> usersThatHaveNotDeletedConversation) {
+        this.usersThatHaveNotDeletedConversation = usersThatHaveNotDeletedConversation;
     }
 
     public boolean getWasUserInActivityNr0() {

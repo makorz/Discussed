@@ -213,6 +213,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
                         if (premiumAccount) {
                             backgroundView.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.gold_background));
+                            blindDateParticipationSwitch.setText(R.string.participation_in_blind_date_switch);
                             blindDateParticipationSwitch.setEnabled(true);
                         }
 
@@ -442,6 +443,8 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         blindDateParticipationSwitch = findViewById(R.id.switch_blindDate_participation);
         blindDateParticipationSwitch.setEnabled(false);
+
+        blindDateParticipationSwitch.setText("Do You want to participate in blind dates? (premium)");
         profileDescriptionText = findViewById(R.id.own_description_my_profile);
         ageText = findViewById(R.id.own_age_my_profile);
         nameText = findViewById(R.id.name_my_profile);
@@ -661,10 +664,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View view) {
 
         int daysToChangeName = 7;
-        int daysToChangeAge = 10;
-        int daysToChangePhoto = 4;
-        int daysToChangeDescription = 4;
-        int daysToChangeGender = 10;
+        int daysToChangeAge = 7;
+        int daysToChangePhoto = 7;
+        int daysToChangeDescription = 7;
+        int daysToChangeGender = 7;
         int daysToChangeLocation = 0;
         long nrOfDaysSinceChange;
         long dateDiff;

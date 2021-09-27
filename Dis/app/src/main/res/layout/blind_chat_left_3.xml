@@ -13,6 +13,7 @@
         android:background="@drawable/other_nr_3_blind_buble"
         android:orientation="vertical"
         android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
         tools:ignore="UselessParent"
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"

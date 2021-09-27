@@ -22,11 +22,12 @@ import pl.makorz.discussed.R;
 
 public class MessageInBlindDateAdapter extends FirestoreRecyclerAdapter<MessageInBlindDate,MessageInBlindDateAdapter.ViewHolder> {
 
-    public static final int MSG_TYPE_OWN = 0;
+    public static final int MSG_TYPE_OWN = 100;
+    public static final int MSG_TYPE_0 = 0;
     public static final int MSG_TYPE_ALIEN_1 = 1;
     public static final int MSG_TYPE_ALIEN_2 = 2;
     public static final int MSG_TYPE_ALIEN_3 = 3;
-    public static final int MSG_TYPE_HOST = 4;
+    public static final int MSG_TYPE_HOST = 10;
 
     PrettyTime p = new PrettyTime();
     FirebaseUser user  = FirebaseAuth.getInstance().getCurrentUser();
@@ -40,17 +41,27 @@ public class MessageInBlindDateAdapter extends FirestoreRecyclerAdapter<MessageI
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
 
-        if(viewType == MSG_TYPE_OWN) {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.blind_chat_right_own, parent, false);
-        } else if (viewType == MSG_TYPE_ALIEN_1 ) {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.blind_chat_left_1, parent, false);
-        } else if (viewType == MSG_TYPE_ALIEN_2 ) {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.blind_chat_left_2, parent, false);
-        } else if (viewType == MSG_TYPE_ALIEN_3 ){
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.blind_chat_left_3, parent, false);
-        } else {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.blind_chat_host_middle, parent, false);
+        switch (viewType) {
+            case 1:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.blind_chat_left_1, parent, false);
+                break;
+            case 2:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.blind_chat_left_2, parent, false);
+                break;
+            case 3:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.blind_chat_left_3, parent, false);
+                break;
+            case 10:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.blind_chat_host_middle, parent, false);
+                break;
+            case 100:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.blind_chat_right_own, parent, false);
+                break;
+            default:
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.blind_chat_left_0, parent, false);
+                break;
         }
+
         return new ViewHolder(view);
     }
 
@@ -60,11 +71,7 @@ public class MessageInBlindDateAdapter extends FirestoreRecyclerAdapter<MessageI
         holder.textOfMessage.setText(model.getTextOfMessage());
         holder.userName.setText(model.getUserName());
         holder.dateOfMessage.setText(p.format(model.getDateOfMessage()));
-      //  holder.wasGraded.setChecked(model.wasGraded());
         holder.messageID.setText(model.getMessageID());
-//        if (model.wasGraded()) {
-//            holder.gradedSymbol.setVisibility(View.VISIBLE);
-//        }
     }
 
 
@@ -74,7 +81,18 @@ public class MessageInBlindDateAdapter extends FirestoreRecyclerAdapter<MessageI
         if(getItem(position).getUserID().equals(user.getUid())) {
             return MSG_TYPE_OWN;
         } else {
-            return MSG_TYPE_ALIEN_1;
+            switch (getItem(position).getTypeOfMessage()) {
+                case 1:
+                    return MSG_TYPE_ALIEN_1;
+                case 2:
+                    return MSG_TYPE_ALIEN_2;
+                case 3:
+                    return MSG_TYPE_ALIEN_3;
+                case 10:
+                    return MSG_TYPE_HOST;
+                default:
+                    return MSG_TYPE_0;
+            }
         }
     }
 

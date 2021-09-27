@@ -46,13 +46,13 @@ public class BlindDatesAdapter extends FirestoreRecyclerAdapter<BlindDate, Blind
     private final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
     public boolean isClickable = true; //Prevent from multiple clicks on recyclerview items, preventing from launching multiple ChatActivities
 
+
     @Override
     protected void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull BlindDate model) {
 
         String blindDateID = model.getBlindDateID();
         checkIfChatWasViewed(blindDateID, currentUser.getUid());
-
-        boolean wasUserInActivity;
+        boolean wasUserInActivity = false;
         int currentUserNumberInBlindDate;
         if (currentUser.getUid().equals(model.getUserIDNr0())){
             currentUserNumberInBlindDate = 0;

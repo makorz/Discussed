@@ -9,8 +9,9 @@ public class Data {
     private String whoSendID;
     private String whoSendName;
     private String chatID;
+    private int typeData;
 
-    public Data(String userTargetedID, int icon, String body, String title, String whoSendID, String whoSendName, String chatID) {
+    public Data(String userTargetedID, int icon, String body, String title, String whoSendID, String whoSendName, String chatID, int typeData) {
         this.userTargetedID = userTargetedID;
         this.icon = icon;
         this.body = body;
@@ -18,6 +19,7 @@ public class Data {
         this.whoSendID = whoSendID;
         this.whoSendName = whoSendName;
         this.chatID = chatID;
+        this.typeData = typeData;
 
     }
 

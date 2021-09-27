@@ -7,10 +7,10 @@
     >
 
     <LinearLayout
-        android:id="@+id/blindChatLeft1Layout"
+        android:id="@+id/blindChatLeft2Layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/other_nr_1_blind_buble"
+        android:background="@drawable/other_nr_2_blind_buble"
         android:orientation="vertical"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"

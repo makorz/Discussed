@@ -261,7 +261,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void termsAgreementCheck () {
+    private void termsAgreementCheck() {
         TextView termsTextView = findViewById(R.id.textOfTerms);
         checkTermsBox = findViewById(R.id.checkAgreeTerms);
         checkAgeBox = findViewById(R.id.checkAgreeAge);

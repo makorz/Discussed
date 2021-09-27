@@ -95,7 +95,7 @@
     <string name="radius_150km_fragment_main">150km</string>
     <string name="radius_250km_fragment_main">250km</string>
     <string name="radius_country_fragment_main">Country</string>
-    <string name="radius_world_fragment_main">Entire World</string>
+    <string name="radius_world_fragment_main">World</string>
     <string name="age_criteria_fragment_main">Age:</string>
     <string name="gender_criteria_fragment_main">Gender:</string>
     <string name="search_criteria_main_fragment">SEARCH CRITERIA</string>
@@ -113,7 +113,8 @@
     <string name="good_job_text_view_settings_tab">If You want to say \"Thank You!\" just click the button on the right and I will be happy just for that! ;)</string>
     <string name="deleteAccount_textview_settings_tab">Do You want to delete Your account (all photos, description, name, location, etc.)?</string>
     <string name="logout_textview_settings_tab">Do you want to logout from current account?</string>
-    <string name="donate_textview_settings_tab">If simple \"Thank You!\" is not enough, You can send my some money buddy! ;D</string>
+    <string name="donate_textview_settings_tab">If simple \"Thank You!\" is not enough, You can send me some money! You will receive PREMIUM account in return!
+                What PREMIUM gives to You? Check "About" tab.</string>
     <string name="participation_in_blind_date_switch">Do You want to participate in blind dates?</string>
 
     <!--LoginFragment strings-->
@@ -297,12 +298,22 @@ Questions &amp; Contact Information \n\n
 
     <!--MainActivity strings-->
     <string name="info_dialog_box_text1"><b>\nWelcome to my application!</b></string>
-    <string name="info_dialog_box_text2">While using this magic, well looking piece of software, You can find someone who wants to talk on similar topic with You.\n</string>
+    <string name="info_dialog_box_text2">While using this magic, good looking piece of software, You can find <b> someone who wants to talk on similar topic with You </b> in word to word conversation.\n\n Discussion starts
+        with covered profile information like photos, location, age, description. During the discussion You and Your chat mate can grade each other messages. Grading a message gives chat mate points he or she can
+        use to uncover Your profile information. Grading is based on length of message, You will obtain point for message at least 50 characters long. Maximum points for single message is 5 points (with premium
+        You can get twice as much - 10 points). \n\n <b>Second option is starting a blind date. </b> Blind date is discussion of three random people (chosen from selected parameters) on questions prepared by host, which results in choosing by host one person
+        out of three and starting chat to continue getting to know each other in private manner. <b>Blind date is composed of 5 rounds.</b> \n\n<b>1.</b> Host prepares 3 questions and starts blind date. \n<b>2.</b> Three persons
+        discuss questions provided by host - duration 30 minutes from moment blind date is created. In this round host can only read what blind dates are writing. \n<b>3. </b>After 30 minutes blind dates cannot
+        write nothing more and host can choose with which person he/she disagrees most and reject that person from blind date. Host also prepares last question for round 4. \n<b>4.</b> Host and two persons left
+        discuss together last question - duration 15 minutes from moment when first user is rejected. \n<b>5.</b> Final round in which host choose who from last two persons is going to be rejected. After that private
+        chat for host and last person starts (first photo from their profile is revealed for each other). \n </string>
     <string name="info_dialog_box_text3">But before You start searching You need to complete Your profile (top-right corner of screen) with following information\'s: \n\n1. Location. \n2. Name. \n3. Age.
         \n4. Personal description. \n5. Gender. \n6. 3 photos. \n7. Favorite topics. \n\nAfter that You can start searching another soul to connect to!</string>
-    <string name="info_dialog_box_text4">\nTo access Your profile tap icon in top right corner. \n\nThen You can edit all information mentioned before. Remember that those information\'s
-        can be edited in following way: \n\n 1. Location - Every day. \n2. Name - Once every 7 days. \n3. Age - Once every 30 days. \n4. Personal description - Once every 7 days. \n5. Gender - Once every 30 days.
-        \n6. Photos - Once every 7 days \n7. Favorite topics - Whenever You like. \n\n This restriction is made to exclude people who are not serious about themselves. \n\n<b>So BE CAREFUL while You enter them!</b> \n\nGood luck and I hope You find what You need!</string>
+    <string name="info_dialog_box_text4">\nTo access Your profile tap <b>icon in top right corner. (round icon with person inside).</b> \n\nThen You can edit all information mentioned before. Remember that those information\'s
+        can be edited in following way: \n\n 1. Location - Every day. \n2. Name - Once every 7 days. \n3. Age - Once every 7 days. \n4. Personal description - Once every 7 days. \n5. Gender - Once every 7 days.
+        \n6. Photos - Once every 7 days \n7. Favorite topics - Whenever You like. \n\n This restriction is made to exclude people who don\'t treat the application appropriately for other users. \n\n<b> So BE CAREFUL
+            while You enter them!</b> \n\nYou can start <b>max 5 chats per day and max 5 blind dates per day</b>. \n\nGood luck and I hope You find what You need!</string>
+
     <string name="loading_text_dialog_box">Loading…</string>
     <string name="yes_text_dialog_boxes">YES</string>
     <string name="no_text_dialog_boxes">Abort!</string>
@@ -310,22 +321,38 @@ Questions &amp; Contact Information \n\n
 
     <!--AboutFragment strings-->
     <string-array name="about_options">
-        <item>Entry information\'s.</item>
+        <item>Entry information.</item>
         <item>How often can I change profile items?</item>
+        <item>What will You get for PREMIUM account?</item>
         <item>How to award stranger for message?</item>
         <item>How we count points for messages?</item>
-     </string-array>
+        <item>How blind dates work?</item>
+        <item>Terms and conditions.</item>
+        <item>Open source licences.</item>
+    </string-array>
     <string-array name="about_options_answers">
         <item>While using this magic, well looking piece of software, You can find someone who wants to talk on similar topic with You.\n But before You start searching You need to complete Your
             profile (top-right corner of screen) with following information\'s: \n\n1. Location. \n2. Name. \n3. Age. \n4. Personal description. \n5. Gender. \n6. 3 photos. \n7. Favorite topics.\n\nAfter that
             You can start searching another soul to connect to! \nTo access Your profile tap icon in top right corner. \n\nThen You can edit all information mentioned before, Remember that those information\'s
             can be edited once every 7 days (except topics - those You can edit how often You want). This restriction is made to exclude people who are not serious about themselves. \n\n
             So BE CAREFUL while You enter them! \n\nGood luck and I hope You find what You need!</item>
-        <item>1. Location - Every day. \n2. Name - Once every 7 days. \n3. Age - Once every 30 days. \n4. Personal description - Once every 7 days. \n5. Gender - Once every 30 days.
+        <item>1. Location - Every day. \n2. Name - Once every 7 days. \n3. Age - Once every 7 days. \n4. Personal description - Once every 7 days. \n5. Gender - Once every 7 days.
             \n6. Photos - Once every 7 days \n7. Favorite topics - Whenever You like.</item>
+        <item>Most fundamental feature You will get is duplication of points You receive for Your messages (so You can get even 10 points for single message!  \n\n
+            Next feature is unlocking ability to switch off Your participation in blind dates. (You are no longer mentioned in searching, but You also cannot make new blind date by Yourself) -
+            turning off / on possible at any time. \n\n Last feature is possibility to edit all profile elements once every two days. </item>
         <item>Just long click on message You want to award, after that golden star will appear in top corner of that chat bubble and pop up message with nr of points stranger received.</item>
         <item>It depends on the length of message. \n\n Simple \"OK, I agree with You!\" will not grant any points to sender of that message. To receive at least 1 point, message
-            must have minimum 100 characters.\n\n User can receive max 5 points for single message. </item>
+            must have minimum 50 characters.\n\n User can receive max 5 points for single message. </item>
+        <item>Blind date is discussion of three random people (chosen from selected parameters) on questions prepared by host, which results in choosing by host one person
+        out of three and starting chat to continue getting to know each other in private manner. Blind date is composed of 5 rounds. \n\n1. Host prepares 3 questions and starts blind date. \n2. 3 persons
+        discuss questions provided by host - duration 30 minutes from moment blind date is created. In this round host can only read what blind dates are writing. \n3.After 30 minutes blind dates cannot
+        write nothing more and host can choose with which person he/she disagrees most and reject that person from blind date. Host also prepares last question for round 4. \n4. Host and two persons left
+        discuss together last question - duration 15 minutes from moment when first user is rejected. \n5. Final round in which host choose who from last two persons is going to be rejected. After that private
+        chat for host and last person starts (first photo from their profile is revealed for each other).</item>
+        <item>null</item>
+        <item>\'com.google.firebase\' -> Firebase Platform\n\n\'de.hdodenhof\' -> Rounded Image View\n\n\'org.ocpsoft.prettytime\' -> Multiple language time in words\n\n\'com.github.bumptech.glide\' -> Image loading framework\n\n
+            \'com.facebook.android:\' -> Facebook Authentication\n\n\'com.squareup.retrofit2\' -> Work with API interfaces</item>
     </string-array>
     <string name="copyright_by_text_view_about_tab">Copyright &#169; by <i>MatKorzDev</i></string>
     <string name="nr_of_goodJob_clicks_text_about_tab">Nr of GoodJob button clicks worldwide: </string>

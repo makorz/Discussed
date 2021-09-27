@@ -195,6 +195,12 @@ public class ConversationsFragment extends Fragment {
                                                             @Override
                                                             public void onSuccess(Void aVoid) {
                                                                 Log.d(TAG, "AllChat successfully deleted!");
+                                                                Fragment fragment = new ConversationsFragment();
+                                                                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                                                                ft.detach(ConversationsFragment.this);
+                                                                ft.replace(R.id.content_frame, fragment, "visible_fragment");
+                                                                ft.commit();
+                                                                deleteDialog.dismiss();
                                                             }
                                                         })
                                                         .addOnFailureListener(new OnFailureListener() {
@@ -221,6 +227,12 @@ public class ConversationsFragment extends Fragment {
                                                                 @Override
                                                                 public void onSuccess(Void aVoid) {
                                                                     Log.d(TAG, "AllChat successfully deleted!");
+                                                                    Fragment fragment = new ConversationsFragment();
+                                                                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                                                                    ft.detach(ConversationsFragment.this);
+                                                                    ft.replace(R.id.content_frame, fragment, "visible_fragment");
+                                                                    ft.commit();
+                                                                    deleteDialog.dismiss();
                                                                 }
                                                             })
                                                             .addOnFailureListener(new OnFailureListener() {
@@ -238,6 +250,12 @@ public class ConversationsFragment extends Fragment {
                                                                 @Override
                                                                 public void onSuccess(Void aVoid) {
                                                                     Log.d(TAG, "Single ChatMemberDocument successfully deleted!");
+                                                                    Fragment fragment = new ConversationsFragment();
+                                                                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                                                                    ft.detach(ConversationsFragment.this);
+                                                                    ft.replace(R.id.content_frame, fragment, "visible_fragment");
+                                                                    ft.commit();
+                                                                    deleteDialog.dismiss();
                                                                 }
                                                             })
                                                             .addOnFailureListener(new OnFailureListener() {
@@ -256,13 +274,6 @@ public class ConversationsFragment extends Fragment {
                                         }
                                     }
                                 });
-
-                        Fragment fragment = new ConversationsFragment();
-                        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                        ft.detach(ConversationsFragment.this);
-                        ft.replace(R.id.content_frame, fragment, "visible_fragment");
-                        ft.commit();
-                        deleteDialog.dismiss();
 
                     }
                 });

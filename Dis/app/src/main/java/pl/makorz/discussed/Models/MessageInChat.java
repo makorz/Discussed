@@ -5,8 +5,8 @@ import java.util.Date;
 public class MessageInChat {
 
     private String textOfMessage, userID, userNameID, messageID;
-    private Date dateOfMessage;
-    private boolean wasGraded;
+    protected Date dateOfMessage;
+    public boolean wasGraded;
 
     public MessageInChat() {
     }

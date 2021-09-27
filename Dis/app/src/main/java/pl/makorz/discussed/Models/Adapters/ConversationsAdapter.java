@@ -29,6 +29,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +63,11 @@ public class ConversationsAdapter extends FirestoreRecyclerAdapter<Conversation,
             index++;
         } else {
             index--;
+        }
+
+        List<String> listOfUsersWhoDidNotDeleted = model.getUsersThatHaveNotDeletedConversation();
+        if (listOfUsersWhoDidNotDeleted.size() < 2){
+
         }
 
         boolean wasUserInActivity;
@@ -223,17 +229,17 @@ public class ConversationsAdapter extends FirestoreRecyclerAdapter<Conversation,
                                             if (documentOfChat != null) {
                                                 List<String> listOfUsers = (List<String>) documentOfChat.get("usersParticipatingID");
                                                 Date lastMessageDate = documentOfChat.getDate("lastMessageDate");
-                                                int index = listOfUsers.indexOf(userID);
-
-                                                if (lastTimeInChatActivity.after(lastMessageDate)) {
-                                                    db.collection("chats").document(chatID)
-                                                            .update("wasUserInActivityNr" + index, true);
-                                                } else {
-                                                    db.collection("chats").document(chatID)
-                                                            .update("wasUserInActivityNr" + index, false);
+                                                if (listOfUsers.contains(userID) && listOfUsers != null) {
+                                                    int index = listOfUsers.indexOf(userID);
+                                                    if (lastTimeInChatActivity.after(lastMessageDate)) {
+                                                        db.collection("chats").document(chatID)
+                                                                .update("wasUserInActivityNr" + index, true);
+                                                    } else {
+                                                        db.collection("chats").document(chatID)
+                                                                .update("wasUserInActivityNr" + index, false);
+                                                    }
                                                 }
-
-                                            } else {
+                                              } else {
                                                 Log.d("LOGGER", "No such document");
                                             }
                                         } else {
